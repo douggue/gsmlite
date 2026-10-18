@@ -36,6 +36,20 @@ Mockup (approved direction, not yet built): https://claude.ai/artifact/JxwAt4xKj
 4. Model / carrier dropdowns from the supplier's lists (modellist / providerlist).
 5. Telegram notifications (bot), next to push and WhatsApp.
 
+## Marketing plan (chosen 2026-10-18)
+Chosen strategies, with what the platform needs for each:
+- Shop price group (verified technicians get lower prices) → price groups admin + "I'm a technician" request with staff approval.
+- Telegram/WhatsApp channels for new services, price drops and "back online" alerts → Telegram channel posting from admin.
+- Real delivery time per service + automatic refund shown as selling points → average delivery time computed from orders.
+- Referral rewards (already built) → pay on the referred customer's first orders.
+- **Free/cheap IMEI check as the main way in (the "real deal")** → check page on the homepage, result followed by the matching unlock offer.
+- One page per model and carrier for Google → generated from the catalog, in every language.
+- Guarantee headline: not done = money back to the wallet automatically.
+- Follow-up offers (next phone, inactive technicians) → automatic messages.
+- Weekly deal → one discounted service per week, announced everywhere.
+More languages to go global: add Portuguese and Arabic first (Arabic needs right-to-left layout), then Turkish, Vietnamese, Indonesian, Russian.
+Going global also needs card payments (Stripe) and crypto next to MonCash/NatCash.
+
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
 2. Admin → Suppliers screen (add supplier, test, sync, browse/import services, needs-attention list for UNKNOWN / account problems, logs).
