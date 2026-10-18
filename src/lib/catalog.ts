@@ -9,7 +9,7 @@ export const productCardInclude = {
 export type ProductWithVariants = Prisma.ProductGetPayload<{ include: typeof productCardInclude }>;
 
 export function minPrice(p: ProductWithVariants) {
-  const prices = p.variants.map((v) => v.salePriceHtg ?? v.priceHtg);
+  const prices = p.variants.map((v) => v.salePriceUsd ?? v.priceUsd);
   return prices.length ? Math.min(...prices) : 0;
 }
 
@@ -24,13 +24,13 @@ export async function getCategories() {
   });
 }
 
-/** Distinct filter tags across published products (e.g. "Android", "PC", "US region"). */
+/** Distinct filter tags across published products (e.g. "Apple", "Samsung", "USA"). */
 export async function getTags(): Promise<string[]> {
   const rows = await prisma.product.findMany({ where: { isPublished: true }, select: { tags: true } });
   return [...new Set(rows.flatMap((r) => r.tags))].sort((a, b) => a.localeCompare(b));
 }
 
-export async function searchProducts(opts: { q?: string; category?: string; sort?: string; featured?: boolean; take?: number; tag?: string; minHtg?: number; maxHtg?: number }) {
+export async function searchProducts(opts: { q?: string; category?: string; sort?: string; featured?: boolean; take?: number; tag?: string; minUsd?: number; maxUsd?: number }) {
   const where: Prisma.ProductWhereInput = { isPublished: true, variants: { some: { isActive: true } } };
   // A parent category also shows the products of its subcategories.
   if (opts.category) where.category = { OR: [{ slug: opts.category }, { parent: { slug: opts.category } }] };
@@ -47,8 +47,8 @@ export async function searchProducts(opts: { q?: string; category?: string; sort
     opts.sort === "newest" ? [{ createdAt: "desc" }] : [{ isFeatured: "desc" }, { sortOrder: "asc" }];
   const products = await prisma.product.findMany({ where, include: productCardInclude, orderBy, take: opts.take });
   let list = products;
-  if (opts.minHtg !== undefined) list = list.filter((p) => minPrice(p) >= opts.minHtg!);
-  if (opts.maxHtg !== undefined) list = list.filter((p) => minPrice(p) <= opts.maxHtg!);
+  if (opts.minUsd !== undefined) list = list.filter((p) => minPrice(p) >= opts.minUsd!);
+  if (opts.maxUsd !== undefined) list = list.filter((p) => minPrice(p) <= opts.maxUsd!);
   if (list !== products) products.splice(0, products.length, ...list);
   if (opts.sort === "price_asc") products.sort((a, b) => minPrice(a) - minPrice(b));
   if (opts.sort === "price_desc") products.sort((a, b) => minPrice(b) - minPrice(a));

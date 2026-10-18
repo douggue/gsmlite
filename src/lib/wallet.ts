@@ -54,19 +54,27 @@ export async function chargeOrder(tx: Tx, order: Order) {
   });
 }
 
-/** Refund an order back to the customer's wallet in the currency it was charged. */
-export async function refundOrder(tx: Tx, order: Order, actorId: string | null, reason: string) {
+/** Refund one order line back to the customer's wallet in the currency the order was charged. Once per line. */
+export async function refundItemToWallet(
+  tx: Tx,
+  order: Order,
+  item: { id: string; unitPrice: number; quantity: number },
+  actorId: string | null,
+  reason: string,
+) {
+  const amount = item.unitPrice * item.quantity;
+  if (amount <= 0) return { id: "", duplicate: true };
   const wallet = await walletAccount(tx, order.userId, order.currency);
   const revenue = await systemAccount(tx, "revenue", order.currency);
   return post(tx, {
     type: "REFUND",
-    idempotencyKey: `order:${order.id}:refund`,
-    description: `Refund for order #${order.number}: ${reason}`,
+    idempotencyKey: `item:${item.id}:refund`,
+    description: `Refund, order #${order.number}: ${reason}`.slice(0, 500),
     createdById: actorId,
-    metadata: { orderId: order.id, reason },
+    metadata: { orderId: order.id, orderItemId: item.id, reason },
     entries: [
-      { accountId: revenue.id, currency: order.currency, amount: -order.total },
-      { accountId: wallet.id, currency: order.currency, amount: order.total },
+      { accountId: revenue.id, currency: order.currency, amount: -amount },
+      { accountId: wallet.id, currency: order.currency, amount },
     ],
   });
 }

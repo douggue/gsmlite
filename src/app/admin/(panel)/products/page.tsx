@@ -25,9 +25,9 @@ export default async function AdminProducts() {
           <tr key={p.id} className="hover:bg-surface-2">
             <td className="px-4 py-3"><div className="flex items-center gap-3">{p.image ? <img src={p.image} alt="" className="h-10 w-10 rounded-lg object-cover" /> : <span className="h-10 w-10 rounded-lg" style={{ background: p.accent ?? "#1467F5" }} />}<div><Link href={`/admin/products/${p.id}`} className="font-semibold text-primary">{t(p.name, "en")}</Link><br /><span className="text-xs text-muted">/{p.slug}</span></div></div></td>
             <td className="px-4 py-3">{t(p.category.name, "en")}</td>
-            <td className="px-4 py-3 text-xs">{p.fulfillmentType}</td>
+            <td className="px-4 py-3 text-xs">{p.serviceType} · {p.fulfillmentType === "SUPPLIER_API" ? "Supplier" : p.fulfillmentType === "MANUAL" ? "Manual" : "Stock"}</td>
             <td className="px-4 py-3">{p.variants.length}</td>
-            <td className="px-4 py-3">{p.variants.length ? formatMoney(Math.min(...p.variants.map((v) => v.salePriceHtg ?? v.priceHtg)), "HTG", "en") : "—"}</td>
+            <td className="px-4 py-3">{p.variants.length ? formatMoney(Math.min(...p.variants.map((v) => v.salePriceUsd ?? v.priceUsd)), "USD", "en") : "—"}</td>
             <td className="px-4 py-3">{p.isPublished ? <span className="badge bg-success-soft text-success">Published</span> : <span className="badge bg-surface-2 text-muted">Draft</span>}{p.isFeatured && <span className="badge ml-1 bg-primary-soft text-primary">Featured</span>}</td>
           </tr>
         ))}

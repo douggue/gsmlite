@@ -1,13 +1,8 @@
 import { cache } from "react";
 import { revalidateTag, unstable_cache } from "next/cache";
 import { prisma } from "./db";
-import { DEFAULT_EXCHANGE, type ExchangePricing } from "./amount";
 
 export type Settings = {
-  /** Recent sales popup on the products ticked in Admin → Trust */
-  salesPopupEnabled: boolean;
-  /** Popups per visit (2–3 feels natural; max 5) */
-  salesPopupPerVisit: number;
   /** "Stock is low" shows when a code product has this many codes left or fewer (mode "auto") */
   lowStockLimit: number;
   /** HTG per 1 USD (mid rate) */
@@ -66,11 +61,7 @@ export type Settings = {
   homepageHistory: { at: string; by: string; config: unknown }[];
   theme: ThemeConfig;
   themeHistory: { at: string; by: string; theme: ThemeConfig }[];
-  /** Rate and fee table shared by every "customer enters the amount" product (Admin → Money exchange) */
-  moneyExchange: ExchangePricing;
 };
-
-export type { ExchangePricing } from "./amount";
 
 export type NavLink = { label: Record<string, string>; href: string };
 
@@ -130,8 +121,6 @@ export function fullTheme(t: Partial<ThemeConfig> | undefined): ThemeConfig {
 
 // Amounts in minor units (centimes).
 export const DEFAULT_SETTINGS: Settings = {
-  salesPopupEnabled: true,
-  salesPopupPerVisit: 3,
   lowStockLimit: 5,
   htgPerUsd: 131.5,
   exchangeSpreadBps: 150,
@@ -176,7 +165,6 @@ export const DEFAULT_SETTINGS: Settings = {
   newsletterEnabled: false,
   requireEmailVerification: true,
   maxAccountsPerDevice: 3,
-  moneyExchange: DEFAULT_EXCHANGE,
 };
 
 export async function getSettings(): Promise<Settings> {

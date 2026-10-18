@@ -25,9 +25,9 @@ export function usdToHtg(usdMinor: number, htgPerUsd: number): number {
   return Math.round(usdMinor * htgPerUsd);
 }
 
-/** Price of an HTG-based amount in the requested currency. */
-export function priceIn(htgMinor: number, currency: Currency, htgPerUsd: number): number {
-  return currency === "HTG" ? htgMinor : htgToUsd(htgMinor, htgPerUsd);
+/** Price of a USD-based amount (catalog prices are in USD cents) in the requested currency. */
+export function priceIn(usdMinor: number, currency: Currency, htgPerUsd: number): number {
+  return currency === "USD" ? usdMinor : usdToHtg(usdMinor, htgPerUsd);
 }
 
 /** Parse a user-entered decimal amount ("1,250.50") into minor units. Returns null if invalid. */

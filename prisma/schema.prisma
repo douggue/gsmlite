@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
   url       = env("DATABASE_URL")
   // Direct (non-pooled) connection for migrations; on Neon/Supabase use the pooled URL above for the app.
   directUrl = env("DATABASE_URL_UNPOOLED")
@@ -54,9 +54,9 @@ model User {
   notifyPrefs      Json          @default("{\"email\":true,\"whatsapp\":true,\"marketing\":false}")
   /// Cart saved to the account so it follows the customer across devices
   savedCart        Json          @default("[]")
-  /// City picked by the customer (shown as "Jean P. · Santo Domingo" in the recent sales popup)
+  /// City picked by the customer (shown next to their first name on reviews)
   city             String?
-  /// Customer may hide their first name from the recent sales popup (Account → Privacy)
+  /// Kept from the original codebase; no longer shown anywhere
   showInFeed       Boolean       @default(true)
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
@@ -66,19 +66,21 @@ model User {
   twoFactors     TwoFactor[]
   orders         Order[]
   ledgerAccounts LedgerAccount[]
-  paymentIntents PaymentIntent[]  @relation("PaymentCustomer")
-  reviewed       PaymentIntent[]  @relation("PaymentReviewer")
+  paymentIntents PaymentIntent[]    @relation("PaymentCustomer")
+  reviewed       PaymentIntent[]    @relation("PaymentReviewer")
   quotes         ExchangeQuote[]
   notifications  Notification[]
   pushSubs       PushSubscription[]
   savedPlayerIds SavedPlayerId[]
   riskFlags      RiskFlag[]
   auditEvents    AuditEvent[]
-  tickets        SupportTicket[]   @relation("TicketCustomer")
+  tickets        SupportTicket[]    @relation("TicketCustomer")
   ticketMessages SupportMessage[]
-  referralsMade  Referral[]        @relation("Referrer")
-  referredBy     Referral?         @relation("Referred")
+  referralsMade  Referral[]         @relation("Referrer")
+  referredBy     Referral?          @relation("Referred")
   reviews        Review[]
+  priceGroupId   String?
+  priceGroup     PriceGroup?        @relation(fields: [priceGroupId], references: [id])
 
   @@map("user")
 }
@@ -178,9 +180,20 @@ model Category {
 }
 
 enum FulfillmentType {
+  /// License keys / codes from the encrypted stock (Admin → Code inventory)
   CODE_INVENTORY
+  /// Done by staff, result typed in by hand
   MANUAL
+  /// Sent to the supplier set on each option (Dhru Fusion API) and tracked automatically
   SUPPLIER_API
+}
+
+/// Dhru Fusion service kinds. IMEI: one device per order (IMEI or serial). SERVER: account-based, ordered in
+/// quantities (tool credits, activations). REMOTE: done on the customer's computer through a remote session.
+enum ServiceType {
+  IMEI
+  SERVER
+  REMOTE
 }
 
 model Product {
@@ -205,10 +218,14 @@ model Product {
   sortOrder        Int              @default(0)
   /// Filter tags such as platform:android, region:us (shown as store filters)
   tags             String[]         @default([])
-  /// Show the recent sales popup on this product's page (Admin → Trust)
-  salesPopup       Boolean          @default(false)
+  serviceType      ServiceType      @default(IMEI)
+  /// IMEI services: label of the identifier box ("IMEI", "Serial number", "IMEI or SN")
+  identifierLabel  Json?
+  /// "imei" (15 digits + check digit), "serial" (letters and digits) or "any"
+  identifierFormat String           @default("imei")
+  /// Several identifiers in one order, one per line (each becomes its own order line)
+  allowBulk        Boolean          @default(true)
   variants         ProductVariant[]
-  saleFeed         SaleFeedItem[]
   reviews          Review[]
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
@@ -217,25 +234,36 @@ model Product {
 }
 
 model ProductVariant {
-  id           String      @id @default(cuid())
-  productId    String
-  product      Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  name         Json
-  /// Price in HTG centimes (integer minor units)
-  priceHtg     Int
-  salePriceHtg Int?
-  sortOrder    Int         @default(0)
-  isActive     Boolean     @default(true)
+  id                String       @id @default(cuid())
+  productId         String
+  product           Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name              Json
+  /// Price in USD cents (integer minor units). HTG prices are converted at the store rate.
+  priceUsd          Int
+  salePriceUsd      Int?
+  sortOrder         Int          @default(0)
+  isActive          Boolean      @default(true)
   /// Marked "out of stock" by staff: stays visible (red dot, struck through) but can't be bought
-  soldOut      Boolean     @default(false)
+  soldOut           Boolean      @default(false)
   /// "Stock is low" message: off | auto (codes left under the limit) | on (manual, until lowStockUntil)
-  lowStock     String      @default("off")
-  lowStockUntil DateTime?
-  sku          String?     @unique
-  codes        CodeItem[]
-  orderItems   OrderItem[]
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  lowStock          String       @default("off")
+  lowStockUntil     DateTime?
+  sku               String?      @unique
+  /// SERVER services: allowed quantity (credits); IMEI services keep 1–1
+  minQty            Int          @default(1)
+  maxQty            Int          @default(1)
+  /// Supplier this option is sent to when the product is SUPPLIER_API
+  supplierId        String?
+  supplier          Supplier?    @relation(fields: [supplierId], references: [id])
+  /// SERVICEID on the supplier's side
+  supplierServiceId String?
+  /// What the supplier charges us per unit, in USD cents (refreshed by catalog sync)
+  costUsd           Int?
+  codes             CodeItem[]
+  orderItems        OrderItem[]
+  groupPrices       GroupPrice[]
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
 }
 
 enum CodeStatus {
@@ -296,32 +324,32 @@ enum PaymentMethodKind {
 }
 
 model Order {
-  id            String            @id @default(cuid())
-  number        Int               @unique @default(autoincrement())
-  userId        String
-  user          User              @relation(fields: [userId], references: [id])
-  status        OrderStatus       @default(AWAITING_PAYMENT)
-  currency      Currency
+  id             String            @id @default(cuid())
+  number         Int               @unique @default(autoincrement())
+  userId         String
+  user           User              @relation(fields: [userId], references: [id])
+  status         OrderStatus       @default(AWAITING_PAYMENT)
+  currency       Currency
   /// Totals in minor units of `currency`
-  subtotal      Int
-  total         Int
+  subtotal       Int
+  total          Int
   /// HTG per 1 USD at the time of the order, when charged in USD
-  rateUsed      Decimal?          @db.Decimal(18, 8)
-  paymentMethod PaymentMethodKind
+  rateUsed       Decimal?          @db.Decimal(18, 8)
+  paymentMethod  PaymentMethodKind
   manualMethodId String?
-  recipientNote String?
-  accessToken   String            @unique
-  /// Private gift page link (/gift/<token>) the buyer sends to the person receiving the codes
-  giftToken     String?           @unique
-  items         OrderItem[]
-  events        OrderEvent[]
-  payments      PaymentIntent[]
-  review        Review?
-  riskFlags     RiskFlag[]
-  paidAt        DateTime?
-  fulfilledAt   DateTime?
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  recipientNote  String?
+  accessToken    String            @unique
+  /// WEB (site) or API (reseller API)
+  source         String            @default("WEB")
+  items          OrderItem[]
+  events         OrderEvent[]
+  payments       PaymentIntent[]
+  review         Review?
+  riskFlags      RiskFlag[]
+  paidAt         DateTime?
+  fulfilledAt    DateTime?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
 
   @@index([userId, createdAt])
   @@index([status])
@@ -330,23 +358,31 @@ model Order {
 enum ItemStatus {
   PENDING
   DELIVERED
+  /// Rejected (by staff or the supplier) and refunded to the wallet
   FAILED
 }
 
 model OrderItem {
-  id           String         @id @default(cuid())
-  orderId      String
-  order        Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  variantId    String
-  variant      ProductVariant @relation(fields: [variantId], references: [id])
-  productName  Json
-  variantName  Json
-  quantity     Int
-  unitPrice    Int
-  fieldValues  Json           @default("{}")
-  status       ItemStatus     @default(PENDING)
-  deliveryNote String?
-  codes        CodeItem[]
+  id             String          @id @default(cuid())
+  orderId        String
+  order          Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variantId      String
+  variant        ProductVariant  @relation(fields: [variantId], references: [id])
+  productName    Json
+  variantName    Json
+  quantity       Int
+  unitPrice      Int
+  fieldValues    Json            @default("{}")
+  /// IMEI / serial for IMEI services (also inside fieldValues), indexed for lookups
+  identifier     String?
+  status         ItemStatus      @default(PENDING)
+  /// Result shown to the customer: unlock code, check report, rejection reason (from staff or the supplier)
+  deliveryNote   String?
+  refundedAt     DateTime?
+  codes          CodeItem[]
+  supplierOrders SupplierOrder[]
+
+  @@index([identifier])
 }
 
 /// Append-only order history
@@ -383,28 +419,28 @@ enum PaymentStatus {
 /// External money coming in. Every successful intent credits the customer's wallet;
 /// when linked to an order, the order is then paid from the wallet in the same transaction.
 model PaymentIntent {
-  id           String          @id @default(cuid())
-  userId       String
-  user         User            @relation("PaymentCustomer", fields: [userId], references: [id])
-  orderId      String?
-  order        Order?          @relation(fields: [orderId], references: [id])
-  provider     PaymentProvider
+  id             String          @id @default(cuid())
+  userId         String
+  user           User            @relation("PaymentCustomer", fields: [userId], references: [id])
+  orderId        String?
+  order          Order?          @relation(fields: [orderId], references: [id])
+  provider       PaymentProvider
   manualMethodId String?
-  manualMethod ManualMethod? @relation(fields: [manualMethodId], references: [id])
-  amount       Int
-  currency     Currency        @default(HTG)
-  status       PaymentStatus   @default(PENDING)
+  manualMethod   ManualMethod?   @relation(fields: [manualMethodId], references: [id])
+  amount         Int
+  currency       Currency        @default(HTG)
+  status         PaymentStatus   @default(PENDING)
   /// Provider transaction id (MonCash) or customer-submitted reference (NatCash); unique per provider
-  providerRef  String?
-  payerPhone   String?
-  evidencePath String?
-  reviewedById String?
-  reviewedBy   User?           @relation("PaymentReviewer", fields: [reviewedById], references: [id])
-  reviewNote   String?
-  holdUntil    DateTime?
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
-  riskFlags    RiskFlag[]
+  providerRef    String?
+  payerPhone     String?
+  evidencePath   String?
+  reviewedById   String?
+  reviewedBy     User?           @relation("PaymentReviewer", fields: [reviewedById], references: [id])
+  reviewNote     String?
+  holdUntil      DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  riskFlags      RiskFlag[]
 
   @@unique([provider, providerRef])
   @@index([status, provider])
@@ -588,15 +624,15 @@ enum ApprovalStatus {
 
 /// Large wallet adjustments need a second staff member to approve (two-person rule).
 model PendingApproval {
-  id           String         @id @default(cuid())
-  kind         String
-  payload      Json
-  summary      String
-  requestedBy  String
-  decidedBy    String?
-  status       ApprovalStatus @default(PENDING)
-  createdAt    DateTime       @default(now())
-  decidedAt    DateTime?
+  id          String         @id @default(cuid())
+  kind        String
+  payload     Json
+  summary     String
+  requestedBy String
+  decidedBy   String?
+  status      ApprovalStatus @default(PENDING)
+  createdAt   DateTime       @default(now())
+  decidedAt   DateTime?
 
   @@index([status])
 }
@@ -797,21 +833,6 @@ model NewsletterSubscriber {
   unsubscribedAt DateTime?
 }
 
-/// A sale shown in the recent sales popup that was made outside the site (WhatsApp…). Site orders are read from Order directly.
-model SaleFeedItem {
-  id        String   @id @default(cuid())
-  /// "Jean P." (first name + last initial only)
-  name      String
-  city      String
-  productId String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  soldAt    DateTime @default(now())
-  createdBy String?
-  createdAt DateTime @default(now())
-
-  @@index([soldAt])
-}
-
 /// Customer review: asked after delivery (source "order") or typed in by staff from a real comment (source "admin").
 model Review {
   id        String   @id @default(cuid())
@@ -835,4 +856,134 @@ model Review {
   createdAt DateTime @default(now())
 
   @@index([status, onHome])
+}
+
+// ─────────────────────────────── Suppliers (Dhru Fusion API) ───────────────────────────────
+
+model Supplier {
+  id              String    @id @default(cuid())
+  name            String
+  /// Site address, e.g. https://supplier.example.com (the API is at /api/index.php)
+  baseUrl         String
+  username        String
+  /// API access key, AES-256-GCM encrypted with ENCRYPTION_KEY; never shown again after saving
+  apiKeyEncrypted String
+  /// How `parameters` is sent: "xml" (classic Dhru kit, widest support) or "json" (base64 JSON)
+  paramFormat     String    @default("xml")
+  isEnabled       Boolean   @default(true)
+  /// Last balance reported by accountinfo (supplier currency, cents)
+  balance         Int?
+  currency        String?
+  /// Alert when the balance drops under this (cents, 0 = off)
+  lowBalanceAlert Int       @default(0)
+  lastSyncAt      DateTime?
+  lastError       String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  services SupplierService[]
+  variants ProductVariant[]
+  orders   SupplierOrder[]
+  logs     SupplierLog[]
+}
+
+/// The supplier's catalog as last synced (imeiservicelist). Staff link options to these.
+model SupplierService {
+  id         String      @id @default(cuid())
+  supplierId String
+  supplier   Supplier    @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  remoteId   String
+  groupName  String
+  name       String
+  type       ServiceType
+  /// Supplier price per unit in cents of the supplier currency
+  credit     Int
+  time       String?
+  info       String?
+  /// Inputs the order needs: [{ name, type, required, options }], identifier label, qty rules
+  fields     Json        @default("[]")
+  /// Seen in the last sync; false = gone from the supplier's list
+  active     Boolean     @default(true)
+  updatedAt  DateTime    @updatedAt
+
+  @@unique([supplierId, remoteId])
+  @@index([supplierId, groupName])
+}
+
+enum SupplierOrderStatus {
+  /// Being sent right now (if this sticks, the send's outcome is unknown)
+  SUBMITTING
+  /// Accepted by the supplier (Dhru STATUS 0 New)
+  WAITING
+  /// Dhru STATUS 1 In process
+  IN_PROCESS
+  /// Dhru STATUS 4: result in `result`
+  SUCCESS
+  /// Dhru STATUS 3, or refused when placing: refunded
+  REJECTED
+  /// No clear answer when placing (timeout, broken reply). Never re-sent automatically: staff check with the supplier.
+  UNKNOWN
+}
+
+/// One attempt to have the supplier process an order line.
+model SupplierOrder {
+  id          String              @id @default(cuid())
+  orderItemId String
+  orderItem   OrderItem           @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  supplierId  String
+  supplier    Supplier            @relation(fields: [supplierId], references: [id])
+  serviceId   String
+  /// REFERENCEID returned by placeimeiorder
+  remoteRef   String?
+  status      SupplierOrderStatus @default(SUBMITTING)
+  result      String?
+  /// What the supplier said when it refused or failed (staff only)
+  error       String?
+  checks      Int                 @default(0)
+  nextCheckAt DateTime?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  @@index([status, nextCheckAt])
+  @@index([orderItemId])
+}
+
+/// Requests to suppliers, secrets removed, for troubleshooting (kept 30 days).
+model SupplierLog {
+  id         String   @id @default(cuid())
+  supplierId String
+  supplier   Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  action     String
+  request    String
+  response   String?
+  httpStatus Int?
+  ms         Int
+  ok         Boolean
+  createdAt  DateTime @default(now())
+
+  @@index([supplierId, createdAt])
+}
+
+// ─────────────────────────────── Price groups ───────────────────────────────
+
+/// Customer groups with their own prices (e.g. Retail, Repair shop, Gold shop).
+model PriceGroup {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  /// Discount off the list price in basis points (500 = 5 %)
+  discountBps Int          @default(0)
+  users       User[]
+  prices      GroupPrice[]
+  createdAt   DateTime     @default(now())
+}
+
+/// A fixed price for one option in one group (wins over the group discount).
+model GroupPrice {
+  priceGroupId String
+  priceGroup   PriceGroup     @relation(fields: [priceGroupId], references: [id], onDelete: Cascade)
+  variantId    String
+  variant      ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  priceUsd     Int
+
+  @@id([priceGroupId, variantId])
 }

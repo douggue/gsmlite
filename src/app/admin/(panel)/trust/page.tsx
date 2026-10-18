@@ -2,17 +2,16 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { requireStaff } from "@/lib/session";
 import { getSettings } from "@/lib/settings";
-import { isExchangeProduct } from "@/lib/amount";
-import { CITIES, cityFlag, shortName } from "@/lib/trust";
+import { CITIES, cityFlag } from "@/lib/trust";
 import { t } from "@/lib/text";
-import { addFeedSale, addReview, deleteFeedSale, deleteReview, saveTrustSettings, setLowStock, updateReview } from "@/actions/trust-admin";
+import { addReview, deleteReview, saveTrustSettings, setLowStock, updateReview } from "@/actions/trust-admin";
 import { ActionButton, ActionForm } from "@/components/admin/ActionButton";
 import { PageTitle, Table } from "@/components/admin/ui";
 
 export const metadata = { title: "Trust" };
 
-type Tab = "feed" | "reviews" | "stock";
-const TABS: [Tab, string][] = [["feed", "Sale popup"], ["reviews", "Customer reviews"], ["stock", "Low stock alert"]];
+type Tab = "reviews" | "stock";
+const TABS: [Tab, string][] = [["reviews", "Customer reviews"], ["stock", "Low stock alert"]];
 const day = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
 function CitySelect({ name = "city", required = false }: { name?: string; required?: boolean }) {
@@ -26,18 +25,18 @@ function CitySelect({ name = "city", required = false }: { name?: string; requir
 
 export default async function TrustAdmin({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   await requireStaff("catalog.manage");
-  const tab = ((await searchParams).tab as Tab) || "feed";
+  const tab = ((await searchParams).tab as Tab) || "reviews";
   const settings = await getSettings();
   const products = await prisma.product.findMany({
     orderBy: [{ isPublished: "desc" }, { sortOrder: "asc" }],
-    select: { id: true, name: true, salesPopup: true, isPublished: true, fulfillmentType: true, category: { select: { id: true, parentId: true } } },
+    select: { id: true, name: true, isPublished: true, fulfillmentType: true },
   });
-  const sellable = products.filter((p) => !isExchangeProduct(settings.moneyExchange, p.category));
+  const sellable = products;
   const pname = (id: string | null) => t(products.find((p) => p.id === id)?.name, "en") || "—";
 
   return (
     <>
-      <PageTitle title="Trust" sub="Recent sale popup, customer reviews and the “stock is low” message. Everything shown to customers comes from real sales and real comments." />
+      <PageTitle title="Trust" sub="Customer reviews and the “stock is low” message. Everything shown to customers comes from real orders and real comments." />
       <nav className="mb-6 flex flex-wrap gap-1 self-start rounded-2xl bg-surface-2 p-1" aria-label="Sections">
         {TABS.map(([id, label]) => (
           <Link key={id} href={`/admin/trust?tab=${id}`} aria-current={tab === id ? "page" : undefined} className={`rounded-xl px-4 py-2 text-sm font-bold ${tab === id ? "bg-primary text-white" : "text-muted hover:text-text"}`}>
@@ -45,106 +44,13 @@ export default async function TrustAdmin({ searchParams }: { searchParams: Promi
           </Link>
         ))}
       </nav>
-      {tab === "feed" && <FeedTab settings={settings} sellable={sellable} pname={pname} />}
       {tab === "reviews" && <ReviewsTab sellable={sellable} pname={pname} />}
       {tab === "stock" && <StockTab limit={settings.lowStockLimit} />}
     </>
   );
 }
 
-type P = { id: string; name: unknown; salesPopup: boolean; isPublished: boolean };
-
-async function FeedTab({ settings, sellable, pname }: { settings: Awaited<ReturnType<typeof getSettings>>; sellable: P[]; pname: (id: string | null) => string }) {
-  const since = new Date(Date.now() - 7 * 86_400_000);
-  const [manual, site] = await Promise.all([
-    prisma.saleFeedItem.findMany({ where: { soldAt: { gte: new Date(Date.now() - 30 * 86_400_000) } }, orderBy: { soldAt: "desc" }, take: 100 }),
-    prisma.order.findMany({
-      where: { status: "FULFILLED", fulfilledAt: { gte: since } },
-      orderBy: { fulfilledAt: "desc" },
-      take: 50,
-      select: { id: true, fulfilledAt: true, user: { select: { name: true, city: true, showInFeed: true } }, items: { take: 1, select: { variant: { select: { productId: true } } } } },
-    }),
-  ]);
-  const rows = [
-    ...site.map((o) => {
-      const reason = !o.user.showInFeed ? "Customer turned it off" : !o.user.city ? "No city on the account" : "";
-      return { key: o.id, name: shortName(o.user.name), city: o.user.city, product: o.items[0]?.variant.productId ?? null, at: o.fulfilledAt!, source: "Site", reason, del: null as string | null };
-    }),
-    ...manual.map((m) => ({ key: m.id, name: m.name, city: m.city, product: m.productId, at: m.soldAt, source: "WhatsApp", reason: m.soldAt < since ? "Older than 7 days" : "", del: m.id })),
-  ].sort((a, b) => b.at.getTime() - a.at.getTime());
-  const today = new Date().toISOString().slice(0, 10);
-
-  return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-      <section className="space-y-3">
-        <h2 className="font-bold">Sales in the popup</h2>
-        <p className="text-sm text-muted">Delivered site orders (customers who picked a city and didn&apos;t opt out) and the WhatsApp sales you add. Only the last 7 days are shown to customers, only on ticked products.</p>
-        <Table head={["Customer", "City", "Product", "Date", "Source", ""]} empty={rows.length === 0}>
-          {rows.map((r) => (
-            <tr key={r.key} className={r.reason ? "opacity-60" : ""}>
-              <td className="px-4 py-3 font-semibold">{r.name}</td>
-              <td className="px-4 py-3">{r.city ? `${cityFlag(r.city)} ${r.city}` : "—"}</td>
-              <td className="px-4 py-3">{pname(r.product)}</td>
-              <td className="px-4 py-3 text-muted">{day(r.at)}</td>
-              <td className="px-4 py-3">
-                <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${r.source === "WhatsApp" ? "bg-success-soft text-success" : "bg-primary-soft text-primary"}`}>{r.source}</span>
-                {r.reason && <span className="mt-1 block text-xs text-muted">Not shown: {r.reason}</span>}
-              </td>
-              <td className="px-4 py-3">{r.del && <ActionButton label="Remove" className="btn-ghost min-h-9 px-3 text-xs text-danger" confirm="Remove this sale from the popup?" action={deleteFeedSale.bind(null, r.del)} />}</td>
-            </tr>
-          ))}
-        </Table>
-      </section>
-
-      <div className="space-y-6">
-        <ActionForm action={addFeedSale} resetOnSuccess className="card space-y-3 p-5">
-          <h2 className="font-bold">+ Add a WhatsApp sale</h2>
-          <p className="text-xs text-muted">For real sales you made outside the site. Only the first name and last initial are kept.</p>
-          <div className="grid grid-cols-[1fr_6rem] gap-2">
-            <input name="first" required maxLength={24} placeholder="First name (Jean)" className="input" />
-            <input name="last" maxLength={30} placeholder="Last (P.)" className="input" />
-          </div>
-          <CitySelect required />
-          <select name="productId" required className="input" defaultValue="">
-            <option value="" disabled>Product…</option>
-            {sellable.filter((p) => p.isPublished).map((p) => <option key={p.id} value={p.id}>{t(p.name, "en")}</option>)}
-          </select>
-          <label className="block text-sm"><span className="label">Sale date</span><input type="date" name="soldOn" defaultValue={today} max={today} className="input" /></label>
-          <button className="btn-primary w-full">Add to the feed</button>
-        </ActionForm>
-
-        <ActionForm action={saveTrustSettings} className="card space-y-4 p-5">
-          <h2 className="font-bold">Popup settings</h2>
-          <label className="flex items-center justify-between gap-3 text-sm font-semibold">
-            Popup on
-            <input type="checkbox" name="enabled" defaultChecked={settings.salesPopupEnabled} className="h-5 w-5 accent-[var(--primary)]" />
-          </label>
-          <label className="flex items-center justify-between gap-3 text-sm">
-            Popups per visit (1–5)
-            <input type="number" name="perVisit" min={1} max={5} defaultValue={settings.salesPopupPerVisit} className="input w-20" />
-          </label>
-          <label className="flex items-center justify-between gap-3 text-sm">
-            “Stock is low” when codes left ≤
-            <input type="number" name="lowLimit" min={1} max={100} defaultValue={settings.lowStockLimit} className="input w-20" />
-          </label>
-          <p className="text-xs text-muted">First popup after ~10 s, then every 40–60 s. Never on the cart or payment pages, never with data saver, gone for the visit once closed. Money exchange products never show it.</p>
-          <fieldset>
-            <legend className="mb-2 text-sm font-semibold">Products that show the popup</legend>
-            <div className="flex flex-wrap gap-2">
-              {sellable.map((p) => (
-                <label key={p.id} className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold has-[:checked]:border-primary has-[:checked]:bg-primary-soft">
-                  <input type="checkbox" name="popup" value={p.id} defaultChecked={p.salesPopup} className="accent-[var(--primary)]" />
-                  {t(p.name, "en")}{!p.isPublished && " (hidden)"}
-                </label>
-              ))}
-            </div>
-          </fieldset>
-          <button className="btn-primary w-full">Save</button>
-        </ActionForm>
-      </div>
-    </div>
-  );
-}
+type P = { id: string; name: unknown; isPublished: boolean };
 
 async function ReviewsTab({ sellable, pname }: { sellable: P[]; pname: (id: string | null) => string }) {
   const reviews = await prisma.review.findMany({ orderBy: [{ status: "asc" }, { createdAt: "desc" }], take: 200 });
@@ -217,8 +123,13 @@ async function StockTab({ limit }: { limit: number }) {
   return (
     <section className="space-y-3">
       <p className="text-sm text-muted">
-        Customers see “Stock is running low” with no number. <b>Automatic</b> (products delivered with codes): shows when {limit} codes or fewer are left, hides when you add codes. <b>On</b>: for top-ups delivered by hand, turn it on when your supplier is really low; set days so it turns itself off.
+        Customers see “Stock is running low” with no number. <b>Automatic</b> (licenses delivered from stock): shows when {limit} codes or fewer are left, hides when you add codes. <b>On</b>: for services delivered by hand or by a supplier, turn it on when stock is really low; set days so it turns itself off.
       </p>
+      <ActionForm action={saveTrustSettings} className="flex flex-wrap items-center gap-3 text-sm">
+        <label htmlFor="lowLimit">“Stock is low” when codes left ≤</label>
+        <input id="lowLimit" type="number" name="lowLimit" min={1} max={100} defaultValue={limit} className="input w-20" />
+        <button className="btn-secondary min-h-10 px-4">Save</button>
+      </ActionForm>
       <Table head={["Product · option", "Stock", "Mode", "Customers see"]} empty={products.length === 0}>
         {products.flatMap((p) =>
           p.variants.map((v) => {

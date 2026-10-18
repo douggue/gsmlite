@@ -22,56 +22,13 @@ function feedName(first: string, last: string) {
   return f ? (l ? `${f} ${l}.` : f) : "";
 }
 
-// ───────────── Sale popup feed ─────────────
-
-/** A real sale made outside the site (WhatsApp…), added to the popup feed. */
-export async function addFeedSale(form: FormData): Promise<R> {
-  try {
-    const staff = await assertStaff("catalog.manage");
-    const name = feedName(String(form.get("first") ?? ""), String(form.get("last") ?? ""));
-    const city = form.get("city");
-    const productId = String(form.get("productId") ?? "");
-    const day = String(form.get("soldOn") ?? "");
-    if (!name) return { ok: false, error: "First name required" };
-    if (!isCity(city)) return { ok: false, error: "Pick a city" };
-    if (!(await prisma.product.findUnique({ where: { id: productId }, select: { id: true } }))) return { ok: false, error: "Pick a product" };
-    const soldAt = /^\d{4}-\d{2}-\d{2}$/.test(day) ? new Date(`${day}T12:00:00`) : new Date();
-    if (soldAt.getTime() > Date.now() + 86_400_000) return { ok: false, error: "The date can't be in the future" };
-    const item = await prisma.saleFeedItem.create({ data: { name, city, productId, soldAt, createdBy: staff.id } });
-    await audit(staff.id, "feed.add", "SaleFeedItem", item.id, { name, city, productId });
-    return done(`Added: ${name} · ${city}`);
-  } catch (e) {
-    return fail(e);
-  }
-}
-
-export async function deleteFeedSale(id: string): Promise<R> {
-  try {
-    const staff = await assertStaff("catalog.manage");
-    await prisma.saleFeedItem.delete({ where: { id } });
-    await audit(staff.id, "feed.delete", "SaleFeedItem", id, {});
-    return done("Removed");
-  } catch (e) {
-    return fail(e);
-  }
-}
-
-/** Popup on/off, popups per visit, low stock limit, and which products show the popup. */
+/** "Stock is low" limit for code products. */
 export async function saveTrustSettings(form: FormData): Promise<R> {
   try {
     const staff = await assertStaff("catalog.manage");
-    const perVisit = Math.min(5, Math.max(1, Math.round(Number(form.get("perVisit")) || 3)));
     const limit = Math.min(100, Math.max(1, Math.round(Number(form.get("lowLimit")) || 5)));
-    const enabled = form.get("enabled") === "on";
-    const popup = new Set(form.getAll("popup").map(String));
-    await setSetting("salesPopupEnabled", enabled);
-    await setSetting("salesPopupPerVisit", perVisit);
     await setSetting("lowStockLimit", limit);
-    await prisma.$transaction([
-      prisma.product.updateMany({ where: { id: { in: [...popup] } }, data: { salesPopup: true } }),
-      prisma.product.updateMany({ where: { id: { notIn: [...popup] } }, data: { salesPopup: false } }),
-    ]);
-    await audit(staff.id, "trust.settings", "SiteSetting", null, { enabled, perVisit, limit, popupProducts: popup.size });
+    await audit(staff.id, "trust.settings", "SiteSetting", null, { limit });
     return done("Saved");
   } catch (e) {
     return fail(e);

@@ -26,6 +26,13 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
   }
   const product = await prisma.product.findUnique({ where: { id }, include: { variants: { orderBy: { sortOrder: "asc" }, include: { _count: { select: { codes: { where: { status: "AVAILABLE" } } } } } } } });
   if (!product) notFound();
+  const suppliers = await prisma.supplier.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } });
+  const linked = await prisma.supplierService.findMany({
+    where: { OR: product.variants.filter((v) => v.supplierId && v.supplierServiceId).map((v) => ({ supplierId: v.supplierId!, remoteId: v.supplierServiceId! })) },
+    select: { supplierId: true, remoteId: true, name: true, credit: true, active: true },
+  });
+  const linkedName = (v: { supplierId: string | null; supplierServiceId: string | null }) => linked.find((l) => l.supplierId === v.supplierId && l.remoteId === v.supplierServiceId);
+  const qtyFields = product.serviceType === "SERVER";
   const money = (n: number | null) => (n == null ? "" : (n / 100).toFixed(2));
   return (
     <>
@@ -39,10 +46,12 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
           delivery: (product.deliveryEstimate ?? {}) as Record<string, string>, seoTitle: (product.seoTitle ?? {}) as Record<string, string>,
           seoDescription: (product.seoDescription ?? {}) as Record<string, string>, fields: JSON.stringify(product.fields, null, 2),
           image: product.image, gallery: (product.gallery ?? []) as string[], tags: product.tags,
+          serviceType: product.serviceType, identifierLabel: (product.identifierLabel ?? {}) as Record<string, string>,
+          identifierFormat: product.identifierFormat, allowBulk: product.allowBulk,
         }}
       />
       <div className="mb-3 mt-10 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">Variants (prices in HTG)</h2>
+        <h2 className="text-lg font-semibold">Options (prices in USD; HTG is converted at the store rate)</h2>
         <div className="flex flex-wrap gap-2">
           <ActionForm action={setProductSoldOut}>
             <input type="hidden" name="productId" value={product.id} />
@@ -63,10 +72,19 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
             <input type="hidden" name="productId" value={product.id} />
             <LocalizedInputs prefix="vname" label="Name" value={v.name as Record<string, string>} />
             <div className="grid grid-cols-3 gap-2">
-              <label><span className="mb-1 block text-xs text-muted">Price HTG</span><input name="price" defaultValue={money(v.priceHtg)} className="input" inputMode="decimal" /></label>
-              <label><span className="mb-1 block text-xs text-muted">Sale price</span><input name="salePrice" defaultValue={money(v.salePriceHtg)} className="input" inputMode="decimal" /></label>
+              <label><span className="mb-1 block text-xs text-muted">Price USD</span><input name="price" defaultValue={money(v.priceUsd)} className="input" inputMode="decimal" /></label>
+              <label><span className="mb-1 block text-xs text-muted">Sale price</span><input name="salePrice" defaultValue={money(v.salePriceUsd)} className="input" inputMode="decimal" /></label>
               <label><span className="mb-1 block text-xs text-muted">Order</span><input name="sortOrder" type="number" defaultValue={v.sortOrder} className="input" /></label>
             </div>
+            {qtyFields ? (
+              <div className="grid grid-cols-2 gap-2">
+                <label><span className="mb-1 block text-xs text-muted">Min quantity</span><input name="minQty" type="number" min={1} defaultValue={v.minQty} className="input" /></label>
+                <label><span className="mb-1 block text-xs text-muted">Max quantity</span><input name="maxQty" type="number" min={1} defaultValue={v.maxQty} className="input" /></label>
+              </div>
+            ) : (
+              <><input type="hidden" name="minQty" value="1" /><input type="hidden" name="maxQty" value="1" /></>
+            )}
+            <SupplierLink suppliers={suppliers} supplierId={v.supplierId} serviceId={v.supplierServiceId} cost={money(v.costUsd)} linked={linkedName(v)} price={v.salePriceUsd ?? v.priceUsd} />
             <div className="flex items-center justify-between text-sm">
               <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
                 <label className="flex items-center gap-2"><input type="checkbox" name="isActive" defaultChecked={v.isActive} /> Active</label>
@@ -82,10 +100,11 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
           <input type="hidden" name="productId" value={product.id} />
           <LocalizedInputs prefix="vname" label="Name" />
           <div className="grid grid-cols-3 gap-2">
-            <input name="price" placeholder="Price HTG" className="input" inputMode="decimal" required />
+            <input name="price" placeholder="Price USD" className="input" inputMode="decimal" required />
             <input name="salePrice" placeholder="Sale (optional)" className="input" inputMode="decimal" />
             <input name="sortOrder" type="number" defaultValue={product.variants.length} className="input" />
           </div>
+          <SupplierLink suppliers={suppliers} supplierId={product.variants[0]?.supplierId ?? null} serviceId={null} cost="" price={0} />
           <div className="flex items-center gap-4 text-sm">
             <label className="flex items-center gap-2"><input type="checkbox" name="isActive" defaultChecked /> Active</label>
             <label className="flex items-center gap-2"><input type="checkbox" name="soldOut" /> Out of stock</label>
@@ -94,5 +113,38 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
         </ActionForm>
       </div>
     </>
+  );
+}
+
+/** Which supplier service an option is sent to, with the margin at the current price. */
+function SupplierLink({ suppliers, supplierId, serviceId, cost, linked, price }: {
+  suppliers: { id: string; name: string }[];
+  supplierId: string | null;
+  serviceId: string | null;
+  cost: string;
+  linked?: { name: string; credit: number; active: boolean };
+  price: number;
+}) {
+  const margin = linked && price ? price - linked.credit : null;
+  return (
+    <div className="space-y-2 rounded-xl bg-surface-2 p-3">
+      <div className="grid grid-cols-[1fr_8rem_6rem] gap-2">
+        <label><span className="mb-1 block text-xs text-muted">Supplier</span>
+          <select name="supplierId" defaultValue={supplierId ?? ""} className="input">
+            <option value="">None (manual / stock)</option>
+            {suppliers.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
+        </label>
+        <label><span className="mb-1 block text-xs text-muted">Service ID</span><input name="supplierServiceId" defaultValue={serviceId ?? ""} className="input" placeholder="e.g. 6904" /></label>
+        <label><span className="mb-1 block text-xs text-muted">Cost USD</span><input name="cost" defaultValue={cost} className="input" inputMode="decimal" disabled={!!linked} /></label>
+      </div>
+      {linked && (
+        <p className="text-xs text-muted">
+          {linked.name} · cost ${(linked.credit / 100).toFixed(2)}
+          {margin != null && <b className={margin > 0 ? " text-success" : " text-danger"}> · margin ${(margin / 100).toFixed(2)}</b>}
+          {!linked.active && <b className="text-danger"> · no longer in the supplier&apos;s list</b>}
+        </p>
+      )}
+    </div>
   );
 }
