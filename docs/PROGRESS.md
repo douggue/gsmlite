@@ -3,7 +3,7 @@
 Phone-unlocking / repair-tool services site, forked from Haiti Gaming.
 
 **Brand: GSMLite · domain: gsmlite.com** (chosen 2026-10-18). Repo name still to be created ("kle" is only the local folder name).
-Mockup (approved direction, not yet built): https://claude.ai/artifact/JxwAt4xKjsFcqR1bq2Lv4C
+Mockup (7 screens, approved direction): https://claude.ai/artifact/JxwAt4xKjsFcqR1bq2Lv4C (copies in docs/mockup/). Full plan in Kreyòl: docs/GSMLite-Plan-Konple.pdf
 
 ## Business model (confirmed)
 - The site **buys from suppliers** (Dhru Fusion API) and **resells to its own customers**.

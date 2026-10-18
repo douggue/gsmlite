@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Free IMEI check</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F7A4D}a:hover{color:#145C39}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1100px; box-sizing: border-box; background: #F4F5F2; color: #111418; font-family: 'IBM Plex Sans', system-ui, sans-serif; display: flex; flex-direction: column">
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 16px">
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.02em">GSM<span style="color: #1F7A4D">Lite</span></span>
+<span style="padding: 6px 10px; border-radius: 999px; background: #E4F3EA; color: #145C39; font-size: 12px; font-weight: 600">2 of 3 free checks left today</span>
+</header>
+<section style="margin: 0 16px; padding: 20px 16px; border-radius: 20px; background: #111418; color: #FFFFFF">
+<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 30px; line-height: 1.1; letter-spacing: -0.02em">Is your phone locked?<br><span style="color: #7CE0A8">Check it free.</span></h1>
+<p style="margin: 10px 0 16px; font-size: 14px; color: #C9CFC6">Model, brand and whether the IMEI is valid. Free with your account.</p>
+<label for="ci" style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px">IMEI</label>
+<input id="ci" value="356789012345678" style="width: 100%; box-sizing: border-box; height: 52px; border-radius: 12px; border: 0; padding: 0 14px; font-family: 'IBM Plex Mono', monospace; font-size: 18px">
+<button type="button" style="margin-top: 10px; width: 100%; min-height: 52px; border: 0; border-radius: 12px; background: #7CE0A8; color: #0B2A1A; font-size: 16px; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Check now</button>
+</section>
+<section aria-label="Result" style="margin: 16px 16px 0; background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center"><b style="font-size: 16px">Result</b><span style="font-size: 12px; color: #5A6058">Example</span></div>
+<dl style="margin: 0; display: grid; grid-template-columns: 110px 1fr; row-gap: 10px; font-size: 14px">
+<dt style="color: #5A6058">Model</dt><dd style="margin: 0; font-weight: 600">[iPhone 13]</dd>
+<dt style="color: #5A6058">Brand</dt><dd style="margin: 0; font-weight: 600">Apple</dd>
+<dt style="color: #5A6058">IMEI</dt><dd style="margin: 0; font-weight: 600; color: #145C39">Valid</dd>
+<dt style="color: #5A6058">Carrier lock</dt><dd style="margin: 0"><a href="#" style="font-weight: 600">Full check $[0.00]</a></dd>
+<dt style="color: #5A6058">Blacklist</dt><dd style="margin: 0"><a href="#" style="font-weight: 600">Full check $[0.00]</a></dd>
+</dl>
+<p style="margin: 0; padding: 10px 12px; border-radius: 10px; background: #E4F3EA; color: #145C39; font-size: 13px">The full check is free if you order the unlock afterwards: its price comes off the unlock.</p>
+</section>
+<section style="margin: 16px 16px 0; padding: 16px; border-radius: 16px; border: 2px solid #1F7A4D; background: #FFFFFF; display: flex; flex-direction: column; gap: 10px">
+<b style="font-size: 16px">Unlock this [iPhone 13]</b>
+<span style="font-size: 14px; color: #4A5048">Use it with any carrier, anywhere. Money back to your wallet automatically if it can't be done.</span>
+<a href="Service.dc.html" style="display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 12px; background: #1F7A4D; color: #FFFFFF; text-decoration: none; font-weight: 600">See unlock options from $[0.00]</a>
+</section>
+<p style="margin: 16px; font-size: 12px; color: #5A6058">Dial <span style="font-family: 'IBM Plex Mono', monospace">*#06#</span> on the phone to see its IMEI. Free checks are limited per account and per device.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1100}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

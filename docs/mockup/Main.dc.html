@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Home</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F7A4D}a:hover{color:#145C39}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1200px; box-sizing: border-box; background: #F4F5F2; color: #111418; font-family: 'IBM Plex Sans', system-ui, sans-serif; display: flex; flex-direction: column; position: relative">
+
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 8px">
+<div style="display: flex; align-items: center; gap: 8px">
+<span style="width: 32px; height: 32px; border-radius: 9px; background: #111418; display: grid; place-items: center">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7CE0A8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 7.5-2"></path></svg>
+</span>
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.02em">GSM<span style="color: #1F7A4D">Lite</span></span>
+</div>
+<a href="#" style="display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; border-radius: 999px; background: #FFFFFF; border: 1px solid #DCDFD8; color: #111418; text-decoration: none; font-weight: 600; font-size: 14px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1F7A4D" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"></rect><path d="M16 12h2"></path></svg>
+$[0.00]
+</a>
+</header>
+
+<section style="padding: 12px 16px 20px">
+<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 34px; line-height: 1.05; letter-spacing: -0.03em">Unlock, check and repair any phone.</h1>
+<p style="margin: 10px 0 0; font-size: 15px; line-height: 1.5; color: #4A5048">Carrier unlocks, IMEI checks, tool credits and firmware services. Pay with your wallet, MonCash or NatCash. Refunded automatically if it can't be done.</p>
+<form style="margin-top: 16px">
+<label for="q" style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px">Find a service or paste an IMEI</label>
+<div style="display: flex; gap: 8px">
+<input id="q" placeholder="iPhone 13 AT&amp;T, 35 678901 234567 8…" style="flex: 1; min-width: 0; height: 48px; box-sizing: border-box; border: 1.5px solid #111418; border-radius: 12px; padding: 0 14px; font-size: 16px; font-family: 'IBM Plex Sans', sans-serif; background: #FFFFFF">
+<button type="submit" aria-label="Search" style="width: 48px; height: 48px; border: 0; border-radius: 12px; background: #111418; display: grid; place-items: center">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+</button>
+</div>
+<p style="margin: 6px 0 0; font-size: 12px; color: #5A6058">Dial <span style="font-family: 'IBM Plex Mono', monospace">*#06#</span> on the phone to see its IMEI.</p>
+</form>
+</section>
+
+<section style="padding: 0 16px" aria-labelledby="cats">
+<h2 id="cats" style="margin: 0 0 10px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #5A6058">Services</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<a href="Service.dc.html" style="display: flex; flex-direction: column; gap: 18px; padding: 14px; border-radius: 16px; background: #111418; color: #FFFFFF; text-decoration: none; min-height: 112px; box-sizing: border-box">
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#7CE0A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"></rect><path d="M10 11V9a2 2 0 0 1 3.7-1"></path><rect x="9" y="11" width="6" height="5" rx="1"></rect></svg>
+<span><b style="display: block; font-size: 16px">Carrier unlock</b><span style="font-size: 12px; color: #B9C0B6">Any network, by IMEI</span></span>
+</a>
+<a href="#" style="display: flex; flex-direction: column; gap: 18px; padding: 14px; border-radius: 16px; background: #FFFFFF; border: 1px solid #DCDFD8; color: #111418; text-decoration: none; min-height: 112px; box-sizing: border-box">
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1F7A4D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M4 10h10M4 15h7"></path><circle cx="17" cy="16" r="3"></circle><path d="m19.5 18.5 2 2"></path></svg>
+<span><b style="display: block; font-size: 16px">IMEI &amp; carrier check</b><span style="font-size: 12px; color: #5A6058">Lock, blacklist, warranty</span></span>
+</a>
+<a href="#" style="display: flex; flex-direction: column; gap: 18px; padding: 14px; border-radius: 16px; background: #FFFFFF; border: 1px solid #DCDFD8; color: #111418; text-decoration: none; min-height: 112px; box-sizing: border-box">
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1F7A4D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"></circle><path d="m11 12 9-9M17 6l3 3M15 8l2 2"></path></svg>
+<span><b style="display: block; font-size: 16px">Tool credits</b><span style="font-size: 12px; color: #5A6058">Credits &amp; licenses</span></span>
+</a>
+<a href="#" style="display: flex; flex-direction: column; gap: 18px; padding: 14px; border-radius: 16px; background: #FFFFFF; border: 1px solid #DCDFD8; color: #111418; text-decoration: none; min-height: 112px; box-sizing: border-box">
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1F7A4D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M9 4v4M15 4v4M9 16v4M15 16v4M4 9h4M4 15h4M16 9h4M16 15h4"></path></svg>
+<span><b style="display: block; font-size: 16px">Data &amp; firmware</b><span style="font-size: 12px; color: #5A6058">FRP, flashing, files</span></span>
+</a>
+</div>
+</section>
+
+<section style="padding: 24px 16px 0" aria-labelledby="pop">
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<h2 id="pop" style="margin: 0 0 10px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #5A6058">Popular</h2>
+<a href="#" style="font-size: 14px; font-weight: 600">All services</a>
+</div>
+<div style="display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; overflow: hidden">
+<a href="Service.dc.html" style="display: flex; align-items: center; gap: 12px; padding: 14px; color: #111418; text-decoration: none; border-bottom: 1px solid #ECEEE9">
+<span style="flex: 1; min-width: 0"><b style="display: block; font-size: 15px">iPhone · USA AT&amp;T unlock</b><span style="font-size: 13px; color: #5A6058">Clean IMEI · [1–3 days]</span></span>
+<span style="font-weight: 600; font-size: 15px">$[0.00]</span>
+</a>
+<a href="#" style="display: flex; align-items: center; gap: 12px; padding: 14px; color: #111418; text-decoration: none; border-bottom: 1px solid #ECEEE9">
+<span style="flex: 1; min-width: 0"><b style="display: block; font-size: 15px">Full IMEI check · carrier + blacklist</b><span style="font-size: 13px; color: #1F7A4D; font-weight: 600">Instant</span></span>
+<span style="font-weight: 600; font-size: 15px">$[0.00]</span>
+</a>
+<a href="#" style="display: flex; align-items: center; gap: 12px; padding: 14px; color: #111418; text-decoration: none; border-bottom: 1px solid #ECEEE9">
+<span style="flex: 1; min-width: 0"><b style="display: block; font-size: 15px">Samsung · network unlock code</b><span style="font-size: 13px; color: #5A6058">By IMEI · [1–24 h]</span></span>
+<span style="font-weight: 600; font-size: 15px">$[0.00]</span>
+</a>
+<a href="#" style="display: flex; align-items: center; gap: 12px; padding: 14px; color: #111418; text-decoration: none">
+<span style="flex: 1; min-width: 0"><b style="display: block; font-size: 15px">[Repair tool] · 12-month license</b><span style="font-size: 13px; color: #1F7A4D; font-weight: 600">Instant</span></span>
+<span style="font-weight: 600; font-size: 15px">$[0.00]</span>
+</a>
+</div>
+</section>
+
+<section style="margin: 24px 16px 0; padding: 16px; border-radius: 16px; background: #E4F3EA; display: flex; flex-direction: column; gap: 10px">
+<b style="font-size: 15px">How it works</b>
+<ol style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #24302A">
+<li>Pick the service and enter the IMEI (or many, one per line).</li>
+<li>Pay from your wallet, MonCash or NatCash.</li>
+<li>We send it to our supplier and follow it for you. You get a notification when the result is ready.</li>
+<li>If it can't be done, the money goes back to your wallet automatically.</li>
+</ol>
+</section>
+
+<div style="flex: 1"></div>
+<nav aria-label="Main" style="position: sticky; bottom: 0; margin-top: 24px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: #FFFFFF; border-top: 1px solid #DCDFD8; padding: 6px 4px 22px">
+<a href="Main.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 48px; justify-content: center; font-size: 11px; font-weight: 600; color: #1F7A4D; text-decoration: none">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg>Home</a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 48px; justify-content: center; font-size: 11px; font-weight: 600; color: #5A6058; text-decoration: none">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>Services</a>
+<a href="Order.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 48px; justify-content: center; font-size: 11px; font-weight: 600; color: #5A6058; text-decoration: none">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"></path><path d="M9 8h6M9 12h6"></path></svg>Orders</a>
+<a href="#" style="display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 48px; justify-content: center; font-size: 11px; font-weight: 600; color: #5A6058; text-decoration: none">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"></rect><path d="M16 12h2M3 10h18"></path></svg>Wallet</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1200}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

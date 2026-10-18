@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Price list</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F7A4D}a:hover{color:#145C39}
+</style>
+</helmet>
+<div style="box-sizing: border-box; min-height: 980px; background: #F4F5F2; color: #111418; font-family: 'IBM Plex Sans', system-ui, sans-serif; padding: 28px 24px 40px">
+<div style="max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px">
+<header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px">
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 24px">GSM<span style="color: #1F7A4D">Lite</span></span>
+<nav aria-label="Main" style="display: flex; flex-wrap: wrap; gap: 18px; font-size: 14px; font-weight: 600"><a href="Main.dc.html" style="color: #111418; text-decoration: none">Home</a><a href="Check.dc.html" style="color: #111418; text-decoration: none">Free IMEI check</a><a href="#" aria-current="page" style="text-decoration: none">Prices</a><a href="#" style="color: #111418; text-decoration: none">Sign in</a></nav>
+</header>
+<div>
+<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 40px; letter-spacing: -0.02em">Every service, every price</h1>
+<p style="margin: 6px 0 0; color: #4A5048">No account needed to see prices. Technicians get lower prices after a quick shop check.</p>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+<label for="ps" style="position: absolute; left: -9999px">Search services</label>
+<input id="ps" placeholder="Search: iPhone AT&amp;T, Samsung FRP, Chimera…" style="flex: 1 1 280px; height: 46px; border: 1.5px solid #111418; border-radius: 12px; padding: 0 14px; font-size: 16px; font-family: 'IBM Plex Sans', sans-serif">
+<button type="button" style="min-height: 46px; padding: 0 16px; border-radius: 12px; border: 0; background: #111418; color: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">IMEI</button>
+<button type="button" style="min-height: 46px; padding: 0 16px; border-radius: 12px; border: 1px solid #DCDFD8; background: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Server</button>
+<button type="button" style="min-height: 46px; padding: 0 16px; border-radius: 12px; border: 1px solid #DCDFD8; background: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Remote</button>
+<button type="button" style="min-height: 46px; padding: 0 16px; border-radius: 12px; border: 1px solid #DCDFD8; background: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">File</button>
+</div>
+<section style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; overflow: hidden">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: #111418; color: #FFFFFF"><b>Apple · USA carrier unlock</b><span style="font-size: 13px; color: #B9C0B6">Collapse ▲</span></div>
+<div style="overflow-x: auto">
+<table style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 560px">
+<thead><tr style="text-align: left; color: #5A6058; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em"><th style="padding: 10px 16px">Service</th><th style="padding: 10px 16px">Status</th><th style="padding: 10px 16px">Real average time</th><th style="padding: 10px 16px; text-align: right">Price</th></tr></thead>
+<tbody>
+<tr style="border-top: 1px solid #ECEEE9"><td style="padding: 12px 16px"><a href="Service.dc.html" style="font-weight: 600">AT&amp;T · clean IMEI</a></td><td style="padding: 12px 16px"><span style="color: #145C39; font-weight: 600">● Online</span></td><td style="padding: 12px 16px">[26 h]</td><td style="padding: 12px 16px; text-align: right; font-weight: 600">$[0.00]</td></tr>
+<tr style="border-top: 1px solid #ECEEE9"><td style="padding: 12px 16px"><a href="#" style="font-weight: 600">T-Mobile · premium</a></td><td style="padding: 12px 16px"><span style="color: #8A3607; font-weight: 600">● Slow right now</span></td><td style="padding: 12px 16px">[3 days]</td><td style="padding: 12px 16px; text-align: right; font-weight: 600">$[0.00]</td></tr>
+<tr style="border-top: 1px solid #ECEEE9"><td style="padding: 12px 16px"><a href="#" style="font-weight: 600">Verizon · all models</a></td><td style="padding: 12px 16px"><span style="color: #145C39; font-weight: 600">● Online</span></td><td style="padding: 12px 16px">[40 min]</td><td style="padding: 12px 16px; text-align: right; font-weight: 600">$[0.00]</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<section style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px"><b>IMEI &amp; carrier checks</b><span style="font-size: 13px; color: #5A6058">[8] services · Expand ▼</span></section>
+<section style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px"><b>Tool credits &amp; licenses</b><span style="font-size: 13px; color: #5A6058">[24] services · Expand ▼</span></section>
+<section style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px"><b>Data, firmware &amp; file services</b><span style="font-size: 13px; color: #5A6058">[60] services · Expand ▼</span></section>
+<section style="padding: 16px; border-radius: 16px; background: #111418; color: #FFFFFF; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between">
+<span><b style="color: #7CE0A8">Deal of the week:</b> [Samsung network unlock] at $[0.00] until Sunday</span>
+<a href="#" style="min-height: 44px; display: flex; align-items: center; padding: 0 16px; border-radius: 12px; background: #7CE0A8; color: #0B2A1A; text-decoration: none; font-weight: 600">Join our Telegram</a>
+</section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1100,"height":980}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
