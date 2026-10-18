@@ -29,6 +29,13 @@ Mockup (approved direction, not yet built): https://claude.ai/artifact/JxwAt4xKj
   from the supplier's lists (modellist/providerlist).
 - FRP / iCloud services: imported and sold like any other supplier service. The owner decided (2026-10-18): no extra safeguards for them.
 
+## Approved additions (2026-10-18, from a look at competitor sites)
+1. File-upload services (Dhru file actions): competitors list far more file services than IMEI/server ones.
+2. Public price list page: every service grouped, price + delivery time, expand/collapse, visible without signing in.
+3. IMEI check offered next to every unlock (check first, then buy).
+4. Model / carrier dropdowns from the supplier's lists (modellist / providerlist).
+5. Telegram notifications (bot), next to push and WhatsApp.
+
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
 2. Admin → Suppliers screen (add supplier, test, sync, browse/import services, needs-attention list for UNKNOWN / account problems, logs).
