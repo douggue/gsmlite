@@ -1,6 +1,9 @@
 # Progress (paused 2026-10-18)
 
-Phone-unlocking / repair-tool services site, forked from Haiti Gaming. Brand, domain and repo name are still to be chosen ("kle" is only the folder name).
+Phone-unlocking / repair-tool services site, forked from Haiti Gaming.
+
+**Brand: GSMLite · domain: gsmlite.com** (chosen 2026-10-18). Repo name still to be created ("kle" is only the local folder name).
+Mockup (approved direction, not yet built): https://claude.ai/artifact/JxwAt4xKjsFcqR1bq2Lv4C
 
 ## Business model (confirmed)
 - The site **buys from suppliers** (Dhru Fusion API) and **resells to its own customers**.
@@ -21,13 +24,19 @@ Phone-unlocking / repair-tool services site, forked from Haiti Gaming. Brand, do
 - `src/lib/suppliers/sync.ts`: balance + catalog sync, import a supplier service as a draft product at cost + markup.
 - Admin product editor: service type, IMEI box, USD prices, quantity range, supplier + service ID with margin.
 
+## Decisions
+- Any Dhru service the supplier exposes can be imported (IMEI, SERVER, REMOTE). To add: Dhru file-upload services, and model/carrier dropdowns
+  from the supplier's lists (modellist/providerlist).
+- FRP / iCloud services: imported like any other. Proposed safeguards for them (owner proof upload + staff approval, blacklist check first,
+  records kept, owner-only terms); the user replied "Great", so confirm they want them before building.
+
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
 2. Admin → Suppliers screen (add supplier, test, sync, browse/import services, needs-attention list for UNKNOWN / account problems, logs).
 3. `/api/cron/suppliers` (poll every few minutes; Vercel Hobby only allows daily cron → use an external cron or Pro).
 4. Auto-refund-by-time must skip lines that are with a supplier.
 5. Storefront redesign per the approved mockup; service page with IMEI box; order page showing supplier progress/results.
-6. Price groups admin; rebrand (name, logo, messages in 4 languages, notify/email sender, CANONICAL_SITE in site-url.ts).
+6. Price groups admin; rebrand to GSMLite (logo, messages in 4 languages, notify/email sender, CANONICAL_SITE in site-url.ts → https://gsmlite.com).
 7. Tests (protocol, IMEI, dispatch with a fake supplier), README/DEPLOY, new GitHub repo, Vercel project, preview branch.
 
 Secrets: supplier API keys are entered in Admin and stored encrypted; platform keys go in Vercel env vars only. Never in code or chat.
