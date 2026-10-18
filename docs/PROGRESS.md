@@ -50,6 +50,16 @@ Chosen strategies, with what the platform needs for each:
 More languages to go global: add Portuguese and Arabic first (Arabic needs right-to-left layout), then Turkish, Vietnamese, Indonesian, Russian.
 Going global also needs card payments (Stripe) and crypto next to MonCash/NatCash.
 
+## Hosting plan (decided 2026-10-18)
+Vercel for testing only; production moves to a VPS / DigitalOcean droplet. Build so the app runs on both:
+- Fixed outbound IP on the VPS (solves suppliers that lock the API key to an IP).
+- Supplier polling: system cron or a small worker every 1–2 min (no Vercel cron limits).
+- File storage: replace Vercel Blob with S3-compatible storage (DigitalOcean Spaces) or local disk, chosen by env.
+- Database: managed Postgres (DigitalOcean) or Postgres on the droplet with daily backups off-server.
+- Country header: x-vercel-ip-country on Vercel, Cloudflare's cf-ipcountry on the VPS; drop the .vercel.app redirect there.
+- Deploy: Docker + Caddy (automatic HTTPS) + GitHub Actions on "ship it"; staging subdomain for preview testing.
+- Secrets: Vercel env vars while testing, then a root-only env file on the server. Never in code or chat.
+
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
 2. Admin → Suppliers screen (add supplier, test, sync, browse/import services, needs-attention list for UNKNOWN / account problems, logs).
