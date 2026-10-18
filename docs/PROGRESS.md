@@ -1,5 +1,8 @@
 # Progress (paused 2026-10-18)
 
+**Standing request from the owner:** always look for new features and propose your own ideas (keep the backlog below up to date).
+Working rules: risky changes on a preview branch, wait for "ship it"; API keys never in code or chat.
+
 Phone-unlocking / repair-tool services site, forked from Haiti Gaming.
 
 **Brand: GSMLite · domain: gsmlite.com** (chosen 2026-10-18). Repo name still to be created ("kle" is only the local folder name).
@@ -74,6 +77,15 @@ Remote services already flow like other supplier services. To add:
 - Staff review queue in admin (approve / reject with reason / ask for a new photo), notifications to the customer.
 - Documents in private storage, encrypted, visible only to staff with a KYC permission, every view logged; retention period and deletion on account closure.
 - Optional later: automatic ID check provider (e.g. Sumsub, Veriff, Didit) behind the same screens.
+
+## Feature ideas backlog (proposed by Claude, not yet approved)
+- IMEI history per customer: every IMEI they checked or ordered, with one-tap reorder.
+- Supplier auto-routing: the same service linked to 2 suppliers; send to the cheaper or faster one, switch automatically if one is down or out of credit.
+- Price-change guard: alert when a supplier raises a cost so a service would sell at a loss; optional auto-reprice to keep the margin.
+- Bulk results export (CSV/PDF) for technicians with many IMEIs.
+- Printable/shareable result certificate (unlock or check report with QR to verify on gsmlite.com).
+- Technician leaderboard / loyalty levels (Bronze, Silver, Gold) based on monthly spend, each level a price group.
+- Service favorites and "order again" for technicians.
 
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
