@@ -60,6 +60,21 @@ Vercel for testing only; production moves to a VPS / DigitalOcean droplet. Build
 - Deploy: Docker + Caddy (automatic HTTPS) + GitHub Actions on "ship it"; staging subdomain for preview testing.
 - Secrets: Vercel env vars while testing, then a root-only env file on the server. Never in code or chat.
 
+## Remote orders (added 2026-10-18)
+Remote services already flow like other supplier services. To add:
+1. Remote tool password stored encrypted, hidden once the order is finished.
+2. "Get ready" checklist before paying (PC on, drivers, phone connected, AnyDesk/TeamViewer/UltraViewer open).
+3. Instructions on the order page: which tool, where to find the ID, stay available.
+4. Order page tells the customer to keep the PC and remote tool open while "in process".
+5. Technician hours shown per service.
+
+## KYC (required, added 2026-10-18)
+- Levels: basic (email + phone verified) → verified (ID document + selfie) → technician/shop (business proof, unlocks technician prices).
+- Triggers (set in admin): top-ups over a limit, card payments, technician price, high-value orders, withdrawals of referral rewards if ever added.
+- Staff review queue in admin (approve / reject with reason / ask for a new photo), notifications to the customer.
+- Documents in private storage, encrypted, visible only to staff with a KYC permission, every view logged; retention period and deletion on account closure.
+- Optional later: automatic ID check provider (e.g. Sumsub, Veriff, Didit) behind the same screens.
+
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
 2. Admin → Suppliers screen (add supplier, test, sync, browse/import services, needs-attention list for UNKNOWN / account problems, logs).
