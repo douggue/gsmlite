@@ -27,8 +27,7 @@ Mockup (approved direction, not yet built): https://claude.ai/artifact/JxwAt4xKj
 ## Decisions
 - Any Dhru service the supplier exposes can be imported (IMEI, SERVER, REMOTE). To add: Dhru file-upload services, and model/carrier dropdowns
   from the supplier's lists (modellist/providerlist).
-- FRP / iCloud services: imported like any other. Proposed safeguards for them (owner proof upload + staff approval, blacklist check first,
-  records kept, owner-only terms); the user replied "Great", so confirm they want them before building.
+- FRP / iCloud services: imported and sold like any other supplier service. The owner decided (2026-10-18): no extra safeguards for them.
 
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
