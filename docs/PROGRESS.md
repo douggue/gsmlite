@@ -187,6 +187,13 @@ Theirs are thin (~200 words, no FAQ, no schema): GSMLite pages should be richer.
 - Customer message per rule, in every language; the blocked top-up/order waits and continues by itself once approved.
 - "Test a rule" tool (pick a customer + action, see which rules apply). Saving rules needs the staff 2FA code.
 
+## Success rate (agreed 2026-10-21; inspired by sickw's "99.3%" in their order box)
+- Shown in the order card next to price and delivery time, with "based on [N] orders in the last 90 days" underneath.
+- = delivered ÷ (delivered + rejected), per service, last 90 days; in-progress orders excluded; one decimal, never rounded up.
+- Fewer than ~20 finished orders → show "New service" instead of a percentage. Never a fake or starting value.
+- Optional hint with the main rejection reason (e.g. "Most rejections: blacklisted phones. Run an IMEI check first").
+- Admin: per service and per supplier; alert below a chosen level; optional auto-pause; later, route to the best supplier.
+
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
 2. Admin → Suppliers screen (add supplier, test, sync, browse/import services, needs-attention list for UNKNOWN / account problems, logs).
