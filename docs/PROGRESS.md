@@ -145,6 +145,11 @@ Theirs are thin (~200 words, no FAQ, no schema): GSMLite pages should be richer.
 - Keyword ideas from Google Search Console + autocomplete (paid keyword-volume API optional); never invented volumes.
 - Owner approves every draft; at most N new pages a day (Google penalizes mass low-value auto pages); refresh when price/time changes;
   monthly AI budget; dashboard: pages indexed, Google visits, orders from Google.
+- Every SEO service page is also a buying page (like sickw service 105): an "Order this service" card near the top with
+  price (the visitor's group price when signed in), delivery time, real success rate, and the service's own order form
+  (IMEI box with live check, serial, dropdowns, uploads… from the form builder), then "Order now" / "Add to cart".
+  On phones the card sits right under the title, with a sticky "Order now" bar while reading. Signed-out visitors can fill
+  the form; sign-in/sign-up comes at payment and keeps what they typed. Article text (sample result, steps, FAQ) comes after.
 - "Hide from Google" per service (FRP, iCloud, MDM…): no page written, noindex, not in sitemap / hubs / public price list /
   structured data, visible only to signed-in customers.
 
