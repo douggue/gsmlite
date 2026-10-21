@@ -109,6 +109,13 @@ Shop by category tiles · Deal of the day carousel (big product art, title, pric
 (Server credits, IMEI check) · Top brands with tabs per tool (license length × new/renewal) · Best sellers tabs (Official, Trending, New, Most demanded).
 Product art: each service needs a square image; plan an admin image generator (tool logo + "12 MONTHS" + New/Renewal ribbon) so cards look uniform.
 
+## Supplier service list (import screen, mockup AdminImport, 2026-10-21)
+Browse every service of a supplier before importing: search, filters (not imported / already on my site / new since last sync /
+price changed / removed by supplier), type chips (IMEI, Server, Remote, File), the supplier's own groups with counts, columns for
+time, fields the customer must give, cost, and status on my site. Click a service for its full description and fields.
+Select many → choose category, markup %, minimum profit, price rounding → "Import as hidden drafts" or "Import and publish".
+Services the supplier removes pause on my site automatically; cost increases are flagged.
+
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
 2. Admin → Suppliers screen (add supplier, test, sync, browse/import services, needs-attention list for UNKNOWN / account problems, logs).

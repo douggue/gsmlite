@@ -132,6 +132,14 @@
       "h": 1000,
       "title": "Admin \u00b7 Settings & staff",
       "expand": "fill"
+    },
+    "AdminImport.dc.html": {
+      "x": 1410,
+      "y": 11880,
+      "w": 1330,
+      "h": 1200,
+      "title": "Admin \u00b7 Supplier service list (import)",
+      "expand": "fill"
     }
   },
   "createdOnFiles": {
@@ -191,7 +199,8 @@
     "AdminKyc.dc.html",
     "AdminPayments.dc.html",
     "AdminMarketing.dc.html",
-    "AdminSettings.dc.html"
+    "AdminSettings.dc.html",
+    "AdminImport.dc.html"
   ],
   "pages": [],
   "title": "GSMLite Mockup"
