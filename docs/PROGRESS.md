@@ -153,6 +153,15 @@ Theirs are thin (~200 words, no FAQ, no schema): GSMLite pages should be richer.
   6. Skip anything tied to "Hide from Google" services.
   7. Score = volume × chance to rank × service margin → top ideas become drafts in the review queue (owner approves).
   8. Track positions; pages that slip get refreshed; keywords we rank 5–20 for get priority improvements.
+  Provider chosen by the owner: DataForSEO (https://docs.dataforseo.com/v3/). Endpoints to use (checked 2026-10-21):
+  - Expand: /v3/dataforseo_labs/google/keyword_suggestions/live/, keyword_ideas/live/, related_keywords/live/
+  - Numbers: keyword_overview/live/ (or /v3/keywords_data/google_ads/search_volume/ task_post + task_get, cheaper in bulk),
+    bulk_keyword_difficulty/live/, search_intent/live/, historical_keyword_data/live/
+  - Competitors: serp_competitors/live/, ranked_keywords/live/, competitors_domain/live/ (e.g. sickw.com)
+  - Rank tracking: /v3/serp/google/organic/task_post/ + task_get/regular/ (weekly, cheaper than live), plus ranked_keywords for gsmlite.com
+  - Develop against their sandbox first (docs appendix /v3/appendix/sandbox/); confirm auth method on /v3/auth/ when building.
+  - Credentials only in hosting env vars (e.g. DATAFORSEO_LOGIN / DATAFORSEO_PASSWORD), never in chat/code; cache results in the DB
+    so the same keyword is not paid for twice; monthly budget cap in admin.
 - Owner approves every draft; at most N new pages a day (Google penalizes mass low-value auto pages); refresh when price/time changes;
   monthly AI budget; dashboard: pages indexed, Google visits, orders from Google.
 - Every SEO service page is also a buying page (like sickw service 105): an "Order this service" card near the top with
