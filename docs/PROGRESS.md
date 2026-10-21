@@ -213,6 +213,16 @@ To add / verify:
 - Process: dependency updates + vulnerability scan in CI, security review on every risky change (preview branch), error
   monitoring, uptime checks, an outside penetration test before launch.
 
+## News / Updates page (inspired by sickw.com/?page=news, 2026-10-21)
+- Automatic "Service changes" feed from supplier syncs and admin edits: New service, Price down (old → new), Price up, Removed,
+  Back online; counts per type in the header; filters by type and brand. Proposal: show New + Price down + Back online to everyone,
+  Price up / Removed only to signed-in customers (owner to confirm). Hidden-from-Google and country-limited services follow their rules.
+- Written posts: new site features, tool updates, security notices, how-tos; date + title + short body + label.
+- Link to a live Service Status page (online / slow / down per service, from real delivery data).
+- Posts can be drafted by the content machine (owner approves), sent to Telegram, RSS feed, indexed by Google.
+- Feature ideas seen there worth adding to the backlog: passkey sign-in (already planned), saying the IMEI by voice
+  (test on iPhone Safari first), favourites list, bulk check with CSV / Excel export (already in backlog).
+
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
 2. Admin → Suppliers screen (add supplier, test, sync, browse/import services, needs-attention list for UNKNOWN / account problems, logs).
