@@ -140,6 +140,14 @@
       "h": 1200,
       "title": "Admin \u00b7 Supplier service list (import)",
       "expand": "fill"
+    },
+    "AdminForm.dc.html": {
+      "x": 0,
+      "y": 13400,
+      "w": 1330,
+      "h": 1250,
+      "title": "Admin \u00b7 Order form builder (custom services)",
+      "expand": "fill"
     }
   },
   "createdOnFiles": {
@@ -200,7 +208,8 @@
     "AdminPayments.dc.html",
     "AdminMarketing.dc.html",
     "AdminSettings.dc.html",
-    "AdminImport.dc.html"
+    "AdminImport.dc.html",
+    "AdminForm.dc.html"
   ],
   "pages": [],
   "title": "GSMLite Mockup"

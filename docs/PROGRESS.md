@@ -125,6 +125,13 @@ Services the supplier removes pause on my site automatically; cost increases are
   slider, FAQ, guides, emails, notifications, wallet page or price list. Any text listing payment methods uses a placeholder
   filled with the visitor's own methods (e.g. {payment_methods}). Same rule for services not sold in their country.
 
+## Order form builder for custom services (mockup AdminForm, 2026-10-21)
+Field types: short text, long text, number, email/phone/link, dropdown, choice buttons, checkbox ("I confirm…"),
+IMEI (checked) / serial, phone model list, photo/file upload, remote ID + password (hidden, encrypted, staff only),
+date/time slot, info text. Per field: label in every language, help text, allowed format, required, hidden after the order
+is done, remember for next order, show only if (another answer). Drag to reorder, live customer preview, templates
+(Remote job, IMEI service, Tool account, License key). Imported supplier services fill the form automatically.
+
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
 2. Admin → Suppliers screen (add supplier, test, sync, browse/import services, needs-attention list for UNKNOWN / account problems, logs).
