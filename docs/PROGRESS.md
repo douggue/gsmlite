@@ -253,3 +253,6 @@ Every change logged; sensitive sections ask for the 2FA code again.
 7. Tests (protocol, IMEI, dispatch with a fake supplier), README/DEPLOY, new GitHub repo, Vercel project, preview branch.
 
 Secrets: supplier API keys are entered in Admin and stored encrypted; platform keys go in Vercel env vars only. Never in code or chat.
+
+## Next project after GSMLite (owner, 2026-10-21)
+An SMM panel. Reuse from GSMLite: wallet/ledger, supplier engine (SMM providers use the common "API v2": action=services/add/status/balance, form posts with a key), auto refunds incl. partial ("Partial" status), price groups, content machine, admin, security.
