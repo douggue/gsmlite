@@ -132,6 +132,21 @@ date/time slot, info text. Per field: label in every language, help text, allowe
 is done, remember for next order, show only if (another answer). Drag to reorder, live customer preview, templates
 (Remote job, IMEI service, Tool account, License key). Imported supplier services fill the form automatically.
 
+## Content machine for Google traffic (decided 2026-10-21; mockup AdminContent)
+Goal: free Google traffic. Chosen outputs: (1) a page per service / model / carrier, (2) tool update posts, (5) guides.
+Reference the owner likes: sickw.com service pages (/?page=services&service=105): one page per service with price, time,
+success rate, sample result, short description, plus brand landing pages (/apple-imei-check, /samsung-imei-check…).
+Theirs are thin (~200 words, no FAQ, no schema): GSMLite pages should be richer.
+- Written by an AI model (e.g. Claude API) from real site data only (services, prices, real avg time, real success rate).
+- Every page: keyword title + meta description, clean localized URL (/en/unlock/iphone-13-att), sample result (IMEI masked),
+  steps, how to find IMEI, FAQ with FAQPage schema, Product/Offer schema, related links, brand hub, hreflang across languages.
+- Brand hubs (Apple / Samsung / Motorola IMEI check…), tool update posts (also to Telegram), guides ending with a service link.
+- Keyword ideas from Google Search Console + autocomplete (paid keyword-volume API optional); never invented volumes.
+- Owner approves every draft; at most N new pages a day (Google penalizes mass low-value auto pages); refresh when price/time changes;
+  monthly AI budget; dashboard: pages indexed, Google visits, orders from Google.
+- "Hide from Google" per service (FRP, iCloud, MDM…): no page written, noindex, not in sitemap / hubs / public price list /
+  structured data, visible only to signed-in customers.
+
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
 2. Admin → Suppliers screen (add supplier, test, sync, browse/import services, needs-attention list for UNKNOWN / account problems, logs).

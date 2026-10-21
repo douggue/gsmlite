@@ -148,6 +148,14 @@
       "h": 1250,
       "title": "Admin \u00b7 Order form builder (custom services)",
       "expand": "fill"
+    },
+    "AdminContent.dc.html": {
+      "x": 1410,
+      "y": 13400,
+      "w": 1330,
+      "h": 1250,
+      "title": "Admin \u00b7 Content machine (SEO)",
+      "expand": "fill"
     }
   },
   "createdOnFiles": {
@@ -209,7 +217,8 @@
     "AdminMarketing.dc.html",
     "AdminSettings.dc.html",
     "AdminImport.dc.html",
-    "AdminForm.dc.html"
+    "AdminForm.dc.html",
+    "AdminContent.dc.html"
   ],
   "pages": [],
   "title": "GSMLite Mockup"

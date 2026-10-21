@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Content machine</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F7A4D}a:hover{color:#145C39}
+</style>
+</helmet>
+<div style="box-sizing: border-box; min-height: 1250px; background: #F4F5F2; color: #111418; font-family: 'IBM Plex Sans', system-ui, sans-serif; display: flex; flex-wrap: wrap">
+<nav aria-label="Admin" style="flex: 1 1 220px; max-width: 100%; box-sizing: border-box; background: #111418; color: #C9CFC6; padding: 20px 14px; display: flex; flex-direction: column; gap: 2px; font-size: 14px">
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 20px; color: #FFFFFF; padding: 0 10px 16px">GSM<span style="color: #7CE0A8">Lite</span> admin</span>
+<a href="AdminDashboard.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Dashboard</a>
+<a href="AdminOrders.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Orders</a>
+<a href="Admin.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Suppliers</a>
+<a href="AdminServices.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Services &amp; prices</a>
+<a href="AdminGroups.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Price groups</a>
+<a href="AdminCustomers.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Customers</a>
+<a href="AdminKyc.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">KYC review</a>
+<a href="AdminPayments.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Payments</a>
+<a href="AdminMarketing.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Marketing</a>
+<a href="AdminContent.dc.html" aria-current="page" style="min-height: 38px; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; border-radius: 10px; background: #1F7A4D; color: #FFFFFF; text-decoration: none; font-weight: 600">Content machine <span style="padding: 0 7px; border-radius: 999px; background: #FFFFFF; color: #145C39; font-size: 12px">[6]</span></a>
+<a href="AdminSettings.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Settings &amp; staff</a>
+</nav>
+<main style="flex: 999 1 560px; min-width: 0; padding: 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 10px">
+<div><h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 32px">Content machine</h1><p style="margin: 4px 0 0; color: #4A5048">SEO pages written from your real services, prices and results. Nothing is published without your approval.</p></div>
+<span style="display: flex; gap: 8px"><button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #DCDFD8; background: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Keyword ideas</button><button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 10px; border: 0; background: #1F7A4D; color: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">+ Write a page</button></span>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px">
+<div style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 14px; padding: 14px"><span style="font-size: 13px; color: #5A6058">Pages on Google</span><b style="display: block; font-size: 24px">[0]</b></div>
+<div style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 14px; padding: 14px"><span style="font-size: 13px; color: #5A6058">Visits from Google · 28 days</span><b style="display: block; font-size: 24px">[0]</b></div>
+<div style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 14px; padding: 14px"><span style="font-size: 13px; color: #5A6058">Orders from those visits</span><b style="display: block; font-size: 24px">[0]</b></div>
+<div style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 14px; padding: 14px"><span style="font-size: 13px; color: #5A6058">Writing cost this month</span><b style="display: block; font-size: 24px">$[0.00] <span style="font-size: 13px; color: #5A6058; font-weight: 400">of $[20]</span></b></div>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start">
+<section style="flex: 2 1 420px; background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; overflow: hidden" aria-labelledby="q">
+<h2 id="q" style="margin: 0; padding: 14px 16px; font-size: 16px; border-bottom: 1px solid #ECEEE9">Drafts to review [6]</h2>
+<div style="display: flex; gap: 12px; align-items: center; padding: 12px 16px; border-bottom: 1px solid #ECEEE9; background: #F2FAF5"><span style="flex: 1"><span style="font-size: 12px; color: #145C39; font-weight: 600">SERVICE PAGE · EN HT FR ES</span><b style="display: block">Unlock iPhone 13 AT&amp;T: permanent factory unlock</b><span style="font-size: 13px; color: #5A6058">Keyword: “unlock iphone 13 att” · from new import</span></span><a href="#" style="font-weight: 600">Review</a></div>
+<div style="display: flex; gap: 12px; align-items: center; padding: 12px 16px; border-bottom: 1px solid #ECEEE9"><span style="flex: 1"><span style="font-size: 12px; color: #145C39; font-weight: 600">BRAND HUB · 4 languages</span><b style="display: block">Apple IMEI check: carrier, blacklist, warranty</b><span style="font-size: 13px; color: #5A6058">Links to [12] Apple check services</span></span><a href="#" style="font-weight: 600">Review</a></div>
+<div style="display: flex; gap: 12px; align-items: center; padding: 12px 16px; border-bottom: 1px solid #ECEEE9"><span style="flex: 1"><span style="font-size: 12px; color: #154A80; font-weight: 600">TOOL UPDATE</span><b style="display: block">[UnlockTool] v[0.0.0]: what's new</b><span style="font-size: 13px; color: #5A6058">From the update you posted · also sent to Telegram after approval</span></span><a href="#" style="font-weight: 600">Review</a></div>
+<div style="display: flex; gap: 12px; align-items: center; padding: 12px 16px; border-bottom: 1px solid #ECEEE9"><span style="flex: 1"><span style="font-size: 12px; color: #6B4FA0; font-weight: 600">GUIDE</span><b style="display: block">How to check if an iPhone is blacklisted (2026)</b><span style="font-size: 13px; color: #5A6058">Ends with a link to the full IMEI check</span></span><a href="#" style="font-weight: 600">Review</a></div>
+<div style="display: flex; gap: 12px; align-items: center; padding: 12px 16px"><span style="flex: 1"><span style="font-size: 12px; color: #6B4FA0; font-weight: 600">GUIDE</span><b style="display: block">How to find the IMEI on any phone</b><span style="font-size: 13px; color: #5A6058">Updating the 2025 version · 3 facts changed</span></span><a href="#" style="font-weight: 600">Review</a></div>
+</section>
+
+<section style="flex: 1 1 300px; background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 14px" aria-labelledby="rules">
+<h2 id="rules" style="margin: 0; font-size: 16px">Machine settings</h2>
+<label style="display: flex; gap: 8px"><input type="checkbox" checked> Write a page for each new published service</label>
+<label style="display: flex; gap: 8px"><input type="checkbox" checked> Brand hubs (Apple, Samsung, Motorola…)</label>
+<label style="display: flex; gap: 8px"><input type="checkbox" checked> Tool update posts</label>
+<label style="display: flex; gap: 8px"><input type="checkbox" checked> Guides from keyword ideas</label>
+<label style="display: flex; gap: 8px"><input type="checkbox" checked> Refresh pages when price or time changes</label>
+<div style="display: flex; justify-content: space-between"><span>Publish at most</span><b>[3] new pages a day</b></div>
+<div style="display: flex; justify-content: space-between"><span>Languages</span><b>EN · HT · FR · ES</b></div>
+<div style="display: flex; justify-content: space-between"><span>Monthly budget</span><b>$[20]</b></div>
+<div style="margin-top: 6px; padding: 12px; border-radius: 12px; background: #FCEBDD; color: #3A2414; font-size: 13px"><b style="display: block">Hidden from Google [9 services]</b>FRP, iCloud and MDM services: no page is written, they are marked “noindex”, left out of the sitemap, brand hubs and public price list, and shown only to signed-in customers.</div>
+</section>
+</div>
+
+<section style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px" aria-labelledby="tpl">
+<h2 id="tpl" style="margin: 0; font-size: 16px">Every service page gets</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; font-size: 14px">
+<span>• Title and description with the main keyword</span><span>• Clean address: /en/unlock/iphone-13-att</span><span>• Real price, delivery time and success rate</span>
+<span>• Sample result (IMEI hidden)</span><span>• How it works, step by step</span><span>• How to find your IMEI</span>
+<span>• FAQ (shown as rich results on Google)</span><span>• Links to related services and the brand hub</span><span>• Same page in every language, linked together</span>
+</div>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1330,"height":1250}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
