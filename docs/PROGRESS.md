@@ -87,6 +87,21 @@ Remote services already flow like other supplier services. To add:
 - Technician leaderboard / loyalty levels (Bronze, Silver, Gold) based on monthly spend, each level a price group.
 - Service favorites and "order again" for technicians.
 
+## Design inspiration (owner likes gsmgenesis.com, 2026-10-21; inspiration only, never copy)
+Ideas to adapt in GSMLite's own style (ink + green, not their navy + orange):
+- Promo slider at the top of home (offers with dates, e.g. "+1 month free"), managed in admin.
+- Quick actions grid under it: Add funds · Place order · My orders · Track order.
+- Horizontal chips: Today's deal · Best sellers · New arrivals.
+- Section cards with a dark header strip (icon, title, subtitle, "View all") over a light body.
+- "Shop by tool" grid with tool logos (UnlockTool, Chimera, Octoplus…) and tabs per brand.
+- Product cards with price, favorite (heart) and quick add-to-cart.
+- "Latest tool updates" feed (tool, version, what's new, link) — admin-managed news; good for SEO and return visits.
+- "How it works" with an animated order flow (Your order → GSMLite → Completed) and "All systems online" badge (real status).
+- Live stats only when real (orders delivered, customers, services): never invented numbers.
+- Support block: live chat + WhatsApp; trust strip (Instant delivery, Secure payments, Expert support, Refund guarantee).
+- Footer: accepted payment badges (MonCash, NatCash, Visa/Mastercard, USDT…), columns for tools, account, customer service.
+Avoid their issue: the fixed bottom menu covers page content on phones.
+
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
 2. Admin → Suppliers screen (add supplier, test, sync, browse/import services, needs-attention list for UNKNOWN / account problems, logs).
