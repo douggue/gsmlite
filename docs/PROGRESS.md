@@ -2,6 +2,7 @@
 
 **Standing request from the owner:** always look for new features and propose your own ideas (keep the backlog below up to date).
 Working rules: risky changes on a preview branch, wait for "ship it"; API keys never in code or chat.
+No more mockups unless the owner asks (said 2026-10-21): record decisions in these notes instead.
 
 Phone-unlocking / repair-tool services site, forked from Haiti Gaming.
 
@@ -146,6 +147,17 @@ Theirs are thin (~200 words, no FAQ, no schema): GSMLite pages should be richer.
   monthly AI budget; dashboard: pages indexed, Google visits, orders from Google.
 - "Hide from Google" per service (FRP, iCloud, MDM…): no page written, noindex, not in sitemap / hubs / public price list /
   structured data, visible only to signed-in customers.
+
+## KYC levels and rules are the owner's to define (2026-10-21)
+- Levels editable in admin: Basic (email + phone code), Verified (ID/passport/licence + selfie, optional proof of address,
+  valid N years), Shop/technician (Verified + shop photos + business paper + address/WhatsApp), plus any new level built
+  from: ID, selfie, video selfie, proof of address, business paper, phone purchase receipt, custom uploads or questions.
+- Rules list, checked in order: "When <condition> [and <condition>] → <action>", each switchable on/off.
+  Conditions: top-up amount, order total, monthly spending, payment method, service or category, country, account age,
+  price group, number of orders, same device/network, risk flag.
+  Actions: require a level, send to manual review, block, no bonuses.
+- Customer message per rule, in every language; the blocked top-up/order waits and continues by itself once approved.
+- "Test a rule" tool (pick a customer + action, see which rules apply). Saving rules needs the staff 2FA code.
 
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
