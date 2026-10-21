@@ -142,7 +142,17 @@ Theirs are thin (~200 words, no FAQ, no schema): GSMLite pages should be richer.
 - Every page: keyword title + meta description, clean localized URL (/en/unlock/iphone-13-att), sample result (IMEI masked),
   steps, how to find IMEI, FAQ with FAQPage schema, Product/Offer schema, related links, brand hub, hreflang across languages.
 - Brand hubs (Apple / Samsung / Motorola IMEI check…), tool update posts (also to Telegram), guides ending with a service link.
-- Keyword ideas from Google Search Console + autocomplete (paid keyword-volume API optional); never invented volumes.
+- Keyword research is automatic (owner request 2026-10-21), weekly:
+  1. Seeds from the catalog: brands, models, carriers, tools, problems ("iphone locked to att", "samsung frp", "check blacklist").
+  2. Expand with Google suggestions / "People also ask" and related searches, through a keyword-data API (e.g. DataForSEO),
+     in every site language and target country.
+  3. Real search volume, difficulty and trend from that API (low pay-as-you-go cost, budget in admin) + Google Search Console
+     (what we already appear for). Never invented numbers.
+  4. Look at which pages rank for each keyword (competitors) to judge difficulty and what a page needs — never copy them.
+  5. Group keywords by intent → map each group to: an existing service page, a new service page, a brand hub or a guide.
+  6. Skip anything tied to "Hide from Google" services.
+  7. Score = volume × chance to rank × service margin → top ideas become drafts in the review queue (owner approves).
+  8. Track positions; pages that slip get refreshed; keywords we rank 5–20 for get priority improvements.
 - Owner approves every draft; at most N new pages a day (Google penalizes mass low-value auto pages); refresh when price/time changes;
   monthly AI budget; dashboard: pages indexed, Google visits, orders from Google.
 - Every SEO service page is also a buying page (like sickw service 105): an "Order this service" card near the top with
