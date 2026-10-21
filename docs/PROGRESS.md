@@ -116,6 +116,12 @@ time, fields the customer must give, cost, and status on my site. Click a servic
 Select many → choose category, markup %, minimum profit, price rounding → "Import as hidden drafts" or "Import and publish".
 Services the supplier removes pause on my site automatically; cost increases are flagged.
 
+## Countries (decided 2026-10-21)
+- Own (custom) services: created in admin without a supplier, delivered by hand or from license-key stock.
+- Every service: sold Worldwide / Only in these countries / Everywhere except. Hidden and refused at checkout elsewhere.
+- Every payment method: same three choices (e.g. MonCash + NatCash only Haiti; card + USDT worldwide; Pix only Brazil).
+- Country = visitor location (Cloudflare/Vercel header) + country on the account; enforced on the server, not only hidden.
+
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
 2. Admin → Suppliers screen (add supplier, test, sync, browse/import services, needs-attention list for UNKNOWN / account problems, logs).
