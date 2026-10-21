@@ -121,6 +121,9 @@ Services the supplier removes pause on my site automatically; cost increases are
 - Every service: sold Worldwide / Only in these countries / Everywhere except. Hidden and refused at checkout elsewhere.
 - Every payment method: same three choices (e.g. MonCash + NatCash only Haiti; card + USDT worldwide; Pix only Brazil).
 - Country = visitor location (Cloudflare/Vercel header) + country on the account; enforced on the server, not only hidden.
+- Owner rule: customers must see NOTHING about a payment method they can't use: no button, no footer logo, no mention in
+  slider, FAQ, guides, emails, notifications, wallet page or price list. Any text listing payment methods uses a placeholder
+  filled with the visitor's own methods (e.g. {payment_methods}). Same rule for services not sold in their country.
 
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
