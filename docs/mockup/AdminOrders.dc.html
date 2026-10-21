@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Admin orders</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F7A4D}a:hover{color:#145C39}
+</style>
+</helmet>
+<div style="box-sizing: border-box; min-height: 1000px; background: #F4F5F2; color: #111418; font-family: 'IBM Plex Sans', system-ui, sans-serif; display: flex; flex-wrap: wrap">
+<nav aria-label="Admin" style="flex: 1 1 220px; max-width: 100%; box-sizing: border-box; background: #111418; color: #C9CFC6; padding: 20px 14px; display: flex; flex-direction: column; gap: 2px; font-size: 14px">
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 20px; color: #FFFFFF; padding: 0 10px 16px">GSM<span style="color: #7CE0A8">Lite</span> admin</span>
+<a href="AdminDashboard.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Dashboard</a>
+<a href="AdminOrders.dc.html" aria-current="page" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; border-radius: 10px; background: #1F7A4D; color: #FFFFFF; text-decoration: none; font-weight: 600">Orders</a>
+<a href="Admin.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Suppliers</a>
+<a href="AdminServices.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Services &amp; prices</a>
+<a href="AdminGroups.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Price groups</a>
+<a href="AdminCustomers.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Customers</a>
+<a href="AdminKyc.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">KYC review</a>
+<a href="AdminPayments.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Payments</a>
+<a href="AdminMarketing.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Marketing</a>
+<a href="AdminSettings.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Settings &amp; staff</a>
+</nav>
+<main style="flex: 999 1 560px; min-width: 0; padding: 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
+<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 32px">Orders</h1>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+<label for="os" style="position: absolute; left: -9999px">Search orders</label>
+<input id="os" placeholder="Order #, IMEI, customer email…" style="flex: 1 1 260px; height: 44px; border: 1px solid #DCDFD8; border-radius: 10px; padding: 0 12px; font-size: 15px; font-family: 'IBM Plex Sans', sans-serif">
+<button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 10px; border: 0; background: #111418; color: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">All</button>
+<button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #DCDFD8; background: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">With supplier [8]</button>
+<button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #DCDFD8; background: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Manual [5]</button>
+<button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #E8590C; background: #FFFFFF; color: #8A3607; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Needs decision [2]</button>
+<button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #DCDFD8; background: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Done</button>
+<button type="button" style="min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #DCDFD8; background: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Refunded</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start">
+<section style="flex: 3 1 480px; background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; overflow: hidden">
+<div style="overflow-x: auto"><table style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 620px">
+<thead><tr style="text-align: left; color: #5A6058; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em"><th style="padding: 10px 14px">Order</th><th style="padding: 10px 14px">Customer</th><th style="padding: 10px 14px">Service</th><th style="padding: 10px 14px">IMEIs</th><th style="padding: 10px 14px">Status</th><th style="padding: 10px 14px">Total</th></tr></thead>
+<tbody>
+<tr style="border-top: 1px solid #ECEEE9; background: #F2FAF5"><td style="padding: 12px 14px; font-weight: 600">#[1042]</td><td style="padding: 12px 14px">[Jean P.] <span style="font-size: 12px; color: #145C39">Technician</span></td><td style="padding: 12px 14px">iPhone AT&amp;T unlock</td><td style="padding: 12px 14px">3</td><td style="padding: 12px 14px"><span style="padding: 3px 8px; border-radius: 999px; background: #DCEBFA; color: #154A80; font-size: 12px; font-weight: 600">1 done · 1 working · 1 refunded</span></td><td style="padding: 12px 14px">$[0.00]</td></tr>
+<tr style="border-top: 1px solid #ECEEE9"><td style="padding: 12px 14px; font-weight: 600">#[1041]</td><td style="padding: 12px 14px">[Marie L.]</td><td style="padding: 12px 14px">Full IMEI check</td><td style="padding: 12px 14px">1</td><td style="padding: 12px 14px"><span style="padding: 3px 8px; border-radius: 999px; background: #E4F3EA; color: #145C39; font-size: 12px; font-weight: 600">Done</span></td><td style="padding: 12px 14px">$[0.00]</td></tr>
+<tr style="border-top: 1px solid #ECEEE9"><td style="padding: 12px 14px; font-weight: 600">#[1039]</td><td style="padding: 12px 14px">[Shop Cap]</td><td style="padding: 12px 14px">Samsung unlock</td><td style="padding: 12px 14px">1</td><td style="padding: 12px 14px"><span style="padding: 3px 8px; border-radius: 999px; background: #FCEBDD; color: #8A3607; font-size: 12px; font-weight: 600">Needs decision</span></td><td style="padding: 12px 14px">$[0.00]</td></tr>
+<tr style="border-top: 1px solid #ECEEE9"><td style="padding: 12px 14px; font-weight: 600">#[1038]</td><td style="padding: 12px 14px">[Paul D.]</td><td style="padding: 12px 14px">FRP remove · remote</td><td style="padding: 12px 14px">—</td><td style="padding: 12px 14px"><span style="padding: 3px 8px; border-radius: 999px; background: #F4F5F2; color: #4A5048; font-size: 12px; font-weight: 600">Manual · waiting staff</span></td><td style="padding: 12px 14px">$[0.00]</td></tr>
+<tr style="border-top: 1px solid #ECEEE9"><td style="padding: 12px 14px; font-weight: 600">#[1037]</td><td style="padding: 12px 14px">[Rose A.]</td><td style="padding: 12px 14px">Chimera 50 credits</td><td style="padding: 12px 14px">—</td><td style="padding: 12px 14px"><span style="padding: 3px 8px; border-radius: 999px; background: #F4F5F2; color: #4A5048; font-size: 12px; font-weight: 600">Awaiting NatCash</span></td><td style="padding: 12px 14px">[0] G</td></tr>
+</tbody></table></div>
+</section>
+<aside style="flex: 2 1 320px; background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 12px" aria-labelledby="od">
+<div style="display: flex; justify-content: space-between; align-items: center"><h2 id="od" style="margin: 0; font-size: 18px">Order #[1042]</h2><span style="font-size: 13px; color: #5A6058">Wallet · USD</span></div>
+<div style="border: 1px solid #ECEEE9; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'IBM Plex Mono', monospace">356789012345678</span><span style="font-size: 13px; color: #145C39; font-weight: 600">Done · [Supplier A] ref [98213]</span><span style="font-size: 13px; color: #4A5048">“Unlocked successfully…”</span></div>
+<div style="border: 1px solid #ECEEE9; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'IBM Plex Mono', monospace">353456789012341</span><span style="font-size: 13px; color: #154A80; font-weight: 600">In process · checked [4 min] ago · [6] checks</span><div style="display: flex; flex-wrap: wrap; gap: 6px"><button type="button" style="min-height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid #DCDFD8; background: #FFFFFF; font-size: 13px; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Check now</button><button type="button" style="min-height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid #DCDFD8; background: #FFFFFF; font-size: 13px; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Deliver by hand</button><button type="button" style="min-height: 36px; padding: 0 10px; border-radius: 8px; border: 1px solid #F0C7A8; background: #FFFFFF; color: #8A3607; font-size: 13px; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Reject &amp; refund</button></div></div>
+<div style="border: 1px solid #ECEEE9; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'IBM Plex Mono', monospace">359876543210982</span><span style="font-size: 13px; color: #8A3607; font-weight: 600">Rejected by supplier · refunded $[0.00]</span><span style="font-size: 13px; color: #4A5048">“IMEI is blacklisted”</span></div>
+<h3 style="margin: 4px 0 0; font-size: 14px">History</h3>
+<ol style="margin: 0; padding-left: 18px; font-size: 13px; color: #4A5048; line-height: 1.7"><li>Paid from wallet · [10:02]</li><li>3 lines sent to [Supplier A] · [10:02]</li><li>Line 3 rejected and refunded · [10:40]</li><li>Line 1 delivered · [14:15]</li></ol>
+</aside>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1330,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

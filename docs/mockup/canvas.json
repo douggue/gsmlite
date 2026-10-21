@@ -1,0 +1,198 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Admin.dc.html": {
+      "expand": "fill",
+      "h": 980,
+      "title": "Admin \u00b7 Suppliers",
+      "w": 1330,
+      "x": 0,
+      "y": 1700
+    },
+    "Main.dc.html": {
+      "h": 1200,
+      "title": "Phone \u00b7 Home",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "Order.dc.html": {
+      "h": 1320,
+      "title": "Phone \u00b7 Order tracking",
+      "w": 406,
+      "x": 924,
+      "y": 0
+    },
+    "Service.dc.html": {
+      "h": 1320,
+      "title": "Phone \u00b7 Service + IMEI order",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "Check.dc.html": {
+      "x": 1410,
+      "y": 0,
+      "w": 390,
+      "h": 1100,
+      "title": "Phone \u00b7 Free IMEI check"
+    },
+    "Wallet.dc.html": {
+      "x": 1880,
+      "y": 0,
+      "w": 390,
+      "h": 1160,
+      "title": "Phone \u00b7 Wallet & rewards"
+    },
+    "Prices.dc.html": {
+      "x": 1450,
+      "y": 1700,
+      "w": 1100,
+      "h": 980,
+      "title": "Public price list",
+      "expand": "fill"
+    },
+    "Desktop.dc.html": {
+      "x": 0,
+      "y": 3000,
+      "w": 1440,
+      "h": 3600,
+      "title": "Desktop \u00b7 Home",
+      "expand": "fill"
+    },
+    "AdminDashboard.dc.html": {
+      "x": 0,
+      "y": 7000,
+      "w": 1330,
+      "h": 1000,
+      "title": "Admin \u00b7 Dashboard",
+      "expand": "fill"
+    },
+    "AdminOrders.dc.html": {
+      "x": 1410,
+      "y": 7000,
+      "w": 1330,
+      "h": 1000,
+      "title": "Admin \u00b7 Orders",
+      "expand": "fill"
+    },
+    "AdminServices.dc.html": {
+      "x": 0,
+      "y": 8220,
+      "w": 1330,
+      "h": 1000,
+      "title": "Admin \u00b7 Services & prices",
+      "expand": "fill"
+    },
+    "AdminGroups.dc.html": {
+      "x": 1410,
+      "y": 8220,
+      "w": 1330,
+      "h": 1000,
+      "title": "Admin \u00b7 Price groups",
+      "expand": "fill"
+    },
+    "AdminCustomers.dc.html": {
+      "x": 0,
+      "y": 9440,
+      "w": 1330,
+      "h": 1000,
+      "title": "Admin \u00b7 Customer detail",
+      "expand": "fill"
+    },
+    "AdminKyc.dc.html": {
+      "x": 1410,
+      "y": 9440,
+      "w": 1330,
+      "h": 1000,
+      "title": "Admin \u00b7 KYC review",
+      "expand": "fill"
+    },
+    "AdminPayments.dc.html": {
+      "x": 0,
+      "y": 10660,
+      "w": 1330,
+      "h": 1000,
+      "title": "Admin \u00b7 Payments",
+      "expand": "fill"
+    },
+    "AdminMarketing.dc.html": {
+      "x": 1410,
+      "y": 10660,
+      "w": 1330,
+      "h": 1000,
+      "title": "Admin \u00b7 Marketing",
+      "expand": "fill"
+    },
+    "AdminSettings.dc.html": {
+      "x": 0,
+      "y": 11880,
+      "w": 1330,
+      "h": 1000,
+      "title": "Admin \u00b7 Settings & staff",
+      "expand": "fill"
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-18T00:05:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "t1": {
+      "kind": "title1",
+      "maxW": 2270,
+      "text": "Customer app (iPhone Safari, installable)",
+      "w": 240,
+      "x": 0,
+      "y": -260
+    },
+    "t2": {
+      "kind": "title1",
+      "maxW": 2550,
+      "text": "Back office and public price list",
+      "w": 240,
+      "x": 0,
+      "y": 1440
+    },
+    "t3": {
+      "kind": "title1",
+      "maxW": 1440,
+      "text": "Desktop home (inspired by the reference layout)",
+      "x": 0,
+      "y": 2740
+    },
+    "t4": {
+      "kind": "title1",
+      "maxW": 2740,
+      "text": "Back office (admin panel)",
+      "x": 0,
+      "y": 6740
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Service.dc.html",
+    "Order.dc.html",
+    "Admin.dc.html",
+    "Check.dc.html",
+    "Wallet.dc.html",
+    "Prices.dc.html",
+    "Desktop.dc.html",
+    "AdminDashboard.dc.html",
+    "AdminOrders.dc.html",
+    "AdminServices.dc.html",
+    "AdminGroups.dc.html",
+    "AdminCustomers.dc.html",
+    "AdminKyc.dc.html",
+    "AdminPayments.dc.html",
+    "AdminMarketing.dc.html",
+    "AdminSettings.dc.html"
+  ],
+  "pages": [],
+  "title": "GSMLite Mockup"
+}

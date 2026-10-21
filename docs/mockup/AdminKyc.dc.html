@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Admin KYC review</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F7A4D}a:hover{color:#145C39}
+</style>
+</helmet>
+<div style="box-sizing: border-box; min-height: 1000px; background: #F4F5F2; color: #111418; font-family: 'IBM Plex Sans', system-ui, sans-serif; display: flex; flex-wrap: wrap">
+<nav aria-label="Admin" style="flex: 1 1 220px; max-width: 100%; box-sizing: border-box; background: #111418; color: #C9CFC6; padding: 20px 14px; display: flex; flex-direction: column; gap: 2px; font-size: 14px">
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 20px; color: #FFFFFF; padding: 0 10px 16px">GSM<span style="color: #7CE0A8">Lite</span> admin</span>
+<a href="AdminDashboard.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Dashboard</a>
+<a href="AdminOrders.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Orders</a>
+<a href="Admin.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Suppliers</a>
+<a href="AdminServices.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Services &amp; prices</a>
+<a href="AdminGroups.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Price groups</a>
+<a href="AdminCustomers.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Customers</a>
+<a href="AdminKyc.dc.html" aria-current="page" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; border-radius: 10px; background: #1F7A4D; color: #FFFFFF; text-decoration: none; font-weight: 600">KYC review</a>
+<a href="AdminPayments.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Payments</a>
+<a href="AdminMarketing.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Marketing</a>
+<a href="AdminSettings.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Settings &amp; staff</a>
+</nav>
+<main style="flex: 999 1 560px; min-width: 0; padding: 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
+<div><h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 32px">KYC review</h1><p style="margin: 4px 0 0; color: #4A5048">Documents are encrypted. Every time you open one, it is written to the audit log.</p></div>
+<div style="display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start">
+<section style="flex: 1 1 260px; background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; overflow: hidden" aria-label="Waiting">
+<h2 style="margin: 0; padding: 14px 16px; font-size: 15px; border-bottom: 1px solid #ECEEE9">Waiting [4]</h2>
+<a href="#" style="display: block; padding: 12px 16px; border-bottom: 1px solid #ECEEE9; background: #F2FAF5; color: #111418; text-decoration: none"><b style="display: block">[Shop Cap-Haïtien]</b><span style="font-size: 13px; color: #5A6058">Technician / shop · [2 h] ago</span></a>
+<a href="#" style="display: block; padding: 12px 16px; border-bottom: 1px solid #ECEEE9; color: #111418; text-decoration: none"><b style="display: block">[Marie L.]</b><span style="font-size: 13px; color: #5A6058">Verified (ID + selfie) · [5 h] ago</span></a>
+<a href="#" style="display: block; padding: 12px 16px; border-bottom: 1px solid #ECEEE9; color: #111418; text-decoration: none"><b style="display: block">[Paul D.]</b><span style="font-size: 13px; color: #5A6058">Verified · new photo sent</span></a>
+<a href="#" style="display: block; padding: 12px 16px; color: #111418; text-decoration: none"><b style="display: block">[Rose A.]</b><span style="font-size: 13px; color: #5A6058">Verified · [1 day] ago</span></a>
+</section>
+<section style="flex: 3 1 480px; background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 14px" aria-labelledby="kd">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px"><h2 id="kd" style="margin: 0; font-size: 18px">[Shop Cap-Haïtien] · asks for Technician level</h2><span style="font-size: 13px; color: #5A6058">Account [3 weeks] old · [12] orders</span></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px">
+<figure style="margin: 0"><div style="aspect-ratio: 4 / 3; border-radius: 12px; background: #E9EBE6; display: grid; place-items: center; color: #5A6058; font-size: 13px">ID card (front)</div><figcaption style="font-size: 12px; color: #5A6058; margin-top: 4px">Opened by you · logged</figcaption></figure>
+<figure style="margin: 0"><div style="aspect-ratio: 4 / 3; border-radius: 12px; background: #E9EBE6; display: grid; place-items: center; color: #5A6058; font-size: 13px">Selfie with ID</div></figure>
+<figure style="margin: 0"><div style="aspect-ratio: 4 / 3; border-radius: 12px; background: #E9EBE6; display: grid; place-items: center; color: #5A6058; font-size: 13px">Shop photo / business paper</div></figure>
+</div>
+<dl style="margin: 0; display: grid; grid-template-columns: 160px 1fr; row-gap: 8px; font-size: 14px">
+<dt style="color: #5A6058">Name on ID</dt><dd style="margin: 0">[Name] <span style="color: #145C39; font-weight: 600">matches account</span></dd>
+<dt style="color: #5A6058">Shop</dt><dd style="margin: 0">[Shop name] · [City] · [WhatsApp]</dd>
+<dt style="color: #5A6058">Same device as</dt><dd style="margin: 0">No other account</dd>
+</dl>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<button type="button" style="min-height: 44px; padding: 0 16px; border-radius: 10px; border: 0; background: #1F7A4D; color: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Approve · join Technician group</button>
+<button type="button" style="min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid #DCDFD8; background: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Ask for a new photo</button>
+<button type="button" style="min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid #F0C7A8; background: #FFFFFF; color: #8A3607; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Reject with reason</button>
+</div>
+<p style="margin: 0; font-size: 12px; color: #5A6058">The customer gets a notification with your decision. Documents are deleted [12 months] after the account closes.</p>
+</section>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1330,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Admin customer detail</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F7A4D}a:hover{color:#145C39}
+</style>
+</helmet>
+<div style="box-sizing: border-box; min-height: 1000px; background: #F4F5F2; color: #111418; font-family: 'IBM Plex Sans', system-ui, sans-serif; display: flex; flex-wrap: wrap">
+<nav aria-label="Admin" style="flex: 1 1 220px; max-width: 100%; box-sizing: border-box; background: #111418; color: #C9CFC6; padding: 20px 14px; display: flex; flex-direction: column; gap: 2px; font-size: 14px">
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 20px; color: #FFFFFF; padding: 0 10px 16px">GSM<span style="color: #7CE0A8">Lite</span> admin</span>
+<a href="AdminDashboard.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Dashboard</a>
+<a href="AdminOrders.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Orders</a>
+<a href="Admin.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Suppliers</a>
+<a href="AdminServices.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Services &amp; prices</a>
+<a href="AdminGroups.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Price groups</a>
+<a href="AdminCustomers.dc.html" aria-current="page" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; border-radius: 10px; background: #1F7A4D; color: #FFFFFF; text-decoration: none; font-weight: 600">Customers</a>
+<a href="AdminKyc.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">KYC review</a>
+<a href="AdminPayments.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Payments</a>
+<a href="AdminMarketing.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Marketing</a>
+<a href="AdminSettings.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Settings &amp; staff</a>
+</nav>
+<main style="flex: 999 1 560px; min-width: 0; padding: 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 10px">
+<div><a href="#" style="font-size: 14px">← Customers</a><h1 style="margin: 4px 0 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 32px">[Jean Pierre]</h1><span style="font-size: 14px; color: #5A6058">[jean@example.com] · [+509 ••••] · joined [Oct 2026]</span></div>
+<span style="display: flex; flex-wrap: wrap; gap: 6px"><span style="padding: 5px 10px; border-radius: 999px; background: #111418; color: #7CE0A8; font-size: 12px; font-weight: 600">Technician group</span><span style="padding: 5px 10px; border-radius: 999px; background: #E4F3EA; color: #145C39; font-size: 12px; font-weight: 600">KYC: Shop verified</span><span style="padding: 5px 10px; border-radius: 999px; background: #E4F3EA; color: #145C39; font-size: 12px; font-weight: 600">Active</span></span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px">
+<div style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; padding: 14px"><span style="font-size: 13px; color: #5A6058">Wallet USD</span><b style="display: block; font-size: 24px">$[0.00]</b></div>
+<div style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; padding: 14px"><span style="font-size: 13px; color: #5A6058">Wallet HTG</span><b style="display: block; font-size: 24px">[0] G</b></div>
+<div style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; padding: 14px"><span style="font-size: 13px; color: #5A6058">Spent this month</span><b style="display: block; font-size: 24px">$[0.00]</b></div>
+<div style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; padding: 14px"><span style="font-size: 13px; color: #5A6058">Orders · success</span><b style="display: block; font-size: 24px">[0] · [0]%</b></div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start">
+<section style="flex: 2 1 400px; background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; overflow: hidden">
+<h2 style="margin: 0; padding: 14px 16px; font-size: 16px; border-bottom: 1px solid #ECEEE9">Recent activity</h2>
+<div style="display: flex; justify-content: space-between; padding: 11px 16px; border-bottom: 1px solid #ECEEE9; font-size: 14px"><span>Order #[1042] · 3 unlocks</span><span>−$[0.00]</span></div>
+<div style="display: flex; justify-content: space-between; padding: 11px 16px; border-bottom: 1px solid #ECEEE9; font-size: 14px"><span>MonCash top-up</span><span style="color: #145C39">+[0] G</span></div>
+<div style="display: flex; justify-content: space-between; padding: 11px 16px; border-bottom: 1px solid #ECEEE9; font-size: 14px"><span>Refund · order #[1042]</span><span style="color: #145C39">+$[0.00]</span></div>
+<div style="display: flex; justify-content: space-between; padding: 11px 16px; font-size: 14px"><span>Referral reward · [Paul D.]</span><span style="color: #145C39">+$[0.00]</span></div>
+</section>
+<aside style="flex: 1 1 260px; display: flex; flex-direction: column; gap: 14px">
+<div style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px"><b>Actions</b>
+<button type="button" style="min-height: 40px; border-radius: 10px; border: 1px solid #DCDFD8; background: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Change price group</button>
+<button type="button" style="min-height: 40px; border-radius: 10px; border: 1px solid #DCDFD8; background: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Adjust wallet (needs 2FA)</button>
+<button type="button" style="min-height: 40px; border-radius: 10px; border: 1px solid #DCDFD8; background: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Send password reset link</button>
+<button type="button" style="min-height: 40px; border-radius: 10px; border: 1px solid #F0C7A8; background: #FFFFFF; color: #8A3607; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">Restrict or suspend</button></div>
+<div style="background: #FCEBDD; border-radius: 16px; padding: 14px; font-size: 13px; color: #3A2414"><b style="display: block">Same device as 1 other account</b>[Rose A.] signed in from this phone. Check before giving bonuses.</div>
+</aside>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1330,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

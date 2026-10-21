@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Admin marketing</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F7A4D}a:hover{color:#145C39}
+</style>
+</helmet>
+<div style="box-sizing: border-box; min-height: 1000px; background: #F4F5F2; color: #111418; font-family: 'IBM Plex Sans', system-ui, sans-serif; display: flex; flex-wrap: wrap">
+<nav aria-label="Admin" style="flex: 1 1 220px; max-width: 100%; box-sizing: border-box; background: #111418; color: #C9CFC6; padding: 20px 14px; display: flex; flex-direction: column; gap: 2px; font-size: 14px">
+<span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 20px; color: #FFFFFF; padding: 0 10px 16px">GSM<span style="color: #7CE0A8">Lite</span> admin</span>
+<a href="AdminDashboard.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Dashboard</a>
+<a href="AdminOrders.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Orders</a>
+<a href="Admin.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Suppliers</a>
+<a href="AdminServices.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Services &amp; prices</a>
+<a href="AdminGroups.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Price groups</a>
+<a href="AdminCustomers.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Customers</a>
+<a href="AdminKyc.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">KYC review</a>
+<a href="AdminPayments.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Payments</a>
+<a href="AdminMarketing.dc.html" aria-current="page" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; border-radius: 10px; background: #1F7A4D; color: #FFFFFF; text-decoration: none; font-weight: 600">Marketing</a>
+<a href="AdminSettings.dc.html" style="min-height: 38px; display: flex; align-items: center; padding: 0 10px; color: #C9CFC6; text-decoration: none">Settings &amp; staff</a>
+</nav>
+<main style="flex: 999 1 560px; min-width: 0; padding: 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
+<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 32px">Marketing</h1>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px">
+<section style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px"><b>Home slider</b>
+<div style="display: flex; justify-content: space-between; padding: 10px; border: 1px solid #ECEEE9; border-radius: 10px; font-size: 14px"><span>+[10]% first top-up</span><span style="color: #145C39; font-weight: 600">Live · until [date]</span></div>
+<div style="display: flex; justify-content: space-between; padding: 10px; border: 1px solid #ECEEE9; border-radius: 10px; font-size: 14px"><span>[UnlockTool] new version</span><span style="color: #5A6058">Scheduled [date]</span></div>
+<button type="button" style="align-self: flex-start; min-height: 40px; padding: 0 12px; border-radius: 10px; border: 1px dashed #A9B0A6; background: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">+ New slide</button></section>
+<section style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px"><b>Deal of the week</b>
+<label style="font-size: 13px; font-weight: 600">Service<select style="display: block; width: 100%; margin-top: 4px; height: 42px; border: 1px solid #DCDFD8; border-radius: 10px; padding: 0 8px; font-size: 15px"><option>[Samsung network unlock]</option></select></label>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; font-size: 13px; font-weight: 600"><label>Deal price<input value="$[0.00]" style="display: block; width: 100%; box-sizing: border-box; margin-top: 4px; height: 42px; border: 1px solid #DCDFD8; border-radius: 10px; padding: 0 10px"></label><label>Ends<input value="[Sunday]" style="display: block; width: 100%; box-sizing: border-box; margin-top: 4px; height: 42px; border: 1px solid #DCDFD8; border-radius: 10px; padding: 0 10px"></label></div>
+<label style="display: flex; gap: 8px; font-size: 14px"><input type="checkbox" checked> Announce on Telegram and WhatsApp</label></section>
+<section style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 14px"><b>Bonuses and free offers</b>
+<div style="display: flex; justify-content: space-between"><span>First top-up bonus</span><b>[10]%</b></div>
+<div style="display: flex; justify-content: space-between"><span>Top-up bonus from $[50]</span><b>[3]%</b></div>
+<div style="display: flex; justify-content: space-between"><span>Free IMEI checks per day</span><b>[3]</b></div>
+<div style="display: flex; justify-content: space-between"><span>Welcome credit (after 1st top-up)</span><b>$[0.50]</b></div>
+<div style="display: flex; justify-content: space-between"><span>Referral reward, each side</span><b>$[2]</b></div></section>
+<section style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 14px"><b>Automatic messages</b>
+<label style="display: flex; gap: 8px"><input type="checkbox" checked> Technician inactive [14] days → bonus offer</label>
+<label style="display: flex; gap: 8px"><input type="checkbox" checked> After an unlock → "check or unlock your next phone"</label>
+<label style="display: flex; gap: 8px"><input type="checkbox" checked> Service back online → Telegram alert</label>
+<label style="display: flex; gap: 8px"><input type="checkbox"> New tool version → Telegram post</label></section>
+<section style="background: #FFFFFF; border: 1px solid #DCDFD8; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 14px"><b>Latest tool updates</b>
+<div style="display: flex; justify-content: space-between"><span>[UnlockTool] v[0.0.0]</span><a href="#">Edit</a></div>
+<div style="display: flex; justify-content: space-between"><span>[Chimera] v[0.0.0]</span><a href="#">Edit</a></div>
+<button type="button" style="align-self: flex-start; min-height: 40px; padding: 0 12px; border-radius: 10px; border: 1px dashed #A9B0A6; background: #FFFFFF; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif">+ Post an update</button></section>
+<section style="background: #111418; color: #FFFFFF; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 6px; font-size: 14px"><b>This month</b>
+<span>Free checks used: [0] → unlocks ordered after: [0]</span>
+<span>Referrals: [0] signed up, [0] ordered</span>
+<span>Bonuses paid: $[0.00]</span>
+<span style="color: #7CE0A8">Telegram members: [0]</span></section>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1330,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
