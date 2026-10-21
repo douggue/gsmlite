@@ -149,7 +149,11 @@ Theirs are thin (~200 words, no FAQ, no schema): GSMLite pages should be richer.
   price (the visitor's group price when signed in), delivery time, real success rate, and the service's own order form
   (IMEI box with live check, serial, dropdowns, uploads… from the form builder), then "Order now" / "Add to cart".
   On phones the card sits right under the title, with a sticky bar ("Add to cart" + "Order now") while reading. Cart holds several services and IMEIs, paid once, saved across devices. Signed-out visitors can fill
-  the form; sign-in/sign-up comes at payment and keeps what they typed. Article text (sample result, steps, FAQ) comes after.
+  the form; sign-in/sign-up comes at payment and keeps what they typed.
+- Connecting the writer: AI provider chosen in admin (Claude by default; built so another provider can be plugged in).
+  The provider's API key goes ONLY in the hosting env vars (Vercel while testing, server env file later), never in chat,
+  code or the admin screen; admin shows "Connected", model choice, monthly budget, tone/brand voice, a "Write a test page"
+  button. Google Search Console connected by Google sign-in for keyword ideas and traffic numbers. Article text (sample result, steps, FAQ) comes after.
 - "Hide from Google" per service (FRP, iCloud, MDM…): no page written, noindex, not in sitemap / hubs / public price list /
   structured data, visible only to signed-in customers.
 
