@@ -223,6 +223,26 @@ To add / verify:
 - Feature ideas seen there worth adding to the backlog: passkey sign-in (already planned), saying the IMEI by voice
   (test on iPhone Safari first), favourites list, bulk check with CSV / Excel export (already in backlog).
 
+## Settings must be complete (owner feedback 2026-10-21: mockup Settings page too vague, e.g. no logo upload)
+Settings area with a left list of sections, each its own page:
+1. Brand & appearance: site name, logo (light + dark), favicon and app icon (home-screen icon for iPhone), social share image,
+   colors, fonts, default light/dark, homepage slider link. (Haiti Gaming already had logo/appearance upload: reuse.)
+2. Business info: legal name, address, hours, support WhatsApp, Telegram, email, social links.
+3. Languages & countries: languages on/off, default language, sold-to countries, currency per country.
+4. Money: USD/HTG rate, rounding, deposit min/max, holds, review thresholds, two-person approval amount.
+5. Payment methods: add/edit methods, logo, instructions per language, countries, fees, min/max (connections show "Connected";
+   keys only in env).
+6. Suppliers defaults: markup, minimum profit, price rounding, check interval, low-balance alerts.
+7. Orders: auto-refund rules, success-rate thresholds, auto-pause, order number format.
+8. KYC: levels, documents, rules (see KYC section).
+9. Notifications: email sender, templates per language, push, WhatsApp, Telegram bot, what staff get alerted about.
+10. SEO & content machine: default titles/descriptions, sitemap, Google Search Console, analytics, AI writer, DataForSEO, budgets.
+11. Security: customer 2FA policy, staff session timeout, admin IP allowlist, bot check, device limits.
+12. Staff & roles, Audit log.
+13. Legal pages: terms, privacy, refund policy, cookie notice (editor per language).
+14. Maintenance mode, data export, backups status.
+Every change logged; sensitive sections ask for the 2FA code again.
+
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
 2. Admin → Suppliers screen (add supplier, test, sync, browse/import services, needs-attention list for UNKNOWN / account problems, logs).
