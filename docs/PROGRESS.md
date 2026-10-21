@@ -101,6 +101,13 @@ Ideas to adapt in GSMLite's own style (ink + green, not their navy + orange):
 - Support block: live chat + WhatsApp; trust strip (Instant delivery, Secure payments, Expert support, Refund guarantee).
 - Footer: accepted payment badges (MonCash, NatCash, Visa/Mastercard, USDT…), columns for tools, account, customer service.
 Avoid their issue: the fixed bottom menu covers page content on phones.
+Desktop layout seen in the owner's screenshots (2026-10-21): thin top bar (delivery, wallet currencies, support, currency/language) ·
+header with logo, wide search, cart, Sign in / Register · category menu row with "Hot" badges · 3 columns under it:
+left "Top categories" list with tool icons, center promo slider (tool update / offer, 05/14 counter), right "Welcome" sign-in card + Quick links
+(Today's deal, Best sellers, New arrivals, Trending) · quick actions row (Add funds, Place order, My orders, Track order) ·
+Shop by category tiles · Deal of the day carousel (big product art, title, price, heart, add-to-cart) · two promo banners side by side
+(Server credits, IMEI check) · Top brands with tabs per tool (license length × new/renewal) · Best sellers tabs (Official, Trending, New, Most demanded).
+Product art: each service needs a square image; plan an admin image generator (tool logo + "12 MONTHS" + New/Renewal ribbon) so cards look uniform.
 
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
