@@ -194,6 +194,25 @@ Theirs are thin (~200 words, no FAQ, no schema): GSMLite pages should be richer.
 - Optional hint with the main rejection reason (e.g. "Most rejections: blacklisted phones. Run an IMEI check first").
 - Admin: per service and per supplier; alert below a chosen level; optional auto-pause; later, route to the best supplier.
 
+## Security plan (owner: "this website needs to be well secured", 2026-10-21)
+Already in the code base: Argon2id passwords + breached-password check, HttpOnly sessions, mandatory TOTP 2FA for staff + re-confirm
+before sensitive actions, two-person approval for big wallet changes, server-side permission checks, audit log, append-only
+double-entry ledger with DB constraints (no negative balances, no edits), idempotency keys, rate-limited auth, Turnstile bot check,
+one-time payment references, held deposits, multi-account device detection, AES-256-GCM encryption, security headers.
+To add / verify:
+- Customer accounts: optional→encouraged 2FA (passkeys too), new-device sign-in alert, sign-out everywhere, withdrawals none.
+- Orders/wallet: every order/IMEI/result checked against the owner (no reading others' orders by changing an id); row locks on money.
+- Secrets: supplier keys + KYC files + remote passwords encrypted; platform keys only in env vars; key rotation guide.
+- KYC files: private storage, short-lived signed links, staff permission + logged views, auto-delete.
+- Web: strict Content-Security-Policy, CSRF/origin checks, input validation (zod) everywhere, output escaping, upload checks
+  (type sniffing, size, re-encode images), no user HTML; supplier results shown as plain text.
+- Abuse: rate limits per IP/account on sign-in, checks, orders, top-ups; free-check limits; Cloudflare WAF + DDoS in front.
+- Admin: separate admin path, IP allowlist option for admin, staff session timeout, least-privilege roles.
+- VPS: SSH keys only (no root/password login), firewall (only 80/443 + SSH), automatic security updates, fail2ban, DB not
+  reachable from internet, app runs as non-root in Docker, daily encrypted off-site backups + tested restore, staging separate.
+- Process: dependency updates + vulnerability scan in CI, security review on every risky change (preview branch), error
+  monitoring, uptime checks, an outside penetration test before launch.
+
 ## Still to do
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
 2. Admin → Suppliers screen (add supplier, test, sync, browse/import services, needs-attention list for UNKNOWN / account problems, logs).
