@@ -1,6 +1,9 @@
 import type { MetadataRoute } from "next";
 import { getSettings } from "@/lib/settings";
 
+// Built on each request (the icon can change in Settings), never at build time when there is no database.
+export const dynamic = "force-dynamic";
+
 /** Install manifest. Icons come from Settings → Brand (built-in until an icon is uploaded). */
 export default async function manifest(): Promise<MetadataRoute.Manifest> {
   const s = await getSettings();

@@ -9,9 +9,11 @@ RUN npm ci --no-audit --no-fund
 FROM deps AS build
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1 NEXT_OUTPUT=standalone
-# Build-time placeholders only: real values come from the env file at run time.
-RUN DATABASE_URL=postgresql://build:build@localhost:5432/build DATABASE_URL_UNPOOLED=postgresql://build:build@localhost:5432/build \
-    npx prisma generate && npx next build
+# Build-time placeholders only (this stage is not shipped): real values come from the env file at run time.
+ENV DATABASE_URL=postgresql://build:build@localhost:5432/build \
+    DATABASE_URL_UNPOOLED=postgresql://build:build@localhost:5432/build \
+    BETTER_AUTH_SECRET=build-only-placeholder-build-only-placeholder
+RUN npx prisma generate && npx next build
 
 # One-shot migrations (docker compose runs it before the app starts)
 FROM deps AS migrate
