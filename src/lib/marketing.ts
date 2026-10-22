@@ -32,6 +32,17 @@ export async function announceChange(kind: "NEW" | "PRICE_DOWN" | "BACK", produc
   await channelPost(text, `/products/${p.slug}`, "Order");
 }
 
+/** A tool update was published → channel (when "tool updates to Telegram" is on). */
+export async function announceToolUpdate(articleId: string) {
+  const s = await getSettings();
+  if (!s.autoMessages.toolUpdateTelegram || !s.telegramChannel) return;
+  const a = await prisma.newsArticle.findUnique({ where: { id: articleId } });
+  if (!a || !a.isPublished || a.kind !== "tool") return;
+  const summary = t(a.excerpt, "en");
+  const text = `🛠 ${a.toolName ?? t(a.title, "en")}${a.version ? ` ${a.version}` : ""} is out${summary ? `\n${summary}` : ""}`;
+  await channelPost(text, `/news/${a.slug}`, "Read more");
+}
+
 /**
  * Daily customer messages (Marketing → Automatic messages):
  * - customers in a price group (technicians) with no order for N days get one "new services are waiting" message

@@ -8,6 +8,7 @@ import { getSettings, setSetting, fullTheme, type ThemeConfig } from "@/lib/sett
 import { normalizeHomepage, type HomepageConfig } from "@/lib/homepage";
 import { isOwnImageUrl } from "@/lib/storage";
 import { contrastRatio } from "@/lib/color";
+import { announceToolUpdate } from "@/lib/marketing";
 
 type R = { ok: true; message?: string } | { ok: false; error: string };
 const fail = (e: unknown): R => ({ ok: false, error: e instanceof Error ? e.message : "Unexpected error" });
@@ -55,6 +56,8 @@ export async function restoreHomepage(index: number): Promise<R> {
 
 // ───────────── News ─────────────
 
+const NEWS_KINDS = ["post", "tool", "feature", "security", "howto"] as const;
+
 export async function saveNews(form: FormData): Promise<R & { id?: string }> {
   try {
     const staff = await assertStaff("content.manage");
@@ -69,8 +72,16 @@ export async function saveNews(form: FormData): Promise<R & { id?: string }> {
     const dateRaw = String(form.get("publishedAt") ?? "");
     const publishedAt = dateRaw ? new Date(dateRaw) : isPublished ? new Date() : null;
     if (publishedAt && Number.isNaN(publishedAt.getTime())) return { ok: false, error: "Invalid publish date" };
-    const data = { slug, title, excerpt: localized(form, "excerpt", 300), body: localized(form, "body", 20_000), image: image || null, isPublished, publishedAt };
+    const kindRaw = String(form.get("kind") ?? "post");
+    const kind = NEWS_KINDS.includes(kindRaw as (typeof NEWS_KINDS)[number]) ? kindRaw : "post";
+    const toolName = kind === "tool" ? String(form.get("toolName") ?? "").trim().slice(0, 80) || null : null;
+    const version = kind === "tool" ? String(form.get("version") ?? "").trim().slice(0, 40) || null : null;
+    if (kind === "tool" && !toolName) return { ok: false, error: "Type the tool name (e.g. UnlockTool)" };
+    const data = { slug, kind, toolName, version, title, excerpt: localized(form, "excerpt", 300), body: localized(form, "body", 20_000), image: image || null, isPublished, publishedAt };
+    const before = id ? await prisma.newsArticle.findUnique({ where: { id }, select: { isPublished: true } }) : null;
     const a = id ? await prisma.newsArticle.update({ where: { id }, data }) : await prisma.newsArticle.create({ data });
+    // First publish of a tool update → Telegram channel (Marketing → Automatic messages)
+    if (isPublished && !before?.isPublished && kind === "tool") await announceToolUpdate(a.id).catch(() => undefined);
     await audit(staff.id, id ? "news.update" : "news.create", "NewsArticle", a.id, { slug, isPublished });
     revalidatePath("/", "layout");
     return { ok: true, id: a.id, message: "Saved" };
