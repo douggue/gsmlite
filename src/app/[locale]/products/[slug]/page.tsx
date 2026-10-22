@@ -1,3 +1,5 @@
+import { servicePageContent } from "@/lib/content/machine";
+import { SeoArticle } from "@/components/shop/SeoArticle";
 import { siteUrl } from "@/lib/site-url";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -35,8 +37,10 @@ export async function generateMetadata({ params }: { params: P }): Promise<Metad
   const { locale, slug } = await params;
   const p = await load(slug);
   if (!p) return {};
-  const title = t(p.seoTitle, locale) || t(p.name, locale);
-  const description = t(p.seoDescription, locale) || t(p.description, locale).slice(0, 160);
+  // An approved content-machine page gives the search title and description when staff left them empty.
+  const written = p.hideFromGoogle ? null : await servicePageContent(p.id, locale);
+  const title = t(p.seoTitle, locale) || written?.title || t(p.name, locale);
+  const description = t(p.seoDescription, locale) || written?.description || t(p.description, locale).slice(0, 160);
   return {
     title,
     description,
@@ -62,6 +66,7 @@ export default async function ProductPage({ params }: { params: P }) {
   const product = await load(slug);
   if (!product) notFound();
   const user = await getUser();
+  const written = product.hideFromGoogle ? null : await servicePageContent(product.id, locale);
   const country = await shopperCountry(user);
   // Not sold here: nothing about it is shown. "Hide from Google" services: signed-in customers only.
   if (!allowedIn(product, country)) notFound();
@@ -225,6 +230,8 @@ export default async function ProductPage({ params }: { params: P }) {
         ) : <div />}
 
         <div>{images.length > 0 && <div className="max-w-xl"><ProductGallery name={name} accent={product.accent} images={images} /></div>}</div>
+
+        <div>{written && <SeoArticle page={written} stepsTitle={g("seo.steps")} faqTitle={g("seo.faq")} />}</div>
       </div>
 
       {related.length > 0 && (

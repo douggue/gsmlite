@@ -1142,6 +1142,13 @@
       "sub": "Une vérification rapide avec une photo de votre atelier. Souvent validée le jour même.",
       "cta": "Demander les prix technicien",
       "waiting": "Votre demande est en cours de vérification. Nous vous prévenons dès que c'est fait."
+    },
+    "seo": {
+      "steps": "Comment ça marche",
+      "faq": "Questions",
+      "hubServices": "Services",
+      "guides": "Guides",
+      "readGuide": "Lire"
     }
   }
 }

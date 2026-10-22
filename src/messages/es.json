@@ -1142,6 +1142,13 @@
       "sub": "Una verificación rápida con una foto de tu taller. Normalmente aprobada el mismo día.",
       "cta": "Pedir precios de técnico",
       "waiting": "Estamos revisando tu solicitud. Te avisamos en cuanto termine."
+    },
+    "seo": {
+      "steps": "Cómo funciona",
+      "faq": "Preguntas",
+      "hubServices": "Servicios",
+      "guides": "Guías",
+      "readGuide": "Leer"
     }
   }
 }

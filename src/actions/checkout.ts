@@ -1,5 +1,6 @@
 "use server";
 import { closedFor } from "@/lib/maintenance";
+import { cookies } from "next/headers";
 import { rateLimit } from "@/lib/rate-limit";
 import { prisma } from "@/lib/db";
 import { assertUser } from "@/lib/session";
@@ -38,7 +39,7 @@ export async function placeOrder(raw: unknown): Promise<PlaceOrderResult> {
   const { items, currency, method, note, manualMethodId } = parsed.data;
 
   try {
-    const order = await createOrder({ userId: user.id, items, currency, method, manualMethodId, recipientNote: note, country: await shopperCountry(user) });
+    const order = await createOrder({ userId: user.id, items, currency, method, manualMethodId, recipientNote: note, country: await shopperCountry(user), trafficSource: (await cookies()).get("gl_src")?.value ?? null });
     await rememberPlayerIds(user.id, items);
 
     if (method === "MONCASH") {

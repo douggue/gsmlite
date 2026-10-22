@@ -4,6 +4,9 @@ import { ContentPage } from "@/components/ContentPage";
 import { pageSeo } from "@/lib/seo";
 import { getDisplaySettings } from "@/lib/settings";
 import { PayLogo } from "@/components/PayLogo";
+import { prisma } from "@/lib/db";
+import { Link } from "@/i18n/navigation";
+import type { PageContent } from "@/lib/content/machine";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -13,7 +16,13 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function GuidesPage({ params }: { params: Promise<{ locale: string }> }) {
   setRequestLocale((await params).locale);
-  const [t, s] = await Promise.all([getTranslations("pages"), getDisplaySettings()]);
+  const locale = (await params).locale;
+  const [t, s, written, gs] = await Promise.all([
+    getTranslations("pages"),
+    getDisplaySettings(),
+    prisma.contentPage.findMany({ where: { kind: "guide", status: "PUBLISHED" }, orderBy: { publishedAt: "desc" }, take: 60 }),
+    getTranslations("gl.seo"),
+  ]);
   const guides = [
     { id: "moncash", title: t("guideMoncashTitle"), steps: t.raw("guideMoncash") as string[], badge: <PayLogo brand="moncash" height={26} /> },
     { id: "natcash", title: t("guideNatcashTitle"), steps: t.raw("guideNatcash") as string[], badge: <PayLogo brand="natcash" height={26} />, extra: `${s.natcashRecipientName} · ${s.natcashRecipientPhone}` },
@@ -21,6 +30,17 @@ export default async function GuidesPage({ params }: { params: Promise<{ locale:
   ];
   return (
     <ContentPage title={t("guidesTitle")}>
+      {written.length > 0 && (
+        <ul className="grid gap-3 sm:grid-cols-2">
+          {written.map((w) => {
+            const c = w.content as unknown as PageContent;
+            const p = c[locale] ?? c.en ?? Object.values(c)[0];
+            return p ? (
+              <li key={w.id}><Link href={`/guides/${w.slug}`} className="card block h-full p-4 hover:border-primary"><b className="block">{p.title}</b><span className="mt-1 block text-sm text-muted">{p.description}</span><span className="mt-2 block text-sm font-semibold text-primary">{gs("readGuide")} →</span></Link></li>
+            ) : null;
+          })}
+        </ul>
+      )}
       <nav className="flex flex-wrap gap-2">
         {guides.map((g) => <a key={g.id} href={`#${g.id}`} className="badge border border-border bg-surface px-3 py-1.5">{g.title}</a>)}
       </nav>

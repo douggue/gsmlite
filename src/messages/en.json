@@ -1142,6 +1142,13 @@
       "sub": "A quick shop check with a photo of your shop. Usually approved the same day.",
       "cta": "Request technician prices",
       "waiting": "Your request is being checked. We'll tell you as soon as it's done."
+    },
+    "seo": {
+      "steps": "How it works",
+      "faq": "Questions",
+      "hubServices": "Services",
+      "guides": "Guides",
+      "readGuide": "Read"
     }
   }
 }

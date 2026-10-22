@@ -18,6 +18,16 @@ export default function middleware(req: NextRequest) {
   if (ref && /^[A-Z0-9]{6,12}$/i.test(ref)) {
     res.cookies.set("gl_ref", ref.toUpperCase(), { path: "/", maxAge: 60 * 60 * 24 * 30, sameSite: "lax", httpOnly: true });
   }
+  // First traffic source (google, bing, telegram, facebook…), for "orders from Google" in the content machine.
+  if (!req.cookies.get("gl_src")) {
+    const utm = req.nextUrl.searchParams.get("utm_source")?.toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 20);
+    let src = utm || "";
+    try {
+      const host = new URL(req.headers.get("referer") ?? "").hostname;
+      if (!src && host && host !== req.nextUrl.hostname) src = /(^|\.)google\./.test(host) ? "google" : /bing\./.test(host) ? "bing" : /t\.me|telegram/.test(host) ? "telegram" : /facebook|fb\./.test(host) ? "facebook" : "other";
+    } catch {}
+    if (src) res.cookies.set("gl_src", src, { path: "/", maxAge: 60 * 60 * 24 * 30, sameSite: "lax", httpOnly: true });
+  }
   // Anonymous browser id, used only to spot several accounts created from one device.
   if (!req.cookies.get("gl_dev")) {
     res.cookies.set("gl_dev", crypto.randomUUID().replace(/-/g, ""), { path: "/", maxAge: 60 * 60 * 24 * 400, sameSite: "lax", httpOnly: true, secure: req.nextUrl.protocol === "https:" });

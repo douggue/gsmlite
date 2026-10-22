@@ -178,3 +178,7 @@ export async function saveGscSite(form: FormData): Promise<R> {
     return fail(e);
   }
 }
+
+export async function editDraftForm(form: FormData): Promise<R> {
+  return editDraft(String(form.get("id") ?? ""), String(form.get("json") ?? ""));
+}

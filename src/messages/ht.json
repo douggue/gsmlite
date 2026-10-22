@@ -1142,6 +1142,13 @@
       "sub": "Yon ti verifikasyon ak yon foto boutik ou. Souvan apwouve menm jou a.",
       "cta": "Mande pri teknisyen",
       "waiting": "N ap verifye demann ou an. N ap di w lè l fini."
+    },
+    "seo": {
+      "steps": "Kijan sa mache",
+      "faq": "Kesyon",
+      "hubServices": "Sèvis yo",
+      "guides": "Gid",
+      "readGuide": "Li"
     }
   }
 }

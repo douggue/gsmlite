@@ -138,6 +138,8 @@ export async function createOrder(input: {
   source?: "WEB" | "API";
   /** Shopper's country: services and payment methods not offered there are refused */
   country?: string | null;
+  /** Where the customer first came from (gl_src cookie) */
+  trafficSource?: string | null;
 }) {
   const settings = await getSettings();
   let manualCurrency: Currency = "HTG";
@@ -198,6 +200,7 @@ export async function createOrder(input: {
         recipientNote: input.recipientNote?.slice(0, 300) || null,
         accessToken: randomToken(),
         source: input.source ?? "WEB",
+        trafficSource: input.trafficSource ?? null,
         items: {
           create: lines.map(({ unitUsd, ...l }) => ({ ...l, priceUsd: unitUsd, fieldValues: l.fieldValues as Prisma.InputJsonValue })),
         },

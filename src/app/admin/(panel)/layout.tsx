@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   const user = await requireStaff();
-  const [settings, reviews, risks, processing, approvals, tickets, newReviews, supplierIssues, kycWaiting] = await Promise.all([
+  const [settings, reviews, risks, processing, approvals, tickets, newReviews, supplierIssues, kycWaiting, contentDrafts] = await Promise.all([
     getSettings(),
     prisma.paymentIntent.count({ where: { status: "REVIEW" } }),
     prisma.riskFlag.count({ where: { status: "OPEN" } }),
@@ -19,6 +19,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
     prisma.review.count({ where: { status: "pending" } }),
     supplierAttentionCount(),
     prisma.kycSubmission.count({ where: { status: "PENDING" } }),
+    prisma.contentPage.count({ where: { status: "DRAFT" } }),
   ]);
   const all: { href: string; label: string; group: string; perm: Permission; badge?: number; alert?: boolean }[] = [
     { href: "/admin", label: "Dashboard", group: "", perm: "dashboard.view" },
@@ -40,6 +41,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
     { href: "/admin/referrals", label: "Referrals", group: "Customers", perm: "referrals.manage" },
     { href: "/admin/analytics", label: "Reports", group: "Customers", perm: "analytics.view" },
     { href: "/admin/marketing", label: "Marketing", group: "Growth", perm: "content.manage" },
+    { href: "/admin/content", label: "Content machine", group: "Growth", perm: "content.manage", badge: contentDrafts },
     { href: "/admin/content", label: "Content machine", group: "Growth", perm: "seo.manage" },
     { href: "/admin/news", label: "News & tool updates", group: "Growth", perm: "content.manage" },
     { href: "/admin/homepage", label: "Homepage", group: "Growth", perm: "content.manage" },
