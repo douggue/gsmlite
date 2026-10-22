@@ -43,6 +43,13 @@ export async function announceToolUpdate(articleId: string) {
   await channelPost(text, `/news/${a.slug}`, "Read more");
 }
 
+/** Customers who already got this message since `since` (the cron runs every few minutes). */
+async function sentSince(type: string, userIds: string[], since: Date) {
+  if (!userIds.length) return new Set<string>();
+  const rows = await prisma.notification.findMany({ where: { type, userId: { in: userIds }, createdAt: { gte: since } }, select: { userId: true } });
+  return new Set(rows.map((r) => r.userId));
+}
+
 /**
  * Daily customer messages (Marketing → Automatic messages):
  * - customers in a price group (technicians) with no order for N days get one "new services are waiting" message
@@ -61,7 +68,9 @@ export async function dailyMessages() {
       select: { id: true },
       take: 500,
     });
+    const told = await sentSince("marketing_inactive", users.map((u) => u.id), from);
     for (const u of users) {
+      if (told.has(u.id)) continue;
       await notify(u.id, "marketing_inactive", {}, "/news?tab=changes");
       sent++;
     }
@@ -75,7 +84,9 @@ export async function dailyMessages() {
       distinct: ["userId"],
       take: 500,
     });
+    const told = await sentSince("marketing_next_phone", orders.map((o) => o.userId), d4);
     for (const o of orders) {
+      if (told.has(o.userId)) continue;
       await notify(o.userId, "marketing_next_phone", {}, "/check");
       sent++;
     }

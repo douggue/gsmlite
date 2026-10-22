@@ -10,6 +10,7 @@ import { endExpiredDeals } from "@/lib/deals";
 import { deletePrivateFile } from "@/lib/storage";
 import { applySpendGroups } from "@/lib/pricing";
 import { dailyMessages } from "@/lib/marketing";
+import { watchSuccessRates } from "@/lib/success-watch";
 
 /**
  * Scheduled maintenance (call every 5–10 minutes with `Authorization: Bearer $CRON_SECRET`, e.g. Vercel Cron or Inngest):
@@ -91,5 +92,6 @@ export async function GET(req: NextRequest) {
   }
   const groupsMoved = await applySpendGroups();
   const messages = await dailyMessages();
-  return NextResponse.json({ ...result, kycDocsDeleted: oldDocs.length, groupsMoved, messages });
+  const successWatch = await watchSuccessRates();
+  return NextResponse.json({ ...result, kycDocsDeleted: oldDocs.length, groupsMoved, messages, successWatch });
 }

@@ -92,6 +92,8 @@ export type Settings = {
   supplierDefaults: { markupPct: number; minProfitUsd: number; round: "99" | "49" | "none" };
   /** Success rate: shown once a service has this many finished orders in 90 days; alert / auto-pause under these % (0 = off) */
   successRate: { minOrders: number; alertBelowPct: number; pauseBelowPct: number };
+  /** Last low-success alert / automatic pause per product (ISO dates), so staff are told once a day */
+  successWatch: Record<string, { alertedAt?: string; pausedAt?: string }>;
 };
 
 export type NavLink = { label: Record<string, string>; href: string };
@@ -216,6 +218,7 @@ export const DEFAULT_SETTINGS: Settings = {
   topupBonus: { firstPct: 10, pct: 3, minUsd: 5000 },
   supplierDefaults: { markupPct: 35, minProfitUsd: 50, round: "99" },
   successRate: { minOrders: 20, alertBelowPct: 80, pauseBelowPct: 0 },
+  successWatch: {},
 };
 
 export async function getSettings(): Promise<Settings> {
