@@ -13,6 +13,8 @@ import { PageTitle, Stat } from "@/components/admin/ui";
 import { StatusBadge } from "@/components/StatusBadge";
 import { linkedAccounts } from "@/lib/devices";
 import { formatPhone } from "@/lib/phone";
+import { userKycRank } from "@/lib/kyc";
+import { setCustomerGroup } from "@/actions/price-groups";
 
 export const metadata = { title: "Customer" };
 
@@ -30,8 +32,39 @@ export default async function Customer({ params }: { params: Promise<{ id: strin
     linkedAccounts(id),
     prisma.deviceSeen.findMany({ where: { userId: id }, orderBy: { lastSeen: "desc" }, take: 10 }),
   ]);
+  const [groups, group, kyc, month, done, failed] = await Promise.all([
+    prisma.priceGroup.findMany({ orderBy: { discountBps: "asc" }, select: { id: true, name: true, discountBps: true } }),
+    user.priceGroupId ? prisma.priceGroup.findUnique({ where: { id: user.priceGroupId } }) : null,
+    userKycRank(id),
+    prisma.$queryRaw<{ s: bigint | null }[]>`SELECT SUM(i."priceUsd" * i.quantity) AS s FROM "OrderItem" i JOIN "Order" o ON o.id = i."orderId" WHERE o."userId" = ${id} AND o."paidAt" >= NOW() - INTERVAL '30 days' AND i.status <> 'FAILED'`,
+    prisma.orderItem.count({ where: { order: { userId: id }, status: "DELIVERED" } }),
+    prisma.orderItem.count({ where: { order: { userId: id }, status: "FAILED" } }),
+  ]);
+  const kycLevel = kyc.levelKey ? await prisma.kycLevel.findUnique({ where: { key: kyc.levelKey }, select: { name: true } }) : null;
+  const rate = done + failed ? Math.floor((done / (done + failed)) * 1000) / 10 : null;
   return (
     <>
+      <div className="mb-3 flex flex-wrap gap-2 text-xs font-semibold">
+        <span className="rounded-full bg-surface-2 px-2.5 py-1">{group ? `${group.name} group` : "Retail"}</span>
+        <span className={`rounded-full px-2.5 py-1 ${kycLevel ? "bg-primary-soft text-primary" : "bg-surface-2"}`}>KYC: {kycLevel ? (kycLevel.name as Record<string, string>).en : "none"}</span>
+        <span className={`rounded-full px-2.5 py-1 ${user.status === "ACTIVE" ? "bg-primary-soft text-primary" : "bg-warning-soft text-warning"}`}>{user.status.toLowerCase()}</span>
+        {linked.length > 0 && <span className="rounded-full bg-warning-soft px-2.5 py-1 text-warning">Same device as {linked.length} other account{linked.length > 1 ? "s" : ""}: check before giving bonuses</span>}
+      </div>
+      <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-2">
+        <Stat label="Spent this month" value={`$${(Number(month[0]?.s ?? 0) / 100).toFixed(2)}`} />
+        <Stat label="Lines · success" value={`${done + failed} · ${rate == null ? "—" : `${rate}%`}`} />
+      </div>
+      {can(staff, "customers.manage") && (
+        <ActionForm action={async (fd: FormData) => { "use server"; return setCustomerGroup(id, String(fd.get("groupId") ?? "")); }} className="mb-4 flex flex-wrap items-end gap-2">
+          <label><span className="label">Price group</span>
+            <select name="groupId" defaultValue={user.priceGroupId ?? ""} className="input min-w-48">
+              <option value="">Retail</option>
+              {groups.map((g) => <option key={g.id} value={g.id}>{g.name} (−{g.discountBps / 100}%)</option>)}
+            </select>
+          </label>
+          <button className="btn-secondary min-h-11 px-4">Change price group</button>
+        </ActionForm>
+      )}
       <PageTitle title={user.name} sub={`${user.email}${user.phone ? ` · ${formatPhone(user.phone)}` : ""} · joined ${user.createdAt.toLocaleDateString("en-US")} · ${user.locale.toUpperCase()}`} actions={<span className="badge bg-surface-2">{user.status}</span>} />
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat label="HTG available" value={formatMoney(balances.HTG.available, "HTG", "en")} />

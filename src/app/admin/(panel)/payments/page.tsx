@@ -8,6 +8,8 @@ import { ActionButton } from "@/components/admin/ActionButton";
 import { PageTitle, Table } from "@/components/admin/ui";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatPhone } from "@/lib/phone";
+import { moncashAvailable } from "@/lib/payments/moncash";
+import { describeRule } from "@/lib/countries";
 
 export const metadata = { title: "Payments" };
 
@@ -33,9 +35,33 @@ export default async function AdminPayments() {
     prisma.paymentIntent.findMany({ where: { status: { not: "REVIEW" } }, orderBy: { updatedAt: "desc" }, take: 50, include: { user: { select: { name: true } }, reviewedBy: { select: { name: true } } } }),
     getSettings(),
   ]);
+  const since = new Date();
+  since.setHours(0, 0, 0, 0);
+  const [today, manual] = await Promise.all([
+    prisma.paymentIntent.groupBy({ by: ["provider", "manualMethodId", "currency"], where: { status: "SUCCEEDED", updatedAt: { gte: since } }, _sum: { amount: true } }),
+    prisma.manualMethod.findMany({ where: { isEnabled: true }, orderBy: { sortOrder: "asc" } }),
+  ]);
+  const sum = (provider: string, manualId?: string) =>
+    today.filter((x) => x.provider === provider && (manualId === undefined || x.manualMethodId === manualId)).map((x) => formatMoney(x._sum.amount ?? 0, x.currency, "en")).join(" + ") || "0";
+  const where = (r: { countryMode: string; countries: string[] }) => describeRule(r);
+  const cards = [
+    { name: "MonCash", state: moncashAvailable(settings.moncashEnabled) ? (process.env.MONCASH_CLIENT_ID ? "● Connected · automatic" : "Test mode (no keys yet)") : "Off", ok: !!process.env.MONCASH_CLIENT_ID && settings.moncashEnabled, today: sum("MONCASH"), shown: where(settings.payCountries.moncash) },
+    { name: "NatCash", state: settings.natcashEnabled ? `Staff approval · ${formatPhone(settings.natcashRecipientPhone)}` : "Off", ok: settings.natcashEnabled, today: sum("NATCASH"), shown: where(settings.payCountries.natcash) },
+    { name: "Card (Stripe)", state: !settings.cardEnabled ? "Off" : process.env.STRIPE_SECRET_KEY ? "● Connected · automatic" : "To connect (add the Stripe keys)", ok: settings.cardEnabled && !!process.env.STRIPE_SECRET_KEY, today: sum("CARD"), shown: where(settings.payCountries.card) },
+    ...manual.map((m) => ({ name: (m.name as Record<string, string>).en || m.code, state: `Staff approval${m.network ? ` · ${m.network}` : ""}`, ok: true, today: sum("MANUAL", m.id), shown: where(m) })),
+  ];
   return (
     <>
-      <PageTitle title="Payments" sub={`NatCash recipient: ${settings.natcashRecipientName} · ${settings.natcashRecipientPhone}. Match every reference against the NatCash statement before approving.`} />
+      <PageTitle title="Payments" sub="MonCash and cards are confirmed automatically. NatCash, USDT and transfers wait for you here." actions={<Link href="/admin/reconciliation" className="btn-secondary min-h-10 px-4">Match a statement</Link>} />
+      <div className="mb-6 grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(210px,1fr))]">
+        {cards.map((c) => (
+          <Link key={c.name} href="/admin/payment-methods" className="rounded-2xl border border-border bg-surface p-4">
+            <b className="block">{c.name}</b>
+            <span className={`text-[13px] ${c.ok ? "text-primary" : "text-muted"}`}>{c.state}</span>
+            <span className="mt-2 block text-[13px] text-muted">Today {c.today} · {c.shown}</span>
+          </Link>
+        ))}
+      </div>
       <h2 className="mb-3 font-semibold">Review queue ({queue.length})</h2>
       <div className="space-y-3">
         {queue.length === 0 && <p className="card p-8 text-center text-sm text-muted">No payments waiting for review.</p>}

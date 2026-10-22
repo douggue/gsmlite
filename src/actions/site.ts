@@ -1,8 +1,9 @@
 "use server";
+import { parseCountryRule } from "@/lib/countries";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
-import { assertStaff } from "@/lib/session";
+import { assertStaff, assertStepUp } from "@/lib/session";
 import { audit } from "@/lib/audit";
 import { setSetting, type NavLink } from "@/lib/settings";
 import { blocksSchema } from "@/lib/pages";
@@ -124,6 +125,7 @@ export async function saveManualMethod(form: FormData): Promise<R> {
       code, name, instructions: L("instructions", 600), recipientName, recipientNumber, logo: logo || null,
       kind, network, qrImage: qrImage || null, currency: kind === "crypto" ? ("USD" as const) : ("HTG" as const),
       // Crypto credits the USD wallet only; orders are paid from the wallet afterwards.
+      ...parseCountryRule(form),
       isEnabled: form.get("isEnabled") === "on", allowDeposits: form.get("allowDeposits") === "on", allowOrders: kind === "crypto" ? false : form.get("allowOrders") === "on",
       sortOrder: Number(form.get("sortOrder") ?? 0) || 0,
     };
@@ -134,5 +136,27 @@ export async function saveManualMethod(form: FormData): Promise<R> {
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") return { ok: false, error: "That code is already used" };
     return fail(e);
+  }
+}
+
+/** Built-in methods: on/off and who sees them (MonCash, NatCash, card). Saving asks for the 2FA code. */
+export async function saveBuiltinMethods(form: FormData): Promise<{ ok: true; message?: string } | { ok: false; error: string }> {
+  try {
+    const staff = await assertStaff("settings.manage");
+    await assertStepUp();
+    const payCountries = {
+      moncash: parseCountryRule(form, "moncash_"),
+      natcash: parseCountryRule(form, "natcash_"),
+      card: parseCountryRule(form, "card_"),
+    };
+    await setSetting("payCountries", payCountries);
+    await setSetting("moncashEnabled", form.get("moncashEnabled") === "on");
+    await setSetting("natcashEnabled", form.get("natcashEnabled") === "on");
+    await setSetting("cardEnabled", form.get("cardEnabled") === "on");
+    await audit(staff.id, "settings.payment_methods", "Settings", null, { payCountries, card: form.get("cardEnabled") === "on" });
+    revalidatePath("/", "layout");
+    return { ok: true, message: "Saved" };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Unexpected error" };
   }
 }
