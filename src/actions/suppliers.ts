@@ -8,7 +8,7 @@ import { encrypt } from "@/lib/crypto";
 import { parseAmount } from "@/lib/money";
 import { endpointUrl } from "@/lib/dhru/protocol";
 import { importService, refreshBalance, syncCatalog } from "@/lib/suppliers/sync";
-import { submitItem } from "@/lib/suppliers/dispatch";
+import { checkSupplierOrder, submitItem } from "@/lib/suppliers/dispatch";
 import { stalledWhere } from "@/lib/suppliers/attention";
 import { rejectItem } from "@/lib/orders";
 import type { PriceRounding } from "@/lib/import-price";
@@ -214,6 +214,21 @@ export async function refundSupplierItem(itemId: string, reason: string): Promis
     await audit(staff.id, "supplier.order.refund", "OrderItem", itemId, { reason: why });
     revalidatePath("/admin/suppliers");
     return { ok: true, message: "Refunded to the customer's wallet" };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+/** "Check now" on one line: ask the supplier at once, whatever the check schedule says. */
+export async function checkSupplierItemNow(itemId: string): Promise<R> {
+  try {
+    const staff = await assertStaff("orders.manage");
+    const so = await prisma.supplierOrder.findFirst({ where: { orderItemId: itemId, status: { in: ["WAITING", "IN_PROCESS"] } }, orderBy: { createdAt: "desc" } });
+    if (!so) return { ok: false, error: "Nothing to check: this line is not waiting on a supplier" };
+    const status = await checkSupplierOrder(so);
+    await audit(staff.id, "supplier.order.check", "SupplierOrder", so.id, { status });
+    revalidatePath("/admin/orders");
+    return { ok: true, message: `Supplier says: ${String(status).replace("_", " ").toLowerCase()}` };
   } catch (e) {
     return fail(e);
   }

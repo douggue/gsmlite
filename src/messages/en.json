@@ -1020,7 +1020,8 @@
       "type": {
         "IMEI": "IMEI",
         "SERVER": "Server",
-        "REMOTE": "Remote"
+        "REMOTE": "Remote",
+        "FILE": "File"
       },
       "none": "No service matches.",
       "collapse": "Collapse",

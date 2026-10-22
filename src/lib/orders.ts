@@ -12,7 +12,7 @@ import { moncashAvailable } from "./payments/moncash";
 import { cardAvailable } from "./payments/card";
 import { methodAllowed } from "./pay-methods";
 import { allowedIn } from "./countries";
-import { evaluateKyc, KycRequiredError } from "./kyc";
+import { evaluateKyc, KycRequiredError, userKycRank } from "./kyc";
 import { maybeRewardReferral } from "./referrals";
 import { parseIdentifiers, type IdentifierFormat } from "./imei";
 import { priceContext, unitPriceUsd } from "./pricing";
@@ -74,6 +74,7 @@ type Line = {
   quantity: number;
   unitPrice: number;
   unitUsd: number;
+  costUsd: number | null;
   identifier: string | null;
   fieldValues: Record<string, string>;
 };
@@ -101,6 +102,7 @@ export async function buildLines(userId: string, items: CartItemInput[], currenc
       variantName: v.name as Prisma.InputJsonValue,
       unitPrice: priceIn(unitUsd, currency, htgPerUsd),
       unitUsd,
+      costUsd: v.costUsd,
       fieldValues,
     };
     if (v.product.serviceType === "IMEI") {
@@ -171,6 +173,15 @@ export async function createOrder(input: {
     country: input.country ?? null,
   }, user.locale);
   if (!kyc.ok) throw new KycRequiredError(kyc);
+  // Services that need a KYC level of their own (Admin → service → Needs KYC).
+  const needed = await prisma.product.findMany({ where: { id: { in: variants.map((v) => v.productId) }, kycLevelKey: { not: null } }, select: { kycLevelKey: true } });
+  if (needed.length) {
+    const levels = await prisma.kycLevel.findMany({ where: { key: { in: needed.map((n) => n.kycLevelKey!) } } });
+    const top = levels.sort((a, b) => b.rank - a.rank)[0];
+    if (top && (await userKycRank(input.userId)).rank < top.rank) {
+      throw new KycRequiredError({ ok: false, blocked: false, level: { key: top.key, name: t(top.name, user.locale) }, message: "", rule: "service" });
+    }
+  }
 
   const order = await prisma.$transaction(async (tx) => {
     await assertWithinNewAccountLimit(tx, user, totalHtg, settings);
@@ -187,7 +198,7 @@ export async function createOrder(input: {
         accessToken: randomToken(),
         source: input.source ?? "WEB",
         items: {
-          create: lines.map(({ unitUsd: _u, ...l }) => ({ ...l, fieldValues: l.fieldValues as Prisma.InputJsonValue })),
+          create: lines.map(({ unitUsd, ...l }) => ({ ...l, priceUsd: unitUsd, fieldValues: l.fieldValues as Prisma.InputJsonValue })),
         },
       },
     });

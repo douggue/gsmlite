@@ -205,6 +205,8 @@ enum ServiceType {
   IMEI
   SERVER
   REMOTE
+  /// The customer uploads a file (firmware dump, backup…); Dhru file services, or done by hand
+  FILE
 }
 
 model Product {
@@ -245,6 +247,12 @@ model Product {
   cardTitle        Json?
   cardTag          Json?
   cardStyle        String           @default("ink")
+  /// Show "Run an IMEI check first" next to the order card
+  offerCheck       Boolean          @default(true)
+  /// KYC level key the customer needs to order this service (empty = the general rules only)
+  kycLevelKey      String?
+  /// The content machine may write an SEO page for it
+  seoPage          Boolean          @default(true)
   variants         ProductVariant[]
   reviews          Review[]
   createdAt        DateTime         @default(now())
@@ -396,6 +404,9 @@ model OrderItem {
   variantName    Json
   quantity       Int
   unitPrice      Int
+  /// Unit price in USD cents and the supplier cost at the time of the order (sales and profit reports)
+  priceUsd       Int?
+  costUsd        Int?
   fieldValues    Json            @default("{}")
   /// IMEI / serial for IMEI services (also inside fieldValues), indexed for lookups
   identifier     String?
@@ -1013,8 +1024,16 @@ model SupplierLog {
 model PriceGroup {
   id          String       @id @default(cuid())
   name        String       @unique
+  /// Shown to staff: who it is for ("Shop verified (KYC)", "Spends $200+ a month")
+  description String?
   /// Discount off the list price in basis points (500 = 5 %)
   discountBps Int          @default(0)
+  /// How customers join: "manual" (staff), "kyc" (the KYC level that joins it), "spend" (30-day spending ≥ minMonthlySpendUsd, checked daily)
+  autoRule    String       @default("manual")
+  minMonthlySpendUsd Int   @default(0)
+  /// Never sell below cost + this (USD cents) to this group, whatever the discount
+  floorProfitUsd Int       @default(0)
+  sortOrder   Int          @default(0)
   users       User[]
   prices      GroupPrice[]
   createdAt   DateTime     @default(now())

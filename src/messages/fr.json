@@ -1020,7 +1020,8 @@
       "type": {
         "IMEI": "IMEI",
         "SERVER": "Serveur",
-        "REMOTE": "À distance"
+        "REMOTE": "À distance",
+        "FILE": "Fichier"
       },
       "none": "Aucun service ne correspond.",
       "collapse": "Réduire",

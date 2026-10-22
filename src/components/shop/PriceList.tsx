@@ -7,7 +7,7 @@ import { Price } from "../Money";
 export type PriceGroupView = {
   id: string;
   name: string;
-  rows: { slug: string; name: string; type: "IMEI" | "SERVER" | "REMOTE"; status: "online" | "slow" | "down"; time: string; price: number; haystack: string }[];
+  rows: { slug: string; name: string; type: "IMEI" | "SERVER" | "REMOTE" | "FILE"; status: "online" | "slow" | "down"; time: string; price: number; haystack: string }[];
 };
 
 /** Search + type chips; one collapsible table per group (the first open), live status and real average time. */
@@ -15,7 +15,7 @@ export function PriceList({ groups, deal, telegram }: { groups: PriceGroupView[]
   const g = useTranslations("gl.prices");
   const fmt = useFormatter();
   const [q, setQ] = useState("");
-  const [type, setType] = useState<"" | "IMEI" | "SERVER" | "REMOTE">("");
+  const [type, setType] = useState<"" | "IMEI" | "SERVER" | "REMOTE" | "FILE">("");
   const [open, setOpen] = useState<Set<string>>(new Set(groups[0] ? [groups[0].id] : []));
   const words = q.toLowerCase().split(/\s+/).filter(Boolean);
   const shown = useMemo(
@@ -34,7 +34,7 @@ export function PriceList({ groups, deal, telegram }: { groups: PriceGroupView[]
         <input id="ps" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={g("searchPlaceholder")}
           className="h-[46px] min-w-0 flex-[1_1_280px] rounded-xl border-[1.5px] border-[#111418] bg-white px-3.5 text-base text-[#111418] dark:border-border dark:bg-surface dark:text-text" />
         <div className="flex gap-2 overflow-x-auto">
-          {(["IMEI", "SERVER", "REMOTE"] as const).map((x) => (
+          {(["IMEI", "SERVER", "REMOTE", "FILE"] as const).filter((x) => x !== "FILE" || groups.some((gr) => gr.rows.some((r) => r.type === "FILE"))).map((x) => (
             <button key={x} type="button" aria-pressed={type === x} onClick={() => setType(type === x ? "" : x)} className={chip(type === x)}>{g(`type.${x}`)}</button>
           ))}
         </div>

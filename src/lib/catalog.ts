@@ -51,7 +51,7 @@ export async function getTags(): Promise<string[]> {
 
 export async function searchProducts(opts: {
   q?: string; category?: string; sort?: string; featured?: boolean; take?: number; tag?: string; minUsd?: number; maxUsd?: number;
-  serviceType?: "IMEI" | "SERVER" | "REMOTE"; tool?: boolean;
+  serviceType?: "IMEI" | "SERVER" | "REMOTE" | "FILE"; tool?: boolean;
   /** Defaults to the current visitor; null = no country/sign-in filter (staff tools) */
   shopper?: Shopper | null;
 }) {

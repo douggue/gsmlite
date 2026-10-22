@@ -8,19 +8,29 @@ import { ActionForm } from "@/components/admin/ActionButton";
 import { LocalizedInputs } from "@/components/admin/LocalizedInputs";
 import { ProductForm } from "@/components/admin/ProductForm";
 import { PageTitle } from "@/components/admin/ui";
+import type { FieldDef } from "@/lib/orders";
 
-export const metadata = { title: "Edit product" };
+export const metadata = { title: "Edit service" };
+
+/** Lines like "Model · list · required · sent as MODELID" for the fields panel. */
+function summarize(fields: FieldDef[]) {
+  return fields.map((f) => `${t(f.label, "en") || f.key} · ${f.type}${f.required ? " · required" : ""}${f.supplierName ? ` · sent as ${f.supplierName.replace(/^param:/, "")}` : ""}`);
+}
 
 export default async function EditProduct({ params }: { params: Promise<{ id: string }> }) {
   await requireStaff("catalog.manage");
   const { id } = await params;
-  const categories = await prisma.category.findMany({ orderBy: { sortOrder: "asc" } });
+  const [categories, kycLevels] = await Promise.all([
+    prisma.category.findMany({ orderBy: { sortOrder: "asc" } }),
+    prisma.kycLevel.findMany({ where: { isActive: true }, orderBy: { rank: "asc" } }),
+  ]);
   const cats = categories.map((c) => ({ id: c.id, name: t(c.name, "en") }));
+  const levels = kycLevels.map((l) => ({ key: l.key, name: t(l.name, "en") }));
   if (id === "new") {
     return (
       <>
-        <PageTitle title="New product" />
-        <ProductForm categories={cats} />
+        <PageTitle title="New service" sub="Your own service (delivered by hand or from license-key stock), or link options to a supplier below once saved." />
+        <ProductForm categories={cats} kycLevels={levels} />
       </>
     );
   }
@@ -29,16 +39,19 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
   const suppliers = await prisma.supplier.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } });
   const linked = await prisma.supplierService.findMany({
     where: { OR: product.variants.filter((v) => v.supplierId && v.supplierServiceId).map((v) => ({ supplierId: v.supplierId!, remoteId: v.supplierServiceId! })) },
-    select: { supplierId: true, remoteId: true, name: true, credit: true, active: true },
+    select: { supplierId: true, remoteId: true, name: true, credit: true, active: true, previousCredit: true, priceChangedAt: true },
   });
   const linkedName = (v: { supplierId: string | null; supplierServiceId: string | null }) => linked.find((l) => l.supplierId === v.supplierId && l.remoteId === v.supplierServiceId);
   const qtyFields = product.serviceType === "SERVER";
   const money = (n: number | null) => (n == null ? "" : (n / 100).toFixed(2));
+  const supplierName = (sid: string | null) => suppliers.find((x) => x.id === sid)?.name;
   return (
     <>
-      <PageTitle title={t(product.name, "en")} sub={`/${product.slug}`} actions={<a href={`/ht/products/${product.slug}`} target="_blank" className="btn-secondary">View in store ↗</a>} />
+      <PageTitle title={`Edit service · ${t(product.name, "en")}`} sub={`/${product.slug} · ${product.variants.some((v) => v.supplierId) ? "from a supplier" : "your own service"}`} actions={<Link href="/admin/products/new" className="btn-secondary min-h-10 px-4">+ New service</Link>} />
       <ProductForm
         categories={cats}
+        kycLevels={levels}
+        fieldsSummary={summarize(product.fields as FieldDef[])}
         product={{
           id: product.id, slug: product.slug, categoryId: product.categoryId, accent: product.accent ?? "#1F7A4D",
           fulfillmentType: product.fulfillmentType, isPublished: product.isPublished, isFeatured: product.isFeatured, sortOrder: product.sortOrder,
@@ -48,10 +61,41 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
           image: product.image, gallery: (product.gallery ?? []) as string[], tags: product.tags,
           serviceType: product.serviceType, identifierLabel: (product.identifierLabel ?? {}) as Record<string, string>,
           identifierFormat: product.identifierFormat, allowBulk: product.allowBulk,
+          countryMode: product.countryMode, countries: product.countries, hideFromGoogle: product.hideFromGoogle, offerCheck: product.offerCheck,
+          seoPage: product.seoPage, kycLevelKey: product.kycLevelKey,
+          cardTitle: (product.cardTitle ?? {}) as Record<string, string>, cardTag: (product.cardTag ?? {}) as Record<string, string>, cardStyle: product.cardStyle,
         }}
       />
+
+      <section className="card mt-6 overflow-x-auto">
+        <h2 className="border-b border-border px-4 py-3 font-semibold">Options and prices</h2>
+        <table className="w-full min-w-[680px] text-left text-sm">
+          <thead className="text-xs uppercase tracking-wide text-muted"><tr><th className="px-4 py-2.5">Option</th><th className="px-4 py-2.5">Supplier · ID</th><th className="px-4 py-2.5">Cost</th><th className="px-4 py-2.5">Price</th><th className="px-4 py-2.5">Margin</th></tr></thead>
+          <tbody>
+            {product.variants.map((v) => {
+              const l = linkedName(v);
+              const cost = l?.credit ?? v.costUsd;
+              const price = v.salePriceUsd ?? v.priceUsd;
+              const margin = cost != null ? price - cost : null;
+              const rose = l?.previousCredit != null && l.credit > l.previousCredit && l.priceChangedAt && Date.now() - l.priceChangedAt.getTime() < 30 * 86_400_000;
+              return (
+                <tr key={v.id} className="border-t border-border">
+                  <td className="px-4 py-3">{t(v.name, "en")}{v.soldOut && <span className="ml-1.5 text-xs text-danger">out of stock</span>}</td>
+                  <td className="px-4 py-3">{v.supplierId ? `${supplierName(v.supplierId) ?? "?"} · ${v.supplierServiceId}` : <span className="text-muted">— your own</span>}</td>
+                  <td className="px-4 py-3 tabular-nums">{cost != null ? `$${money(cost)}` : "—"}</td>
+                  <td className="px-4 py-3 tabular-nums">${money(price)}{v.salePriceUsd != null && <span className="ml-1 text-xs text-muted line-through">${money(v.priceUsd)}</span>}</td>
+                  <td className={`px-4 py-3 font-semibold tabular-nums ${margin == null ? "text-muted" : margin <= 0 ? "text-danger" : "text-primary"}`}>
+                    {margin == null ? "—" : margin <= 0 ? `Loss!${rose ? " cost went up" : ""}` : `$${money(margin)} · ${cost ? Math.round((margin / cost) * 100) : 100}%`}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </section>
+
       <div className="mb-3 mt-10 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">Options (prices in USD; HTG is converted at the store rate)</h2>
+        <h2 className="text-lg font-semibold">Edit options (prices in USD; HTG is converted at the store rate)</h2>
         <div className="flex flex-wrap gap-2">
           <ActionForm action={setProductSoldOut}>
             <input type="hidden" name="productId" value={product.id} />

@@ -210,7 +210,7 @@ export type ParsedService = {
   remoteId: string;
   groupName: string;
   name: string;
-  type: "IMEI" | "SERVER" | "REMOTE";
+  type: "IMEI" | "SERVER" | "REMOTE" | "FILE";
   credit: number;
   time: string | null;
   info: string | null;
@@ -220,7 +220,7 @@ export type ParsedService = {
   fields: SupplierField[];
 };
 
-function serviceType(v: unknown, fallback: unknown): "IMEI" | "SERVER" | "REMOTE" {
+function serviceType(v: unknown, fallback: unknown): "IMEI" | "SERVER" | "REMOTE" | "FILE" {
   const s = String(v ?? fallback ?? "").toUpperCase();
   if (s === "SERVER" || s === "1") return "SERVER";
   if (s === "REMOTE" || s === "2") return "REMOTE";

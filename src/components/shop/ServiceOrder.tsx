@@ -29,7 +29,7 @@ type Props = {
     name: Record<string, string>;
     accent: string | null;
     image: string | null;
-    serviceType: "IMEI" | "SERVER" | "REMOTE";
+    serviceType: "IMEI" | "SERVER" | "REMOTE" | "FILE";
     identifierLabel: Record<string, string> | null;
     identifierFormat: IdentifierFormat;
     allowBulk: boolean;

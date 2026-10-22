@@ -1020,7 +1020,8 @@
       "type": {
         "IMEI": "IMEI",
         "SERVER": "Sèvè",
-        "REMOTE": "A distans"
+        "REMOTE": "A distans",
+        "FILE": "Fichye"
       },
       "none": "Pa gen sèvis ki koresponn.",
       "collapse": "Fèmen",

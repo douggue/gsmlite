@@ -81,7 +81,7 @@ export default async function ProductPage({ params }: { params: P }) {
     serviceStats(product.id),
     payMethodsFor(country, "orders", locale),
     user ? getBalances(prisma, user.id) : null,
-    product.serviceType === "IMEI" && !product.category.slug.includes("check") ? checkService(product.id) : null,
+    product.serviceType === "IMEI" && product.offerCheck && !product.category.slug.includes("check") ? checkService(product.id) : null,
     priceContext(user?.id),
   ]);
   const stock = product.fulfillmentType === "CODE_INVENTORY"

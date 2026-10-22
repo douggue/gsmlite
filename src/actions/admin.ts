@@ -7,6 +7,7 @@ import { prisma } from "@/lib/db";
 import { assertStaff, assertStepUp } from "@/lib/session";
 import { audit } from "@/lib/audit";
 import { recordChange, recordVariantChange } from "@/lib/service-changes";
+import { parseCountryRule } from "@/lib/countries";
 import { encrypt, hmac, randomToken } from "@/lib/crypto";
 import { completePayment, rejectPayment } from "@/lib/payments/complete";
 import { deliverItemManually, fulfillOrder, refundOrCancel, revealCode } from "@/lib/orders";
@@ -181,10 +182,18 @@ export async function saveProduct(form: FormData): Promise<R & { id?: string }> 
       isFeatured: form.get("isFeatured") === "on",
       sortOrder: Number(form.get("sortOrder") ?? 0) || 0,
       fields: fields as Prisma.InputJsonValue,
-      serviceType: (["IMEI", "SERVER", "REMOTE"].includes(String(form.get("serviceType"))) ? String(form.get("serviceType")) : "IMEI") as ServiceType,
+      serviceType: (["IMEI", "SERVER", "REMOTE", "FILE"].includes(String(form.get("serviceType"))) ? String(form.get("serviceType")) : "IMEI") as ServiceType,
       identifierLabel: localized(form, "idLabel"),
       identifierFormat: ["imei", "serial", "any"].includes(String(form.get("identifierFormat"))) ? String(form.get("identifierFormat")) : "imei",
       allowBulk: form.get("allowBulk") === "on",
+      ...parseCountryRule(form),
+      hideFromGoogle: form.get("hideFromGoogle") === "on",
+      offerCheck: form.get("offerCheck") === "on",
+      seoPage: form.get("seoPage") === "on",
+      kycLevelKey: String(form.get("kycLevelKey") ?? "") || null,
+      cardTitle: localized(form, "cardTitle"),
+      cardTag: localized(form, "cardTag"),
+      cardStyle: ["ink", "green", "mint", "slate"].includes(String(form.get("cardStyle"))) ? String(form.get("cardStyle")) : "ink",
     };
     const wasPublished = id ? (await prisma.product.findUnique({ where: { id }, select: { isPublished: true } }))?.isPublished : false;
     const product = id ? await prisma.product.update({ where: { id }, data }) : await prisma.product.create({ data });
