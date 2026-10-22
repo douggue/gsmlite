@@ -1,4 +1,4 @@
-# Progress (paused 2026-10-18)
+# Progress (updated 2026-10-22: everything built on preview/v1, waiting for credentials and "ship it")
 
 **Standing request from the owner:** always look for new features and propose your own ideas (keep the backlog below up to date).
 Working rules: risky changes on a preview branch, wait for "ship it"; API keys never in code or chat.
@@ -243,19 +243,23 @@ Settings area with a left list of sections, each its own page:
 14. Maintenance mode, data export, backups status.
 Every change logged; sensitive sections ask for the 2FA code again.
 
-## Still to do
-0. Known limit: prices are whole cents. Suppliers sometimes price credits below a cent precision (e.g. $0.125 per credit);
-   switch per-unit cost/price to tenths of a cent (or price per 10/100 credits) before selling such services.
-1. DONE (branch preview/usd-storefront): store pages in USD, IMEI order box, unlock demo catalog; typecheck, 59 tests and production build pass.
-   Seen in the iPhone check: old Haiti Gaming logo still shown, and the floating WhatsApp button covers the order total: fix in the redesign.
-2. Admin → Suppliers screen (add supplier, test, sync, browse/import services, needs-attention list for UNKNOWN / account problems, logs).
-3. `/api/cron/suppliers` (poll every few minutes; Vercel Hobby only allows daily cron → use an external cron or Pro).
-4. Auto-refund-by-time must skip lines that are with a supplier.
-5. Storefront redesign per the approved mockup; service page with IMEI box; order page showing supplier progress/results.
-6. Price groups admin; rebrand to GSMLite (logo, messages in 4 languages, notify/email sender, CANONICAL_SITE in site-url.ts → https://gsmlite.com).
-7. Tests (protocol, IMEI, dispatch with a fake supplier), README/DEPLOY, new GitHub repo, Vercel project, preview branch.
-
-Secrets: supplier API keys are entered in Admin and stored encrypted; platform keys go in Vercel env vars only. Never in code or chat.
+## Status (2026-10-22): all features built on branch preview/v1
+Owner's instruction: "do everything, the only thing I will have to do is connect the credentials".
+Everything below is built, typechecked, tested (83 tests) and pushed to preview/v1. Not merged to main: waiting for "ship it".
+- Storefront per mockup (home, service page with order card, order page, wallet, check, prices, deals, track, status, news, RSS),
+  countries per service and payment method, success rate and real times, free IMEI check, weekly deal, top-up bonus.
+- Admin per mockup: dashboard, orders, suppliers (Dhru Fusion: sync, import, auto-send, status checks, refunds, file services,
+  model/carrier lists), services & prices (filters, loss flags), price groups, customers, KYC, payments, marketing, content machine,
+  settings in 14 sections (app icon/favicon, languages on/off, Telegram, legal, maintenance mode), security (admin IP allowlist).
+- Order form builder: 17 field types, conditions, templates, encrypted passwords, file uploads, "hidden after done".
+- Sub-cent supplier credits: sold in packs (1 pack = 10/100/1000… credits), QNT sent = packs × pack size.
+- Google sign-in, new-device alerts, rate limits on orders/top-ups, CSP + HSTS, customer Telegram notifications.
+- Content machine: Claude writer (model and monthly budget in admin; default claude-opus-5-5 with server-side fallback), DataForSEO
+  keyword ideas, Search Console, drafts → owner approves → service text + FAQ on product pages, brand hubs, guides, tool posts.
+- Languages: Kreyòl, Français, English, Español, Português, العربية (right-to-left).
+- Server hosting: Dockerfile, deploy/docker-compose.yml (Postgres, app, Caddy HTTPS, cron, nightly backups), CI in GitHub Actions.
+  Guide: docs/DEPLOY-VPS.md. Every key to add: docs/CREDENTIALS.md (also .env.example).
+Files on the server stay on disk (uploads volume) with nightly backups; Vercel Blob still works on Vercel.
 
 ## Sign-in / accounts (auth) — DECIDED 2026-10-22: email/password + Google only
 (Google needs an OAuth client ID/secret from Google Cloud, set only in hosting env vars.) Passkeys/Apple/phone sign-in: not now.
