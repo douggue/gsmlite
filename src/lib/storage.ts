@@ -115,3 +115,49 @@ export async function readPrivateFile(relPath: string): Promise<Buffer> {
   if (!full.startsWith(path.resolve(ROOT) + path.sep)) throw new Error("Invalid path");
   return readFile(full);
 }
+
+const DOC_TYPES: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "application/pdf": "pdf", "video/mp4": "mp4", "video/quicktime": "mov" };
+export const MAX_DOC_BYTES = 12 * 1024 * 1024;
+
+/**
+ * Private document (KYC, order uploads): content checked by its first bytes, encrypted with ENCRYPTION_KEY before it
+ * leaves the server, stored privately. Returns { path, mime } to keep in the database.
+ */
+export async function saveEncryptedDocument(file: File, folder: string): Promise<{ path: string; mime: string; size: number }> {
+  const buf = Buffer.from(await file.arrayBuffer());
+  if (buf.length === 0 || buf.length > MAX_DOC_BYTES) throw new UploadError("size");
+  const isJpeg = buf[0] === 0xff && buf[1] === 0xd8;
+  const isPng = buf.subarray(0, 4).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47]));
+  const isWebp = buf.subarray(8, 12).toString() === "WEBP";
+  const isPdf = buf.subarray(0, 5).toString() === "%PDF-";
+  const isMp4 = buf.subarray(4, 8).toString() === "ftyp";
+  const mime = isJpeg ? "image/jpeg" : isPng ? "image/png" : isWebp ? "image/webp" : isPdf ? "application/pdf" : isMp4 ? (file.type === "video/quicktime" ? "video/quicktime" : "video/mp4") : null;
+  if (!mime) throw new UploadError("type");
+  const { encryptBytes } = await import("./crypto");
+  const sealed = encryptBytes(buf);
+  const name = `${folder}/${Date.now()}-${randomToken(12)}.${DOC_TYPES[mime]}.enc`;
+  if (blobEnabled()) {
+    const blob = await put(name, sealed, { access: "private", contentType: "application/octet-stream", addRandomSuffix: false });
+    return { path: blob.pathname, mime, size: buf.length };
+  }
+  if (!uploadsEnabled()) throw new UploadError("storage");
+  await mkdir(path.join(ROOT, folder), { recursive: true });
+  await writeFile(path.join(ROOT, name), sealed);
+  return { path: name, mime, size: buf.length };
+}
+
+export async function readEncryptedDocument(relPath: string): Promise<Buffer> {
+  const { decryptBytes } = await import("./crypto");
+  return decryptBytes(await readPrivateFile(relPath));
+}
+
+/** Remove a private file for good (KYC retention, account closing). */
+export async function deletePrivateFile(relPath: string): Promise<void> {
+  if (blobEnabled()) {
+    await del(relPath).catch(() => {});
+    return;
+  }
+  const full = path.resolve(ROOT, relPath);
+  if (!full.startsWith(path.resolve(ROOT) + path.sep)) return;
+  await unlink(full).catch(() => {});
+}

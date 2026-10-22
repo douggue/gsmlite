@@ -12,6 +12,7 @@ import { moncashAvailable } from "./payments/moncash";
 import { cardAvailable } from "./payments/card";
 import { methodAllowed } from "./pay-methods";
 import { allowedIn } from "./countries";
+import { evaluateKyc, KycRequiredError } from "./kyc";
 import { maybeRewardReferral } from "./referrals";
 import { parseIdentifiers, type IdentifierFormat } from "./imei";
 import { priceContext, unitPriceUsd } from "./pricing";
@@ -159,6 +160,18 @@ export async function createOrder(input: {
   const user = await prisma.user.findUniqueOrThrow({ where: { id: input.userId } });
   if (user.status !== "ACTIVE") throw new OrderError("account_restricted");
 
+  // The owner's KYC rules (Admin → KYC → Levels & rules): may ask for a level, block, or send to review.
+  const variants = await prisma.productVariant.findMany({ where: { id: { in: input.items.map((i) => i.variantId) } }, select: { productId: true, product: { select: { categoryId: true } } } });
+  const kyc = await evaluateKyc(input.userId, {
+    action: "order",
+    amountUsd: lines.reduce((s, l) => s + l.unitUsd * l.quantity, 0),
+    method: input.method === "MANUAL" ? `MANUAL:${input.manualMethodId}` : input.method,
+    productIds: variants.map((v) => v.productId),
+    categoryIds: variants.map((v) => v.product.categoryId),
+    country: input.country ?? null,
+  }, user.locale);
+  if (!kyc.ok) throw new KycRequiredError(kyc);
+
   const order = await prisma.$transaction(async (tx) => {
     await assertWithinNewAccountLimit(tx, user, totalHtg, settings);
     const created = await tx.order.create({
@@ -183,6 +196,7 @@ export async function createOrder(input: {
     if (totalHtg >= settings.reviewOrderThresholdHtg) {
       await flag(tx, "High-value order: review before release", { userId: input.userId, orderId: created.id });
     }
+    if (kyc.review) await flag(tx, `KYC rule: ${kyc.rule ?? "review"}`, { userId: input.userId, orderId: created.id });
 
     if (input.method === "WALLET") {
       await chargeOrder(tx, created);

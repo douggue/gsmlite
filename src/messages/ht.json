@@ -201,7 +201,9 @@
       "generic": "Nou pa t ka pase kòmand ou. Tanpri eseye ankò.",
       "invalid_amount": "Montan an pa bon oswa li pa nan limit yo. Chanje l epi eseye ankò.",
       "verify_email": "Konfime imèl ou anvan ou kontinye. Gade bwat resepsyon ou.",
-      "not_in_country": "Sèvis sa a pa disponib nan peyi ou."
+      "not_in_country": "Sèvis sa a pa disponib nan peyi ou.",
+      "kyc_required": "Sa mande yon kont verifye. Verifye l nan kèk minit.",
+      "kyc_blocked": "Sa pa pèmèt sou kont ou. Kontakte sipò."
     }
   },
   "order": {
@@ -414,7 +416,10 @@
     "order_refunded": "Kòmand #{number} ranbouse nan bous ou.",
     "exchange_done": "Chanj lajan ou a fèt.",
     "wallet_adjusted": "Ekip nou an ajiste bous ou.",
-    "referral_rewarded": "Ou resevwa {amount} paske yon zanmi ou te achte."
+    "referral_rewarded": "Ou resevwa {amount} paske yon zanmi ou te achte.",
+    "kyc_approved": "Kont ou se {level} kounye a. Ou ka kontinye.",
+    "kyc_rejected": "Verifikasyon ou pa t aksepte: {reason}",
+    "kyc_needs_more": "Nou bezwen yon nouvo foto pou verifikasyon ou: {reason}"
   },
   "pages": {
     "aboutTitle": "Sou GSMLite",
@@ -910,7 +915,9 @@
       "added": "Ajoute nan panye",
       "addToCart": "Mete nan panye pito",
       "notifyNote": "W ap resevwa yon notifikasyon depi chak rezilta pare.",
-      "stickyOrder": "Kòmande"
+      "stickyOrder": "Kòmande",
+      "kycNeeded": "Verifye kont ou pou w kontinye.",
+      "verifyNow": "Verifye kounye a"
     },
     "order": {
       "lines": "Telefòn nan kòmand sa a",
@@ -1076,6 +1083,35 @@
       },
       "signInForAll": "Konekte pou w wè tou pri ki monte ak sèvis ki retire.",
       "noChanges": "Pa gen chanjman nan 60 dènye jou yo."
+    },
+    "kyc": {
+      "verification": "Verifikasyon",
+      "title": "Verifye kont ou",
+      "sub": "Gen kèk peman ak pri ki mande yon kont verifye. Voye dokiman yo yon fwa; nou tcheke yo vit.",
+      "current": "Nivo ou:",
+      "none": "Poko verifye",
+      "status": {
+        "APPROVED": "Aksepte",
+        "PENDING": "N ap tcheke l",
+        "NEEDS_MORE": "Bezwen nouvo foto",
+        "REJECTED": "Pa aksepte"
+      },
+      "sentOn": "Voye {date}. N ap avèti w.",
+      "addPhone": "Mete telefòn ou",
+      "start": "Kòmanse",
+      "sendAgain": "Voye ankò",
+      "send": "Voye pou tcheke",
+      "sending": "N ap voye…",
+      "sent": "Voye. N ap avèti w depi nou fin tcheke.",
+      "backTo": "Retounen sou sa w t ap fè a",
+      "privacy": "Dokiman yo chifre epi se sèlman ekip verifikasyon an ki wè yo; chak fwa yo gade yo, sa anrejistre. Nou efase yo apre kont ou fèmen.",
+      "err": {
+        "missing": "Mete “{field}”.",
+        "size": "Yon fichye twò gwo (12 MB maks).",
+        "type": "Sèvi ak yon foto (JPG, PNG), yon PDF oswa yon videyo MP4.",
+        "busy": "Twòp eseye. Tann inèdtan.",
+        "level": "Nivo sa a pa disponib."
+      }
     }
   }
 }

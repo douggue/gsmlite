@@ -17,7 +17,10 @@ export type NotificationType =
   | "order_refunded"
   | "exchange_done"
   | "wallet_adjusted"
-  | "referral_rewarded";
+  | "referral_rewarded"
+  | "kyc_approved"
+  | "kyc_rejected"
+  | "kyc_needs_more";
 
 const CATALOGS: Record<string, { notifications: Record<string, string> }> = { ht, fr, en, es };
 

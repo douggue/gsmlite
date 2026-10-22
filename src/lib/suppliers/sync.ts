@@ -133,8 +133,10 @@ export async function importService(supplierServiceId: string, opts: { categoryI
   const meta = s.fields as unknown as ServiceMeta;
   const price = importPrice(s.credit, opts.markupBps, opts.minProfitUsd, opts.round);
   const categoryId = opts.categoryId === "group" ? await categoryForGroup(s.groupName) : opts.categoryId;
-  let slug = slugify(s.name);
-  if (await prisma.product.findUnique({ where: { slug } })) slug = `${slug}-${s.remoteId}`.slice(0, 80);
+  // A free address: the name, then name + supplier ID, then a counter.
+  const base = slugify(s.name);
+  let slug = base;
+  for (let n = 0; await prisma.product.findUnique({ where: { slug } }); n++) slug = (n === 0 ? `${base}-${s.remoteId}` : `${base}-${s.remoteId}-${n + 1}`).slice(0, 80);
   const product = await prisma.product.create({
     data: {
       slug,

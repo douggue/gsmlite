@@ -5,6 +5,7 @@ import { usdToHtg } from "../money";
 import { addEvent, fulfillOrder } from "../orders";
 import { notify } from "../notify";
 import { InsufficientFundsError } from "../ledger";
+import { evaluateKyc } from "../kyc";
 
 /**
  * Mark an external payment as succeeded exactly once and credit the wallet.
@@ -16,6 +17,13 @@ export async function completePayment(
   opts: { providerRef?: string; verifiedAmount?: number; actorId?: string | null; note?: string },
 ) {
   const settings = await getSettings();
+  // Top-ups: the owner's KYC rules may hold the money for review or skip the bonus.
+  const pre = await prisma.paymentIntent.findUnique({ where: { id: intentId } });
+  const kyc = pre && !pre.orderId
+    ? await evaluateKyc(pre.userId, { action: "topup", amountUsd: pre.currency === "USD" ? pre.amount : Math.round(pre.amount / settings.htgPerUsd), method: pre.provider === "MANUAL" ? `MANUAL:${pre.manualMethodId}` : pre.provider })
+    : null;
+  const kycReview = kyc?.ok ? kyc.review : false;
+  const noBonus = kyc?.ok ? kyc.noBonus : false;
 
   const out = await prisma.$transaction(async (tx) => {
     const [locked] = await tx.$queryRaw<{ id: string }[]>`SELECT id FROM "PaymentIntent" WHERE id = ${intentId} FOR UPDATE`;
@@ -33,7 +41,7 @@ export async function completePayment(
     // Large manual top-ups are held before they can be spent (blueprint §8). Order payments are not held;
     // high-value orders are reviewed through the order risk flag instead.
     const amountHtg = intent.currency === "USD" ? usdToHtg(intent.amount, settings.htgPerUsd) : intent.amount;
-    const hold = !intent.orderId && intent.provider !== "MONCASH" && amountHtg >= settings.holdThresholdHtg;
+    const hold = !intent.orderId && ((intent.provider !== "MONCASH" && amountHtg >= settings.holdThresholdHtg) || kycReview);
     const updated = await tx.paymentIntent.update({
       where: { id: intent.id },
       data: {
@@ -45,7 +53,7 @@ export async function completePayment(
       },
     });
     await creditPayment(tx, updated, { hold, actorId: opts.actorId });
-    if (!hold && !intent.orderId) await grantTopupBonus(tx, updated, settings.topupBonus, settings.htgPerUsd);
+    if (!hold && !intent.orderId && !noBonus) await grantTopupBonus(tx, updated, settings.topupBonus, settings.htgPerUsd);
 
     if (intent.orderId) {
       const order = await tx.order.findUniqueOrThrow({ where: { id: intent.orderId } });

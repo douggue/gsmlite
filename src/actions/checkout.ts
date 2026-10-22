@@ -9,6 +9,7 @@ import { z } from "zod";
 import { mustVerifyEmail } from "@/lib/verify-email";
 import { shopperCountry } from "@/lib/prefs";
 import { startCardPayment } from "@/lib/payments/start";
+import { KycRequiredError } from "@/lib/kyc";
 
 const input = z.object({
   items: cartSchema,
@@ -18,7 +19,7 @@ const input = z.object({
   note: z.string().max(300).optional(),
 });
 
-export type PlaceOrderResult = { ok: true; orderId: string; redirect?: string } | { ok: false; error: string };
+export type PlaceOrderResult = { ok: true; orderId: string; redirect?: string } | { ok: false; error: string; kyc?: { level: string | null; message: string } };
 
 export async function placeOrder(raw: unknown): Promise<PlaceOrderResult> {
   let user;
@@ -49,6 +50,7 @@ export async function placeOrder(raw: unknown): Promise<PlaceOrderResult> {
     return { ok: true, orderId: order.id };
   } catch (e) {
     if (e instanceof OrderError) return { ok: false, error: e.code };
+    if (e instanceof KycRequiredError) return { ok: false, error: e.decision.blocked ? "kyc_blocked" : "kyc_required", kyc: { level: e.decision.level?.key ?? null, message: e.decision.message } };
     if (e instanceof InsufficientFundsError) return { ok: false, error: "insufficient" };
     if (e instanceof LimitExceededError) return { ok: false, error: "new_account_limit" };
     console.error("placeOrder failed", e);

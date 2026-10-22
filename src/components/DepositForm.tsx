@@ -186,6 +186,11 @@ export function DepositForm(p: Props) {
           const r = await createDeposit(fd);
           if (!r.ok) {
             setCaptchaKey((k) => k + 1); // bot-check tokens are single-use
+            if (r.kyc) {
+              setError(r.kyc.message || tco("errors.kyc_required"));
+              if (r.kyc.level) router.push(`/account/verification?level=${r.kyc.level}&next=/account/wallet/deposit`);
+              return;
+            }
             return setError(errors[r.error] ?? tc("error"));
           }
           if (r.redirect) window.location.href = r.redirect;

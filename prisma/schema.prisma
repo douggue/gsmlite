@@ -36,32 +36,33 @@ enum Currency {
 }
 
 model User {
-  id               String        @id
+  id               String          @id
   name             String
-  email            String        @unique
-  emailVerified    Boolean       @default(false)
+  email            String          @unique
+  emailVerified    Boolean         @default(false)
   image            String?
   phone            String?
-  role             Role          @default(CUSTOMER)
-  status           AccountStatus @default(ACTIVE)
-  locale           String        @default("ht")
+  role             Role            @default(CUSTOMER)
+  status           AccountStatus   @default(ACTIVE)
+  locale           String          @default("ht")
   /// Country on the account (ISO code), set from the visitor's location at sign-up; decides services and payment methods
   country          String?
-  displayCurrency  Currency      @default(HTG)
-  twoFactorEnabled Boolean?      @default(false)
+  kycSubmissions   KycSubmission[]
+  displayCurrency  Currency        @default(HTG)
+  twoFactorEnabled Boolean?        @default(false)
   customRoleId     String?
-  customRole       CustomRole?   @relation(fields: [customRoleId], references: [id])
-  referralCode     String?       @unique
+  customRole       CustomRole?     @relation(fields: [customRoleId], references: [id])
+  referralCode     String?         @unique
   /// { email: boolean, whatsapp: boolean, marketing: boolean }
-  notifyPrefs      Json          @default("{\"email\":true,\"whatsapp\":true,\"marketing\":false}")
+  notifyPrefs      Json            @default("{\"email\":true,\"whatsapp\":true,\"marketing\":false}")
   /// Cart saved to the account so it follows the customer across devices
-  savedCart        Json          @default("[]")
+  savedCart        Json            @default("[]")
   /// City picked by the customer (shown next to their first name on reviews)
   city             String?
   /// Kept from the original codebase; no longer shown anywhere
-  showInFeed       Boolean       @default(true)
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  showInFeed       Boolean         @default(true)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
 
   sessions       Session[]
   accounts       Account[]
@@ -1118,4 +1119,104 @@ model ServiceChange {
 
   @@index([createdAt])
   @@index([productId, createdAt])
+}
+
+// ─────────────────────────────── KYC ───────────────────────────────
+
+/**
+ * Verification levels defined by the owner (Basic, Verified, Shop/technician, or any new one).
+ */
+model KycLevel {
+  id           String          @id @default(cuid())
+  key          String          @unique
+  name         Json
+  description  Json            @default("{}")
+  /// Higher = stronger. A rule asking for a level is met by any approved level with an equal or higher rank.
+  rank         Int             @default(1)
+  /// [{ type: "id_doc"|"selfie"|"video_selfie"|"address_proof"|"business_doc"|"shop_photo"|"receipt"|"upload"|"question"|"email"|"phone", label: {..}, required }]
+  requirements Json            @default("[]")
+  /// Approval is valid this many months (0 = no expiry)
+  validMonths  Int             @default(0)
+  /// Price group the customer joins when approved (e.g. Technician)
+  joinsGroupId String?
+  isActive     Boolean         @default(true)
+  submissions  KycSubmission[]
+  rules        KycRule[]
+  createdAt    DateTime        @default(now())
+}
+
+/**
+ * "When <conditions> → <action>", checked in order; the first rule that matches decides.
+ */
+model KycRule {
+  id         String    @id @default(cuid())
+  sortOrder  Int       @default(0)
+  isEnabled  Boolean   @default(true)
+  name       String
+  /// [{ field, op: "gt"|"gte"|"lt"|"eq"|"in"|"not_in"|"true", value }]
+  conditions Json      @default("[]")
+  /// require_level | review | block | no_bonus
+  action     String
+  levelId    String?
+  level      KycLevel? @relation(fields: [levelId], references: [id])
+  /// Shown to the customer, per language
+  message    Json      @default("{}")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+enum KycStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  /// Staff asked for a new photo / more information
+  NEEDS_MORE
+}
+
+model KycSubmission {
+  id           String        @id @default(cuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  levelId      String
+  level        KycLevel      @relation(fields: [levelId], references: [id])
+  status       KycStatus     @default(PENDING)
+  /// Answers to the level's questions (shop name, address, WhatsApp…)
+  answers      Json          @default("{}")
+  /// Reason shown to the customer (rejection / what to send again)
+  note         String?
+  reviewedById String?
+  reviewedAt   DateTime?
+  expiresAt    DateTime?
+  documents    KycDocument[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([status, createdAt])
+  @@index([userId, status])
+}
+
+/**
+ * Encrypted file in private storage; every staff view is written to KycView and the audit log.
+ */
+model KycDocument {
+  id           String        @id @default(cuid())
+  submissionId String
+  submission   KycSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  /// requirement type, e.g. id_doc, selfie
+  kind         String
+  path         String
+  mime         String
+  size         Int
+  deletedAt    DateTime?
+  views        KycView[]
+  createdAt    DateTime      @default(now())
+}
+
+model KycView {
+  id         String      @id @default(cuid())
+  documentId String
+  document   KycDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  staffId    String
+  ip         String?
+  createdAt  DateTime    @default(now())
 }

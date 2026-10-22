@@ -201,7 +201,9 @@
       "generic": "No pudimos realizar tu pedido. Inténtalo de nuevo.",
       "invalid_amount": "El monto no es válido o está fuera de los límites. Cámbielo e inténtelo de nuevo.",
       "verify_email": "Confirma tu correo antes de continuar. Revisa tu bandeja.",
-      "not_in_country": "Este servicio no está disponible en tu país."
+      "not_in_country": "Este servicio no está disponible en tu país.",
+      "kyc_required": "Esto necesita una cuenta verificada. Verifícala en unos minutos.",
+      "kyc_blocked": "Esto no está permitido en tu cuenta. Contacta con soporte."
     }
   },
   "order": {
@@ -414,7 +416,10 @@
     "order_refunded": "El pedido #{number} fue reembolsado a tu billetera.",
     "exchange_done": "Tu cambio de moneda se completó.",
     "wallet_adjusted": "Nuestro equipo ajustó tu billetera.",
-    "referral_rewarded": "Recibiste {amount} porque un amigo invitado hizo una compra."
+    "referral_rewarded": "Recibiste {amount} porque un amigo invitado hizo una compra.",
+    "kyc_approved": "Tu cuenta ahora es {level}. Puedes continuar.",
+    "kyc_rejected": "Tu verificación no fue aprobada: {reason}",
+    "kyc_needs_more": "Necesitamos una foto nueva para tu verificación: {reason}"
   },
   "pages": {
     "aboutTitle": "Sobre GSMLite",
@@ -910,7 +915,9 @@
       "added": "Agregado al carrito",
       "addToCart": "Agregar al carrito",
       "notifyNote": "Recibirás una notificación en cuanto cada resultado esté listo.",
-      "stickyOrder": "Pedir"
+      "stickyOrder": "Pedir",
+      "kycNeeded": "Verifica tu cuenta para continuar.",
+      "verifyNow": "Verificar ahora"
     },
     "order": {
       "lines": "Teléfonos de este pedido",
@@ -1076,6 +1083,35 @@
       },
       "signInForAll": "Inicia sesión para ver también subidas de precio y servicios retirados.",
       "noChanges": "No hay cambios en los últimos 60 días."
+    },
+    "kyc": {
+      "verification": "Verificación",
+      "title": "Verifica tu cuenta",
+      "sub": "Algunos pagos y precios necesitan una cuenta verificada. Envía los documentos una vez; los revisamos rápido.",
+      "current": "Tu nivel:",
+      "none": "Aún sin verificar",
+      "status": {
+        "APPROVED": "Aprobado",
+        "PENDING": "En revisión",
+        "NEEDS_MORE": "Se necesita otra foto",
+        "REJECTED": "No aprobado"
+      },
+      "sentOn": "Enviado el {date}. Te avisaremos.",
+      "addPhone": "Agrega tu teléfono",
+      "start": "Empezar",
+      "sendAgain": "Enviar de nuevo",
+      "send": "Enviar para revisión",
+      "sending": "Enviando…",
+      "sent": "Enviado. Te avisaremos en cuanto se revise.",
+      "backTo": "Volver a lo que estabas haciendo",
+      "privacy": "Los documentos se cifran y solo los ve nuestro equipo de verificación; cada vista queda registrada. Se borran cuando se cierra la cuenta.",
+      "err": {
+        "missing": "Agrega «{field}».",
+        "size": "Un archivo es demasiado grande (12 MB máx.).",
+        "type": "Usa una foto (JPG, PNG), un PDF o un video MP4.",
+        "busy": "Demasiados intentos. Espera una hora.",
+        "level": "Este nivel no está disponible."
+      }
     }
   }
 }

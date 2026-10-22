@@ -7,6 +7,7 @@ import { getSettings } from "@/lib/settings";
 import { refundOrCancel } from "@/lib/orders";
 import { LIVE } from "@/lib/suppliers/dispatch";
 import { endExpiredDeals } from "@/lib/deals";
+import { deletePrivateFile } from "@/lib/storage";
 
 /**
  * Scheduled maintenance (call every 5–10 minutes with `Authorization: Bearer $CRON_SECRET`, e.g. Vercel Cron or Inngest):
@@ -79,5 +80,12 @@ export async function GET(req: NextRequest) {
       }
     }
   }
-  return NextResponse.json(result);
+  // KYC documents of accounts closed longer than the retention period are deleted for good.
+  const cutoff = new Date(now.getTime() - settings.kycRetentionMonths * 30 * 86_400_000);
+  const oldDocs = await prisma.kycDocument.findMany({ where: { deletedAt: null, submission: { user: { status: "CLOSED", updatedAt: { lt: cutoff } } } }, take: 200 });
+  for (const d of oldDocs) {
+    await deletePrivateFile(d.path);
+    await prisma.kycDocument.update({ where: { id: d.id }, data: { deletedAt: new Date() } });
+  }
+  return NextResponse.json({ ...result, kycDocsDeleted: oldDocs.length });
 }

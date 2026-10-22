@@ -201,7 +201,9 @@
       "generic": "We could not place your order. Please try again.",
       "invalid_amount": "The amount is invalid or outside the limits. Change it and try again.",
       "verify_email": "Confirm your email before continuing. Check your inbox.",
-      "not_in_country": "This service is not available in your country."
+      "not_in_country": "This service is not available in your country.",
+      "kyc_required": "This needs a verified account. Verify it in a few minutes.",
+      "kyc_blocked": "This isn't allowed on your account. Contact support."
     }
   },
   "order": {
@@ -414,7 +416,10 @@
     "order_refunded": "Order #{number} was refunded to your wallet.",
     "exchange_done": "Your currency exchange is complete.",
     "wallet_adjusted": "Your wallet was adjusted by our team.",
-    "referral_rewarded": "You received {amount} because a friend you invited made a purchase."
+    "referral_rewarded": "You received {amount} because a friend you invited made a purchase.",
+    "kyc_approved": "Your account is now {level}. You can continue.",
+    "kyc_rejected": "Your verification was not approved: {reason}",
+    "kyc_needs_more": "We need a new photo for your verification: {reason}"
   },
   "pages": {
     "aboutTitle": "About GSMLite",
@@ -910,7 +915,9 @@
       "added": "Added to cart",
       "addToCart": "Add to cart instead",
       "notifyNote": "You'll get a notification as soon as each result is ready.",
-      "stickyOrder": "Order"
+      "stickyOrder": "Order",
+      "kycNeeded": "Verify your account to continue.",
+      "verifyNow": "Verify now"
     },
     "order": {
       "lines": "Phones in this order",
@@ -1076,6 +1083,35 @@
       },
       "signInForAll": "Sign in to also see price rises and removed services.",
       "noChanges": "No changes in the last 60 days."
+    },
+    "kyc": {
+      "verification": "Verification",
+      "title": "Verify your account",
+      "sub": "Some payments and prices need a verified account. Send the documents once; we check them quickly.",
+      "current": "Your level:",
+      "none": "Not verified yet",
+      "status": {
+        "APPROVED": "Approved",
+        "PENDING": "Being checked",
+        "NEEDS_MORE": "New photo needed",
+        "REJECTED": "Not approved"
+      },
+      "sentOn": "Sent {date}. We'll notify you.",
+      "addPhone": "Add your phone",
+      "start": "Start",
+      "sendAgain": "Send again",
+      "send": "Send for checking",
+      "sending": "Sending…",
+      "sent": "Sent. We'll notify you as soon as it's checked.",
+      "backTo": "Go back to what you were doing",
+      "privacy": "Documents are encrypted and only seen by our verification staff; every view is recorded. They are deleted after your account closes.",
+      "err": {
+        "missing": "Add “{field}”.",
+        "size": "A file is too big (12 MB max).",
+        "type": "Use a photo (JPG, PNG), a PDF or an MP4 video.",
+        "busy": "Too many tries. Wait an hour.",
+        "level": "This level is not available."
+      }
     }
   }
 }

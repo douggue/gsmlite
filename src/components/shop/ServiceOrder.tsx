@@ -65,6 +65,7 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
   const [fields, setFields] = useState<Record<string, string>>(saved[0]?.values ?? {});
   const [method, setMethod] = useState(signedIn && balances ? "WALLET" : methods[0]?.id ?? "WALLET");
   const [error, setError] = useState("");
+  const [kycLevel, setKycLevel] = useState<string | null | undefined>(undefined);
   const [added, setAdded] = useState(false);
   const [pending, start] = useTransition();
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -112,6 +113,7 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
 
   function check(): boolean {
     setError("");
+    setKycLevel(undefined);
     if (!variant || !variant.inStock) return false;
     if (isImei) {
       if (ids.valid.length === 0) {
@@ -174,6 +176,10 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
       });
       if (!res.ok) {
         if (res.error === "signin") return router.push(`/auth/login?next=${encodeURIComponent(`/products/${product.slug}#order`)}`);
+        if (res.kyc) {
+          setKycLevel(res.kyc.level);
+          return setError(res.kyc.message || g("kycNeeded"));
+        }
         setError(tc.has(`errors.${res.error}`) ? tc(`errors.${res.error}`) : tc("errors.generic"));
         return;
       }
@@ -330,7 +336,14 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
       {isImei && ids.invalid.length > 0 && (
         <p role="alert" className="rounded-[10px] bg-[#fcebdd] px-3 py-2.5 text-[13px] text-[#8a3607]">{g("leftOut", { n: ids.invalid.length })}</p>
       )}
-      {error && <p className="rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger" role="alert">{error}</p>}
+      {error && (
+        <p className="rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger" role="alert">
+          {error}
+          {kycLevel !== undefined && kycLevel !== null && (
+            <Link href={`/account/verification?level=${kycLevel}&next=${encodeURIComponent(`/products/${product.slug}#order`)}`} className="ml-1 font-semibold underline">{g("verifyNow")}</Link>
+          )}
+        </p>
+      )}
 
       <button ref={buttonRef} type="button" onClick={orderNow} disabled={!variant?.inStock || pending}
         className="min-h-[52px] w-full rounded-[14px] bg-primary text-[17px] font-semibold text-white disabled:opacity-60">

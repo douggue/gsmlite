@@ -9,7 +9,7 @@ export default async function AccountLayout({ children, params }: { children: Re
   const { locale } = await params;
   setRequestLocale(locale);
   await requireUser(locale, `/${locale}/account`);
-  const [ta, tc, tn] = await Promise.all([getTranslations("account"), getTranslations("common"), getTranslations("notifications")]);
+  const [ta, tc, tn, tg] = await Promise.all([getTranslations("account"), getTranslations("common"), getTranslations("notifications"), getTranslations("gl.kyc")]);
   const settings = await getSettings();
   const items = [
     { href: "/account", label: ta("dashboard") },
@@ -19,6 +19,7 @@ export default async function AccountLayout({ children, params }: { children: Re
     { href: "/account/support", label: ta("support") },
     ...(settings.referralEnabled ? [{ href: "/account/referrals", label: ta("referrals") }] : []),
     { href: "/account/profile", label: ta("profile") },
+    { href: "/account/verification", label: tg("verification") },
     { href: "/account/security", label: ta("security") },
     { href: "/account/privacy", label: ta("privacy") },
   ];

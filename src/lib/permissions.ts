@@ -23,6 +23,7 @@ export const PERMISSIONS = [
   "referrals.manage",
   "approvals.decide",
   "suppliers.manage",
+  "kyc.review",
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];
@@ -31,7 +32,7 @@ export type Permission = (typeof PERMISSIONS)[number];
 export const ROLE_PERMISSIONS: Record<Role, readonly Permission[]> = {
   SUPER_ADMIN: PERMISSIONS,
   STORE_MANAGER: ["dashboard.view", "catalog.manage", "suppliers.manage", "codes.manage", "orders.view", "orders.manage", "customers.view", "analytics.view", "content.manage"],
-  FINANCE_MANAGER: ["dashboard.view", "payments.review", "wallet.view", "wallet.adjust", "risk.manage", "orders.view", "customers.view", "audit.view", "analytics.view", "referrals.manage", "approvals.decide"],
+  FINANCE_MANAGER: ["dashboard.view", "kyc.review", "payments.review", "wallet.view", "wallet.adjust", "risk.manage", "orders.view", "customers.view", "audit.view", "analytics.view", "referrals.manage", "approvals.decide"],
   CONTENT_EDITOR: ["dashboard.view", "catalog.manage", "content.manage", "seo.manage"],
   SUPPORT_AGENT: ["dashboard.view", "orders.view", "customers.view", "support.manage"],
   FULFILLMENT: ["dashboard.view", "orders.view", "orders.manage", "codes.reveal"],
@@ -60,6 +61,7 @@ export const PERMISSION_LABELS: Record<Permission, string> = {
   "content.manage": "Edit homepage, news, theme and translations",
   "seo.manage": "Edit SEO titles and redirects",
   "suppliers.manage": "Sync and import supplier services, fix stuck supplier orders",
+  "kyc.review": "Open KYC documents (every view logged) and approve or reject them",
   "referrals.manage": "Review referrals",
   "approvals.decide": "Approve large wallet adjustments (second person)",
 };

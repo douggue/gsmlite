@@ -16,11 +16,12 @@ import { savePrivateImage, uploadsEnabled } from "@/lib/storage";
 import { normalizePhone } from "@/lib/phone";
 import { mustVerifyEmail } from "@/lib/verify-email";
 import { methodAllowed } from "@/lib/pay-methods";
+import { evaluateKyc } from "@/lib/kyc";
 import { shopperCountry } from "@/lib/prefs";
 import { cardAvailable } from "@/lib/payments/card";
 import { startCardPayment } from "@/lib/payments/start";
 
-export type ActionResult<T = object> = ({ ok: true } & T) | { ok: false; error: string };
+export type ActionResult<T = object> = ({ ok: true } & T) | { ok: false; error: string; kyc?: { level: string | null; message: string } };
 
 // Spaces are dropped (copied from an SMS: "TX 1234 5678"); dots, slashes and underscores are kept (some wallets use them).
 const refSchema = z.string().transform((s) => s.replace(/\s+/g, "")).pipe(z.string().min(4).max(40).regex(/^[A-Za-z0-9._\/-]+$/));
@@ -62,6 +63,8 @@ export async function createDeposit(form: FormData): Promise<ActionResult<{ redi
   if (!amount || amountHtg < settings.minDepositHtg || amountHtg > settings.maxDepositHtg) return { ok: false, error: "amount" };
 
   const dbUser = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
+  const kyc = await evaluateKyc(user.id, { action: "topup", amountUsd: currency === "USD" ? amount : Math.round(amount / settings.htgPerUsd), method: methodId, country: await shopperCountry(user) }, dbUser.locale);
+  if (!kyc.ok) return { ok: false, error: kyc.blocked ? "kyc_blocked" : "kyc_required", kyc: { level: kyc.level?.key ?? null, message: kyc.message } };
   try {
     await assertWithinNewAccountLimit(prisma, dbUser, amountHtg, settings);
   } catch (e) {

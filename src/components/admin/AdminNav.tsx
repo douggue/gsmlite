@@ -22,9 +22,9 @@ function useAdminTheme() {
   return { dark, toggle };
 }
 
-const footerBtn = "group flex flex-1 flex-col items-center gap-1 rounded-xl border border-border bg-surface-2 px-2 py-2.5 text-[11px] font-semibold text-muted transition-colors hover:border-primary hover:text-primary";
+const footerBtn = "group flex flex-1 flex-col items-center gap-1 rounded-xl border border-white/10 bg-white/[0.04] px-2 py-2.5 text-[11px] font-semibold text-[#c9cfc6] transition-colors hover:border-[#7ce0a8] hover:text-white";
 
-export function AdminNav({ items, user, logo }: { items: { href: string; label: string; group?: string; badge?: number }[]; user: { name: string; role: string }; logo?: string }) {
+export function AdminNav({ items, user, logo }: { items: { href: string; label: string; group?: string; badge?: number; alert?: boolean }[]; user: { name: string; role: string }; logo?: string }) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -34,18 +34,18 @@ export function AdminNav({ items, user, logo }: { items: { href: string; label: 
     <nav className="flex flex-col gap-0.5" aria-label="Admin">
       {items.map((i, n) => (
         <div key={i.href}>
-        {i.group && i.group !== items[n - 1]?.group && <p className="mb-1 mt-3 px-3 text-[11px] font-bold uppercase tracking-wider text-muted">{i.group}</p>}
+        {i.group && i.group !== items[n - 1]?.group && <p className="mb-1 mt-4 px-2.5 text-[11px] font-bold uppercase tracking-wider text-[#7d847a]">{i.group}</p>}
         <Link
           href={i.href}
           onClick={() => setOpen(false)}
           aria-current={active(i.href) ? "page" : undefined}
-          className={`group flex min-h-10 items-center gap-3 rounded-xl px-2.5 py-2 text-sm font-semibold transition-colors ${active(i.href) ? "bg-primary text-white shadow-[0_8px_20px_-10px_var(--primary)]" : "text-muted hover:bg-surface-2 hover:text-text"}`}
+          className={`group flex min-h-10 items-center gap-2.5 rounded-[10px] px-2.5 py-1.5 text-sm transition-colors ${active(i.href) ? "bg-[#1f7a4d] font-semibold text-white" : "text-[#c9cfc6] hover:bg-white/[0.06] hover:text-white"}`}
         >
-          <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg ${active(i.href) ? "bg-white/15" : "bg-surface-2 text-primary group-hover:bg-primary-soft"}`}>
-            <AdminIcon name={i.href} />
+          <span className="grid h-7 w-7 shrink-0 place-items-center opacity-90">
+            <AdminIcon name={i.href} width={18} height={18} />
           </span>
           <span className="min-w-0 flex-1 truncate">{i.label}</span>
-          {!!i.badge && <span className={`rounded-full px-2 text-xs font-bold ${active(i.href) ? "bg-white text-primary" : "bg-warning-soft text-warning"}`}>{i.badge}</span>}
+          {!!i.badge && <span className={`rounded-full px-2 py-px text-xs font-semibold ${i.alert ? "bg-[#fcebdd] text-[#8a3607]" : "bg-[#2a3029] text-[#c9cfc6]"}`}>{i.badge}</span>}
         </Link>
         </div>
       ))}
@@ -53,9 +53,9 @@ export function AdminNav({ items, user, logo }: { items: { href: string; label: 
   );
   const initials = user.name.split(/\s+/).map((w) => w[0]).filter(Boolean).slice(0, 2).join("").toUpperCase();
   const footer = (
-    <div className="mt-auto space-y-3 border-t border-border pt-4">
+    <div className="mt-auto space-y-3 border-t border-white/10 pt-4 [&_.text-text]:text-white [&_.text-muted]:text-[#9aa197]">
       <div className="flex items-center gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary text-sm font-black text-white">{initials || "HG"}</span>
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#7ce0a8] text-sm font-black text-[#0b2a1a]">{initials || "GL"}</span>
         <span className="min-w-0">
           <span className="block truncate text-sm font-bold text-text">{user.name}</span>
           <span className="block text-[11px] font-semibold uppercase tracking-wider text-muted">{user.role.replace("_", " ")}</span>
@@ -66,7 +66,7 @@ export function AdminNav({ items, user, logo }: { items: { href: string; label: 
           <AdminIcon name={theme.dark ? "sun" : "moon"} width={20} height={20} />
           {theme.dark ? "Light" : "Dark"}
         </button>
-        <a href="/ht" target="_blank" rel="noreferrer" className={footerBtn} aria-label="View the store (new tab)">
+        <a href="/" target="_blank" rel="noreferrer" className={footerBtn} aria-label="View the store (new tab)">
           <AdminIcon name="eye" width={20} height={20} />
           Store
         </a>
@@ -89,8 +89,8 @@ export function AdminNav({ items, user, logo }: { items: { href: string; label: 
   const quick = items.filter((i) => i.href in shortcuts).slice(0, 4).map((i) => ({ ...i, short: shortcuts[i.href], label: i.label === "Dashboard" ? "Home" : i.label }));
   return (
     <>
-      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-6 overflow-y-auto border-r border-border bg-surface p-4 lg:flex">
-        <Link href="/admin" className="text-text"><Logo src={logo} /></Link>
+      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-4 overflow-y-auto bg-[#111418] p-4 text-white lg:flex">
+        <Link href="/admin" className="display px-2.5 pb-2 text-xl font-extrabold text-white">GSM<span className="text-[#7ce0a8]">Lite</span> admin</Link>
         {nav}
         {footer}
       </aside>
@@ -101,8 +101,8 @@ export function AdminNav({ items, user, logo }: { items: { href: string; label: 
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
           <button type="button" className="absolute inset-0 bg-black/50" aria-label="Close" onClick={() => setOpen(false)} />
-          <div className="absolute inset-y-0 left-0 flex w-72 flex-col gap-6 overflow-y-auto bg-surface p-4">
-            <button type="button" onClick={() => setOpen(false)} className="self-end p-2 text-text" aria-label="Close"><CloseIcon /></button>
+          <div className="absolute inset-y-0 left-0 flex w-72 flex-col gap-4 overflow-y-auto bg-[#111418] p-4 text-white">
+            <button type="button" onClick={() => setOpen(false)} className="self-end p-2 text-white" aria-label="Close"><CloseIcon /></button>
             {nav}
             {footer}
           </div>

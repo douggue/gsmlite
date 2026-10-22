@@ -48,6 +48,11 @@ export function CheckoutForm({ balances, moncashEnabled, natcashEnabled, manualM
       });
       if (!res.ok) {
         if (res.error === "signin") return router.push("/auth/login?next=/checkout");
+        if (res.kyc) {
+          setError(res.kyc.message || tc("errors.kyc_required"));
+          if (res.kyc.level) router.push(`/account/verification?level=${res.kyc.level}&next=/checkout`);
+          return;
+        }
         setError(tc.has(`errors.${res.error}`) ? tc(`errors.${res.error}`) : tc("errors.generic"));
         return;
       }

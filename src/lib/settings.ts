@@ -77,6 +77,8 @@ export type Settings = {
   freeCheckVariantId: string;
   /** Days after a full IMEI check during which its price comes off an unlock of the same IMEI (0 = off) */
   checkCreditDays: number;
+  /** KYC documents are deleted this many months after the account is closed */
+  kycRetentionMonths: number;
   /** Wallet top-up bonus: % on the first top-up, % on top-ups of at least minUsd (cents); 0 = off */
   topupBonus: { firstPct: number; pct: number; minUsd: number };
   /** Defaults on the supplier import screen */
@@ -199,6 +201,7 @@ export const DEFAULT_SETTINGS: Settings = {
   freeChecksPerDay: 3,
   freeCheckVariantId: "",
   checkCreditDays: 7,
+  kycRetentionMonths: 12,
   topupBonus: { firstPct: 10, pct: 3, minUsd: 5000 },
   supplierDefaults: { markupPct: 35, minProfitUsd: 50, round: "99" },
   successRate: { minOrders: 20, alertBelowPct: 80, pauseBelowPct: 0 },
