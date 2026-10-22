@@ -390,6 +390,8 @@ model Order {
   fulfilledAt    DateTime?
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
+  /// Where the customer first came from (google, telegram…) for the content machine numbers
+  trafficSource  String?
 
   @@index([userId, createdAt])
   @@index([status])
@@ -1267,4 +1269,80 @@ model OrderFile {
 
   @@index([userId, createdAt])
   @@index([orderItemId])
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  REJECTED
+}
+
+/// Content machine page: a service page (extra text on /products/[slug]), a brand hub, a guide or a tool-update post.
+/// Written by the AI writer from real site data; nothing goes live before staff approve it.
+model ContentPage {
+  id            String        @id @default(cuid())
+  /// service | hub | guide | tool
+  kind          String
+  status        ContentStatus @default(DRAFT)
+  /// URL part for hubs and guides (/en/brand/<slug>, /en/guides/<slug>); service pages use the product's address
+  slug          String        @unique
+  productId     String?
+  /// Brand of a hub (Apple, Samsung…)
+  brand         String?
+  newsArticleId String?
+  keyword       String
+  /// Per language: { title, description, intro, steps[], findImei, sections[{h, p}], faq[{q, a}], sample }
+  content       Json          @default("{}")
+  /// Snapshot of price / time / success rate used to write it; a change marks the page for refresh
+  dataHash      String?
+  /// Why it was written (new import, keyword idea, refresh…)
+  reason        String?
+  /// What writing it cost, in millionths of a dollar
+  costMicros    Int           @default(0)
+  model         String?
+  reviewedById  String?
+  publishedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([status, kind])
+  @@index([productId])
+}
+
+/// Keyword research results (DataForSEO, Search Console), cached so the same keyword is never paid for twice.
+model Keyword {
+  id          String   @id @default(cuid())
+  keyword     String
+  locale      String
+  country     String
+  volume      Int?
+  difficulty  Int?
+  cpcCents    Int?
+  intent      String?
+  /// Where we rank today (Search Console average position × 10), null = not seen
+  position    Int?
+  clicks      Int?
+  impressions Int?
+  source      String
+  /// idea | drafted | ignored
+  status      String   @default("idea")
+  score       Int      @default(0)
+  /// What it maps to: product id, hub brand, or "guide"
+  target      String?
+  fetchedAt   DateTime @default(now())
+
+  @@unique([keyword, locale, country])
+  @@index([status, score])
+}
+
+/// Money spent by the content machine (AI writing, keyword data), for the monthly budget.
+model ContentSpend {
+  id         String   @id @default(cuid())
+  /// ai | keywords
+  kind       String
+  costMicros Int
+  note       String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
 }

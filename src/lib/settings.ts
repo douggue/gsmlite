@@ -106,6 +106,21 @@ export type Settings = {
   languages: string[];
   /** Admin only from these addresses (IPs or IPv4 CIDR). Empty = from anywhere (2FA still required). */
   adminIpAllowlist: string[];
+  /** Content machine (Admin → Content machine). The AI key and DataForSEO login live in the hosting env only. */
+  contentMachine: {
+    onNewService: boolean;
+    hubs: boolean;
+    toolPosts: boolean;
+    guides: boolean;
+    refresh: boolean;
+    perDay: number;
+    languages: string[];
+    budgetUsd: number;
+    model: string;
+    tone: string;
+  };
+  /** Google Search Console: the property (e.g. sc-domain:gsmlite.com) and the encrypted refresh token */
+  gsc: { site: string; refreshToken: string; connectedAt?: string };
 };
 
 export type NavLink = { label: Record<string, string>; href: string };
@@ -237,6 +252,8 @@ export const DEFAULT_SETTINGS: Settings = {
   legal: { entity: "", registration: "", taxId: "", email: "", refundDays: 7 },
   languages: ["ht", "fr", "en", "es"],
   adminIpAllowlist: [],
+  contentMachine: { onNewService: true, hubs: true, toolPosts: true, guides: true, refresh: true, perDay: 3, languages: ["en", "ht", "fr", "es"], budgetUsd: 20, model: "claude-opus-5-5", tone: "Clear, friendly and precise, for phone repair technicians and phone owners. Short sentences. No hype." },
+  gsc: { site: "", refreshToken: "" },
 };
 
 export async function getSettings(): Promise<Settings> {
