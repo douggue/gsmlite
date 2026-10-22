@@ -259,6 +259,8 @@ model ProductVariant {
   supplierServiceId String?
   /// What the supplier charges us per unit, in USD cents (refreshed by catalog sync)
   costUsd           Int?
+  /// Set out of stock by a sync because the supplier stopped offering the service; undone if it comes back
+  pausedBySupplier  Boolean      @default(false)
   codes             CodeItem[]
   orderItems        OrderItem[]
   groupPrices       GroupPrice[]
@@ -889,22 +891,27 @@ model Supplier {
 
 /// The supplier's catalog as last synced (imeiservicelist). Staff link options to these.
 model SupplierService {
-  id         String      @id @default(cuid())
-  supplierId String
-  supplier   Supplier    @relation(fields: [supplierId], references: [id], onDelete: Cascade)
-  remoteId   String
-  groupName  String
-  name       String
-  type       ServiceType
+  id             String      @id @default(cuid())
+  supplierId     String
+  supplier       Supplier    @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  remoteId       String
+  groupName      String
+  name           String
+  type           ServiceType
   /// Supplier price per unit in cents of the supplier currency
-  credit     Int
-  time       String?
-  info       String?
+  credit         Int
+  time           String?
+  info           String?
   /// Inputs the order needs: [{ name, type, required, options }], identifier label, qty rules
-  fields     Json        @default("[]")
+  fields         Json        @default("[]")
   /// Seen in the last sync; false = gone from the supplier's list
-  active     Boolean     @default(true)
-  updatedAt  DateTime    @updatedAt
+  active         Boolean     @default(true)
+  /// Cost before the last price change, and when it changed (shown as "↑ was $x" in the service list)
+  previousCredit Int?
+  priceChangedAt DateTime?
+  /// First sync that listed it ("New" filter)
+  firstSeenAt    DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
 
   @@unique([supplierId, remoteId])
   @@index([supplierId, groupName])

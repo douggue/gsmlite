@@ -3,12 +3,13 @@ import { requireStaff } from "@/lib/session";
 import { can, type Permission } from "@/lib/permissions";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { getSettings } from "@/lib/settings";
+import { supplierAttentionCount } from "@/lib/suppliers/attention";
 
 export const dynamic = "force-dynamic";
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   const user = await requireStaff();
-  const [settings, reviews, risks, processing, approvals, tickets, newReviews] = await Promise.all([
+  const [settings, reviews, risks, processing, approvals, tickets, newReviews, supplierIssues] = await Promise.all([
     getSettings(),
     prisma.paymentIntent.count({ where: { status: "REVIEW" } }),
     prisma.riskFlag.count({ where: { status: "OPEN" } }),
@@ -16,10 +17,12 @@ export default async function PanelLayout({ children }: { children: React.ReactN
     prisma.pendingApproval.count({ where: { status: "PENDING" } }),
     prisma.supportTicket.count({ where: { status: "OPEN" } }),
     prisma.review.count({ where: { status: "pending" } }),
+    supplierAttentionCount(),
   ]);
   const all: { href: string; label: string; group: string; perm: Permission; badge?: number }[] = [
     { href: "/admin", label: "Dashboard", group: "", perm: "dashboard.view" },
     { href: "/admin/orders", label: "Orders", group: "Operations", perm: "orders.view", badge: processing },
+    { href: "/admin/suppliers", label: "Suppliers", group: "Operations", perm: "suppliers.manage", badge: supplierIssues },
     { href: "/admin/payments", label: "Payments", group: "Operations", perm: "payments.review", badge: reviews },
     { href: "/admin/reconciliation", label: "Reconciliation", group: "Operations", perm: "payments.review" },
     { href: "/admin/risk", label: "Risk queue", group: "Operations", perm: "risk.manage", badge: risks },

@@ -5,6 +5,7 @@ const PATHS: Record<string, string[]> = {
   "/admin": ["M3 10.5 12 3l9 7.5", "M5 9.5V20h5v-6h4v6h5V9.5"],
   "/admin/orders": ["M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z", "M3 6h18", "M16 10a4 4 0 0 1-8 0"],
   "/admin/payments": ["M3 7h18v12H3z", "M3 11h18", "M7 15h3"],
+  "/admin/suppliers": ["M3 21h18", "M5 21V8l7-5 7 5v13", "M9 21v-6h6v6", "M9 10h6"],
   "/admin/reconciliation": ["M9 11l3 3L22 4", "M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"],
   "/admin/risk": ["M12 3 2 20h20L12 3Z", "M12 10v4", "M12 17.5v.01"],
   "/admin/approvals": ["M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5Z", "m8.5 12 2.5 2.5 4.5-5"],

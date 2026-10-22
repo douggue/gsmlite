@@ -5,13 +5,15 @@ import { releaseHold } from "@/lib/wallet";
 import { notify } from "@/lib/notify";
 import { getSettings } from "@/lib/settings";
 import { refundOrCancel } from "@/lib/orders";
+import { LIVE } from "@/lib/suppliers/dispatch";
 
 /**
  * Scheduled maintenance (call every 5–10 minutes with `Authorization: Bearer $CRON_SECRET`, e.g. Vercel Cron or Inngest):
  * - re-checks pending MonCash payments in case a callback was lost
  * - releases held deposits whose hold period ended
  * - expires abandoned payment intents
- * - refunds paid orders that were not delivered within `autoRefundHours` (nothing delivered, no open risk review)
+ * - refunds paid orders that were not delivered within `autoRefundHours` (nothing delivered, nothing with a supplier,
+ *   no open risk review)
  */
 export async function GET(req: NextRequest) {
   if (!process.env.CRON_SECRET || req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -59,7 +61,8 @@ export async function GET(req: NextRequest) {
       where: {
         status: { in: ["PAID", "PROCESSING"] },
         paidAt: { lt: cutoff },
-        items: { none: { status: "DELIVERED" } },
+        // A line with a supplier may still succeed (and we pay for it): those wait for the supplier's answer.
+        items: { none: { OR: [{ status: "DELIVERED" }, { supplierOrders: { some: { status: { in: [...LIVE] } } } }] } },
         riskFlags: { none: { status: "OPEN" } },
       },
       select: { id: true },

@@ -279,3 +279,23 @@ the QR, sends USDT, pastes the transaction hash, staff check it on the explorer 
 
 ## Next project after GSMLite (owner, 2026-10-21)
 An SMM panel. Reuse from GSMLite: wallet/ledger, supplier engine (SMM providers use the common "API v2": action=services/add/status/balance, form posts with a key), auto refunds incl. partial ("Partial" status), price groups, content machine, admin, security.
+
+## Build log: Admin → Suppliers (branch preview/suppliers, 2026-10-22)
+Built from the mockup screens "Admin suppliers" and "Supplier service list":
+- Suppliers page: one card per supplier (status chip, balance, services, open orders, Service list & import / Sync now / Logs),
+  "Send waiting orders again" after a top-up, "Needs your attention" list (unknown sends: "It exists: enter its number" /
+  "Not there: send again"; lines waiting on balance/key: "Send again" / "Refund customer"; orders with a supplier > 3 days).
+  Menu badge counts these plus low balances. Adding a supplier tests the connection; the API key is encrypted and never shown.
+- Service list & import: search, filters (Not imported, Already on my site, New, Price changed, Removed by supplier), type and
+  sort chips, their groups, tap a service for its description and fields, tick services, then category (or "same name as their
+  group"), markup %, minimum profit, rounding (.99 or .49/.99) with a live price preview → "Import as hidden drafts" or
+  "Import and publish". Shows "↑ was $x" on price changes and "Selling at a loss" when the cost passes your price.
+- Sync: records price changes; a service the supplier removes pauses your option (out of stock) and un-pauses it if it returns.
+- Logs page per supplier (last 100 requests, key removed, "Only problems" filter); logs older than 30 days are deleted.
+- New permission "Suppliers" (owner and store manager).
+- Automatic refund by time now skips any order with a line still with a supplier.
+- Status checks: call `/api/cron/suppliers` every 2–5 minutes with `Authorization: Bearer CRON_SECRET`. On the VPS: crontab.
+  While on Vercel's free plan (its cron runs once a day) use a free outside scheduler such as cron-job.org. Customers opening
+  their order also triggers a check.
+Next: the admin menu itself in the mockup's dark style with its sections (Services & prices, Price groups, KYC review, Marketing),
+built together with those screens.

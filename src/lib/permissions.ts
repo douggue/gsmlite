@@ -22,6 +22,7 @@ export const PERMISSIONS = [
   "seo.manage",
   "referrals.manage",
   "approvals.decide",
+  "suppliers.manage",
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];
@@ -29,7 +30,7 @@ export type Permission = (typeof PERMISSIONS)[number];
 /** Starter roles from blueprint section 14. Enforced server-side in every admin action and page. */
 export const ROLE_PERMISSIONS: Record<Role, readonly Permission[]> = {
   SUPER_ADMIN: PERMISSIONS,
-  STORE_MANAGER: ["dashboard.view", "catalog.manage", "codes.manage", "orders.view", "orders.manage", "customers.view", "analytics.view", "content.manage"],
+  STORE_MANAGER: ["dashboard.view", "catalog.manage", "suppliers.manage", "codes.manage", "orders.view", "orders.manage", "customers.view", "analytics.view", "content.manage"],
   FINANCE_MANAGER: ["dashboard.view", "payments.review", "wallet.view", "wallet.adjust", "risk.manage", "orders.view", "customers.view", "audit.view", "analytics.view", "referrals.manage", "approvals.decide"],
   CONTENT_EDITOR: ["dashboard.view", "catalog.manage", "content.manage", "seo.manage"],
   SUPPORT_AGENT: ["dashboard.view", "orders.view", "customers.view", "support.manage"],
@@ -58,6 +59,7 @@ export const PERMISSION_LABELS: Record<Permission, string> = {
   "support.manage": "Answer support tickets",
   "content.manage": "Edit homepage, news, theme and translations",
   "seo.manage": "Edit SEO titles and redirects",
+  "suppliers.manage": "Sync and import supplier services, fix stuck supplier orders",
   "referrals.manage": "Review referrals",
   "approvals.decide": "Approve large wallet adjustments (second person)",
 };
