@@ -54,6 +54,8 @@ export type Settings = {
   referralEnabled: boolean;
   referralRewardHtg: number;
   referralMinOrderHtg: number;
+  /** Reward for the invited friend too (HTG centimes, 0 = only the person who invited is rewarded) */
+  referralFriendRewardHtg: number;
   heroImageUrl: string;
   ogImageUrl: string;
   homepage: unknown;
@@ -71,6 +73,10 @@ export type Settings = {
   telegramUrl: string;
   /** Free IMEI checks per day for one account (and one device) */
   freeChecksPerDay: number;
+  /** Optional supplier service (option id) asked for the model when a TAC is not known yet; empty = local list only */
+  freeCheckVariantId: string;
+  /** Days after a full IMEI check during which its price comes off an unlock of the same IMEI (0 = off) */
+  checkCreditDays: number;
   /** Wallet top-up bonus: % on the first top-up, % on top-ups of at least minUsd (cents); 0 = off */
   topupBonus: { firstPct: number; pct: number; minUsd: number };
   /** Defaults on the supplier import screen */
@@ -170,6 +176,7 @@ export const DEFAULT_SETTINGS: Settings = {
   referralEnabled: false,
   referralRewardHtg: 10_000,
   referralMinOrderHtg: 50_000,
+  referralFriendRewardHtg: 0,
   heroImageUrl: "",
   ogImageUrl: "",
   homepage: null,
@@ -190,6 +197,8 @@ export const DEFAULT_SETTINGS: Settings = {
   cardEnabled: false,
   telegramUrl: "",
   freeChecksPerDay: 3,
+  freeCheckVariantId: "",
+  checkCreditDays: 7,
   topupBonus: { firstPct: 10, pct: 3, minUsd: 5000 },
   supplierDefaults: { markupPct: 35, minProfitUsd: 50, round: "99" },
   successRate: { minOrders: 20, alertBelowPct: 80, pauseBelowPct: 0 },

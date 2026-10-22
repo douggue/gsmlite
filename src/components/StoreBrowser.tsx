@@ -30,6 +30,8 @@ export type StoreProduct = {
   created: number;
   /** Every text the product can be found by */
   haystack: string[];
+  /** Card art: category label, short title, ribbon, color */
+  art: { label: string; title: string; tag: string; style: string };
 };
 
 /** Top-level categories get a tab; subcategories (top: false) are only used for names. */
@@ -382,10 +384,9 @@ function Tile({ p, fav, onFav }: { p: StoreProduct; fav: boolean; onFav: () => v
   const tc = useTranslations("common");
   const tp = useTranslations("product");
   return (
-    <Link href={`/products/${p.slug}`} className="card lift group flex flex-col bg-[linear-gradient(180deg,var(--surface-2),var(--surface))] p-3">
+    <Link href={`/products/${p.slug}`} className="card lift group flex flex-col p-3">
       <div className="relative">
-        <ProductArt name={p.name} accent={p.accent} image={p.image} />
-        {p.tags[0] && <span className="badge absolute right-2 top-2 block max-w-[calc(100%-3.5rem)] truncate bg-[#0b0e10]/60 text-[11px] text-white backdrop-blur">{p.tags.slice(0, 2).join(" · ")}</span>}
+        <ProductArt name={p.name} accent={p.accent} image={p.image} label={p.art.label} title={p.art.title} tag={p.art.tag} cardStyle={p.art.style} />
         {p.onSale && <span className="badge absolute bottom-2 left-2 bg-danger text-white">−%</span>}
         <FavButton fav={fav} onFav={onFav} />
       </div>
@@ -412,9 +413,9 @@ function Row({ p, fav, onFav }: { p: StoreProduct; fav: boolean; onFav: () => vo
   const tc = useTranslations("common");
   const tp = useTranslations("product");
   return (
-    <Link href={`/products/${p.slug}`} className="card lift group flex items-center gap-3 bg-[linear-gradient(90deg,var(--surface-2),var(--surface))] p-2.5 sm:gap-4 sm:p-3">
+    <Link href={`/products/${p.slug}`} className="card lift group flex items-center gap-3 p-2.5 sm:gap-4 sm:p-3">
       <div className="relative w-24 shrink-0 sm:w-36">
-        <ProductArt name={p.name} accent={p.accent} image={p.image} />
+        <ProductArt name={p.name} accent={p.accent} image={p.image} title={p.art.title} cardStyle={p.art.style} />
         <FavButton fav={fav} onFav={onFav} small />
       </div>
       <div className="flex min-w-0 flex-1 flex-col">

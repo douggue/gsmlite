@@ -16,7 +16,7 @@ const USD_PRESETS = [10, 25, 50, 100];
 
 type Method = {
   key: string;
-  kind: "moncash" | "mobile" | "crypto";
+  kind: "moncash" | "mobile" | "crypto" | "card";
   name: string;
   mark: string;
   markBg: string;
@@ -33,6 +33,9 @@ type Method = {
 };
 
 type Props = {
+  /** Method to open first (wallet page links: ?method=MONCASH, CARD, MANUAL:<id>…) */
+  initial?: string;
+  card?: boolean;
   moncash: boolean;
   natcash: boolean;
   natcashName: string;
@@ -54,6 +57,7 @@ export function DepositForm(p: Props) {
 
   const methods: Method[] = [
     ...(p.moncash ? [{ key: "MONCASH", kind: "moncash" as const, name: "MonCash", brand: "moncash" as const, mark: "MC", markBg: "#e30613", markFg: "#fff", recipientName: "", recipientNumber: "" }] : []),
+    ...(p.card ? [{ key: "CARD", kind: "card" as const, name: tw("card"), mark: "VISA", markBg: "#111418", markFg: "#7ce0a8", recipientName: "", recipientNumber: "" }] : []),
     ...(p.natcash ? [{ key: "NATCASH", kind: "mobile" as const, name: "NatCash", brand: "natcash" as const, mark: "NC", markBg: "#f7a400", markFg: "#0b0e10", recipientName: p.natcashName, recipientNumber: p.natcashPhone, qr: p.natcashQr || null }] : []),
     ...p.manual.map((m) => ({
       key: `MANUAL:${m.id}`,
@@ -71,10 +75,14 @@ export function DepositForm(p: Props) {
       manualId: m.id,
     })),
   ];
-  const [key, setKey] = useState(methods[0]?.key ?? "");
+  const [key, setKey] = useState(methods.find((x) => x.key === p.initial)?.key ?? methods[0]?.key ?? "");
   const m = methods.find((x) => x.key === key) ?? methods[0];
   const crypto = m?.kind === "crypto";
-  const [amount, setAmount] = useState("1000");
+  /** Crypto and card top-ups are in USD */
+  const usd = crypto || m?.kind === "card";
+  /** MonCash and card: paid on the provider's page, no reference to type */
+  const direct = m?.kind === "moncash" || m?.kind === "card";
+  const [amount, setAmount] = useState(usd ? "25" : "1000");
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const [captchaKey, setCaptchaKey] = useState(0);
@@ -104,16 +112,17 @@ export function DepositForm(p: Props) {
 
   const switchTo = (k: string) => {
     const next = methods.find((x) => x.key === k);
-    if (next && (next.kind === "crypto") !== crypto) setAmount(next.kind === "crypto" ? "25" : "1000");
+    const nextUsd = next?.kind === "crypto" || next?.kind === "card";
+    if (next && nextUsd !== usd) setAmount(nextUsd ? "25" : "1000");
     setKey(k);
     setError("");
   };
 
   const minor = parseAmount(amount);
-  const currency = crypto ? "USD" : "HTG";
+  const currency = usd ? "USD" : "HTG";
   const minUsd = Math.ceil(p.minHtg / p.htgPerUsd);
   const maxUsd = Math.floor(p.maxHtg / p.htgPerUsd);
-  const hint = crypto
+  const hint = usd
     ? tw("amountHint", { min: formatMoney(minUsd, "USD", locale), max: formatMoney(maxUsd, "USD", locale) })
     : tw("amountHint", { min: formatMoney(p.minHtg, "HTG", locale), max: formatMoney(p.maxHtg, "HTG", locale) });
 
@@ -214,7 +223,7 @@ export function DepositForm(p: Props) {
                     )}
                     <span className="min-w-0">
                       <span className="block truncate text-sm font-bold">{x.name}</span>
-                      <span className="block text-[11px] text-muted">{x.kind === "crypto" ? `USD · ${x.network ?? ""}` : "HTG"}</span>
+                      <span className="block text-[11px] text-muted">{x.kind === "crypto" ? `USD · ${x.network ?? ""}` : x.kind === "card" ? "Visa · Mastercard · USD" : "HTG"}</span>
                     </span>
                   </>
                 )}
@@ -225,7 +234,7 @@ export function DepositForm(p: Props) {
       </fieldset>
 
       {/* Where to send */}
-      {m.kind !== "moncash" && (
+      {!direct && (
         <section className="card overflow-hidden">
           <div className={`grid gap-4 p-4 sm:p-5 ${m.qr || genQr ? "sm:grid-cols-[auto_1fr]" : ""}`}>
             {(m.qr || genQr) && (
@@ -258,6 +267,7 @@ export function DepositForm(p: Props) {
       )}
 
       {m.kind === "moncash" && <p className="card p-4 text-sm">{tw("moncashInfo")}</p>}
+      {m.kind === "card" && <p className="card p-4 text-sm">{tw("cardInfo")}</p>}
 
       {steps.length > 0 && (
         <ol className="space-y-2">
@@ -273,27 +283,27 @@ export function DepositForm(p: Props) {
       <div className="card space-y-5 p-4 sm:p-5">
         {/* Amount */}
         <div>
-          <label htmlFor="amount" className="label">{crypto ? tw("cryptoAmount") : tw("amount")}</label>
+          <label htmlFor="amount" className="label">{usd ? tw("cryptoAmount") : tw("amount")}</label>
           <div className="relative">
-            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 font-semibold text-muted">{crypto ? "$" : "HTG"}</span>
-            <input id="amount" name="amount" inputMode="decimal" className={`input h-14 text-xl font-bold ${crypto ? "pl-9" : "pl-14"}`} value={amount} onChange={(e) => setAmount(e.target.value.replace(",", "."))} required />
+            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 font-semibold text-muted">{usd ? "$" : "HTG"}</span>
+            <input id="amount" name="amount" inputMode="decimal" className={`input h-14 text-xl font-bold ${usd ? "pl-9" : "pl-14"}`} value={amount} onChange={(e) => setAmount(e.target.value.replace(",", "."))} required />
           </div>
           <div className="mt-2 flex flex-wrap gap-2">
-            {(crypto ? USD_PRESETS : HTG_PRESETS).map((v) => (
+            {(usd ? USD_PRESETS : HTG_PRESETS).map((v) => (
               <button
                 key={v}
                 type="button"
                 onClick={() => setAmount(String(v))}
                 className={`min-h-10 rounded-xl border px-3.5 text-sm font-semibold ${minor === v * 100 ? "border-primary bg-primary-soft text-primary" : "border-border bg-surface"}`}
               >
-                {crypto ? `$${v}` : `${v.toLocaleString(locale)} HTG`}
+                {usd ? `$${v}` : `${v.toLocaleString(locale)} HTG`}
               </button>
             ))}
           </div>
           <p className="mt-1.5 text-xs text-muted">{hint}</p>
         </div>
 
-        {m.kind !== "moncash" && (
+        {!direct && (
           <>
             {/* Reference / transaction hash */}
             <div>
@@ -363,7 +373,7 @@ export function DepositForm(p: Props) {
         {error && <p className="rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger" role="alert">{error}</p>}
         <Turnstile key={captchaKey} locale={locale} />
         <button className="btn-primary min-h-14 w-full text-base" disabled={pending || !minor || shotBusy}>
-          {pending ? tc("loading") : m.kind === "moncash" ? to("payMoncash") : `${tw("submitDeposit")}${minor ? ` · ${formatMoney(minor, currency, locale)}` : ""}`}
+          {pending ? tc("loading") : m.kind === "moncash" ? to("payMoncash") : m.kind === "card" ? `${tw("payCard")}${minor ? ` · ${formatMoney(minor, currency, locale)}` : ""}` : `${tw("submitDeposit")}${minor ? ` · ${formatMoney(minor, currency, locale)}` : ""}`}
         </button>
       </div>
 

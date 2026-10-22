@@ -1,10 +1,33 @@
 import Image from "next/image";
 
-/** Original artwork: an accent-colored tile with the product's initials, so no third-party imagery is needed. */
-export function ProductArt({ name, accent, image, size = "md", priority = false }: { name: string; accent?: string | null; image?: string | null; size?: "md" | "lg"; priority?: boolean }) {
+const STYLES: Record<string, { box: string; label: string; title: string; tag: string }> = {
+  ink: { box: "bg-[#111418]", label: "text-[#7ce0a8]", title: "text-white", tag: "bg-[#7ce0a8] text-[#0b2a1a]" },
+  green: { box: "bg-[#1f7a4d]", label: "text-[#d3eedd]", title: "text-white", tag: "bg-white text-[#145c39]" },
+  mint: { box: "bg-[#e4f3ea]", label: "text-[#145c39]", title: "text-[#111418]", tag: "bg-[#111418] text-white" },
+  slate: { box: "bg-[#262b2f]", label: "text-[#7ce0a8]", title: "text-white", tag: "bg-[#7ce0a8] text-[#0b2a1a]" },
+};
+
+/** Old products only have an accent color: pick the closest card style. */
+function styleFrom(accent?: string | null) {
+  const a = (accent ?? "").toLowerCase();
+  if (a === "#1f7a4d") return "green";
+  if (a === "#e4f3ea") return "mint";
+  if (a === "#2b2f35" || a === "#262b2f") return "slate";
+  return "ink";
+}
+
+/**
+ * Service art in the mockup style: small label, big two-line title and a ribbon on a flat ink / green / mint tile.
+ * Uploaded product photos are shown instead when there is one.
+ */
+export function ProductArt({ name, accent, image, size = "md", priority = false, label, title, tag, cardStyle }: {
+  name: string; accent?: string | null; image?: string | null; size?: "md" | "lg"; priority?: boolean;
+  label?: string; title?: string; tag?: string; cardStyle?: string;
+}) {
+  const round = size === "lg" ? "rounded-3xl" : "rounded-xl";
   if (image) {
     return (
-      <div className={`relative aspect-[4/3] overflow-hidden bg-surface-2 ${size === "lg" ? "rounded-3xl" : "rounded-xl"}`}>
+      <div className={`relative aspect-[4/3] overflow-hidden bg-surface-2 ${round}`}>
         <Image
           src={image}
           alt={name}
@@ -16,16 +39,12 @@ export function ProductArt({ name, accent, image, size = "md", priority = false 
       </div>
     );
   }
-  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
-  const color = accent ?? "#1F7A4D";
+  const s = STYLES[cardStyle ?? ""] ?? STYLES[styleFrom(accent)];
   return (
-    <div
-      className={`relative grid place-items-center overflow-hidden ${size === "lg" ? "aspect-[4/3] rounded-3xl" : "aspect-[4/3] rounded-xl"}`}
-      style={{ background: `radial-gradient(circle at 50% 42%, ${color} 0%, color-mix(in srgb, ${color} 45%, #0b0e10) 55%, #0b0e10 100%)` }}
-      aria-hidden
-    >
-      <div className="absolute inset-x-6 bottom-0 h-1/3 rounded-full bg-black/25 blur-2xl" />
-      <span className={`display relative font-bold tracking-tight text-white [text-shadow:0_6px_24px_rgba(0,0,0,.35)] ${size === "lg" ? "text-7xl" : "text-4xl"}`}>{initials}</span>
+    <div className={`relative flex aspect-[4/3] flex-col justify-between overflow-hidden p-3 ${round} ${s.box}`} aria-hidden>
+      <span className={`text-[10px] font-semibold uppercase tracking-[0.1em] ${s.label}`}>{label ?? ""}</span>
+      <b className={`display line-clamp-3 leading-[1.08] ${s.title} ${size === "lg" ? "text-4xl" : "text-[19px] sm:text-[21px]"}`}>{title || name}</b>
+      {tag ? <span className={`self-start rounded-md px-1.5 py-0.5 text-[10px] font-bold uppercase ${s.tag}`}>{tag}</span> : <span />}
     </div>
   );
 }

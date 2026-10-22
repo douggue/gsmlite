@@ -33,3 +33,13 @@ describe("group prices", () => {
     expect(unitPriceUsd(v, { discountBps: 0, fixed: new Map([["v1", 2500]]) })).toBe(2000);
   });
 });
+
+import { identifierProblem } from "@/lib/imei";
+describe("identifierProblem", () => {
+  it("says what is wrong with an IMEI", () => {
+    expect(identifierProblem("35345678901234", "imei")).toEqual({ key: "len", n: 14 });
+    expect(identifierProblem("35345678901234A", "imei")).toEqual({ key: "letters" });
+    expect(identifierProblem("490154203237519", "imei")).toEqual({ key: "check" });
+    expect(identifierProblem("ab", "serial")).toEqual({ key: "serial" });
+  });
+});

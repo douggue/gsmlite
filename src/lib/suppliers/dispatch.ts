@@ -5,6 +5,7 @@ import { callSupplier } from "../dhru/client";
 import { encodeCustomFields, isAccountProblem, parseOrderStatus, parsePlaceOrder, resultText, type DhruParams } from "../dhru/protocol";
 import { deliverItemManually, rejectItem, type FieldDef } from "../orders";
 import { t } from "../text";
+import { parseModel, rememberTac } from "../free-check";
 
 /** Supplier orders that still count as "with the supplier" (at most one per line, enforced by a unique index). */
 export const LIVE = ["SUBMITTING", "WAITING", "IN_PROCESS", "UNKNOWN", "SUCCESS"] as const;
@@ -123,6 +124,12 @@ export async function checkSupplierOrder(so: SupplierOrder & { supplier?: unknow
   if (claimed.count === 0) return so.status;
   if (parsed.status === "SUCCESS") {
     await deliverItemManually(so.orderItemId, text || "Done", null).catch((e) => console.error("deliver after supplier success", so.id, e));
+    // A result that names the model teaches the free IMEI check this phone's TAC.
+    const found = parseModel(text);
+    if (found.model) {
+      const item = await prisma.orderItem.findUnique({ where: { id: so.orderItemId }, select: { identifier: true } });
+      if (item?.identifier) await rememberTac(item.identifier, found.brand, found.model, "learned").catch(() => {});
+    }
   } else {
     await rejectItem(so.orderItemId, null, text || "Rejected by the supplier");
   }

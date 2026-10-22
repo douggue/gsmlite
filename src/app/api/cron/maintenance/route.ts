@@ -1,11 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { verifyMoncashIntent } from "@/lib/payments/verify";
-import { releaseHold } from "@/lib/wallet";
+import { grantTopupBonus, releaseHold } from "@/lib/wallet";
 import { notify } from "@/lib/notify";
 import { getSettings } from "@/lib/settings";
 import { refundOrCancel } from "@/lib/orders";
 import { LIVE } from "@/lib/suppliers/dispatch";
+import { endExpiredDeals } from "@/lib/deals";
 
 /**
  * Scheduled maintenance (call every 5–10 minutes with `Authorization: Bearer $CRON_SECRET`, e.g. Vercel Cron or Inngest):
@@ -20,7 +21,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
   const now = new Date();
-  const result = { moncashChecked: 0, holdsReleased: 0, expired: 0, autoRefunded: 0 };
+  const result = { moncashChecked: 0, holdsReleased: 0, expired: 0, autoRefunded: 0, dealsEnded: await endExpiredDeals() };
 
   const pending = await prisma.paymentIntent.findMany({
     where: { provider: "MONCASH", status: "PENDING", createdAt: { gte: new Date(now.getTime() - 86_400_000) } },
@@ -35,11 +36,13 @@ export async function GET(req: NextRequest) {
     }
   }
 
+  const settings = await getSettings();
   const held = await prisma.paymentIntent.findMany({ where: { status: "SUCCEEDED", holdUntil: { lte: now } }, take: 100 });
   for (const h of held) {
     const released = await prisma.$transaction(async (tx) => {
       const r = await releaseHold(tx, h);
       await tx.paymentIntent.update({ where: { id: h.id }, data: { holdUntil: null } });
+      await grantTopupBonus(tx, h, settings.topupBonus, settings.htgPerUsd);
       return !r.duplicate;
     });
     if (released) {
@@ -54,7 +57,6 @@ export async function GET(req: NextRequest) {
   });
   result.expired = expired.count;
 
-  const settings = await getSettings();
   if (settings.autoRefundHours > 0) {
     const cutoff = new Date(now.getTime() - settings.autoRefundHours * 3_600_000);
     const stuck = await prisma.order.findMany({

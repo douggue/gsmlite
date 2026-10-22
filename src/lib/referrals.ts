@@ -73,6 +73,22 @@ export async function payReferral(referralId: string, actorId: string | null) {
         { accountId: wallet.id, currency: "HTG", amount },
       ],
     });
+    // Optional: the invited friend gets a reward too ("both get …").
+    const friend = settings.referralFriendRewardHtg ?? 0;
+    if (friend > 0) {
+      const fw = await walletAccount(tx, r.referredId, "HTG");
+      await post(tx, {
+        type: "BONUS",
+        idempotencyKey: `referral-friend:${r.id}`,
+        description: "Welcome reward (invited by a friend)",
+        createdById: actorId,
+        metadata: { referralId: r.id },
+        entries: [
+          { accountId: source.id, currency: "HTG", amount: -friend },
+          { accountId: fw.id, currency: "HTG", amount: friend },
+        ],
+      });
+    }
     return tx.referral.update({ where: { id: r.id }, data: { status: "REWARDED", rewardAmount: amount, rewardedAt: new Date() } });
   });
   if (ref) await notify(ref.referrerId, "referral_rewarded", { amount, currency: "HTG" }, "/account/referrals");

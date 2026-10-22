@@ -45,3 +45,13 @@ export function parseIdentifiers(text: string, format: IdentifierFormat): { vali
   }
   return { valid, invalid };
 }
+
+/** Why an identifier is refused, for the message under the IMEI box. */
+export function identifierProblem(value: string, format: IdentifierFormat): { key: "len"; n: number } | { key: "check" | "letters" | "serial" | "any" } {
+  if (format === "imei") {
+    if (/\D/.test(value)) return { key: "letters" };
+    if (value.length !== 15) return { key: "len", n: value.length };
+    return { key: "check" };
+  }
+  return { key: format === "serial" ? "serial" : "any" };
+}

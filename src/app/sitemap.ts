@@ -14,7 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     prisma.category.findMany({ where: { isVisible: true }, select: { slug: true, updatedAt: true } }),
   ]);
   const paths: { path: string; lastModified?: Date }[] = [
-    { path: "" }, { path: "/store" }, { path: "/categories" }, { path: "/guides" }, { path: "/faq" },
+    { path: "" }, { path: "/store" }, { path: "/categories" }, { path: "/guides" }, { path: "/faq" }, { path: "/check" }, { path: "/prices" }, { path: "/deals" }, { path: "/status" },
     { path: "/about" }, { path: "/news" }, { path: "/contact" }, { path: "/terms" }, { path: "/privacy" }, { path: "/refunds" },
     ...categories.map((c) => ({ path: `/categories/${c.slug}`, lastModified: c.updatedAt })),
     ...products.map((p) => ({ path: `/products/${p.slug}`, lastModified: p.updatedAt })),

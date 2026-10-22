@@ -7,13 +7,20 @@ import { VerifyGate } from "@/components/VerifyGate";
 import { mustVerifyEmail } from "@/lib/verify-email";
 import { getManualMethods } from "@/lib/manual-methods";
 import { Link } from "@/i18n/navigation";
+import { shopperCountry } from "@/lib/prefs";
+import { payMethodsFor } from "@/lib/pay-methods";
 
-export default async function DepositPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function DepositPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ method?: string }> }) {
   const { locale } = await params;
+  const { method } = await searchParams;
   setRequestLocale(locale);
   const user = await requireUser(locale);
   if (await mustVerifyEmail(user.id)) return <VerifyGate email={user.email} />;
-  const [tw, tc, s, manual] = await Promise.all([getTranslations("wallet"), getTranslations("common"), getSettings(), getManualMethods(locale, "deposits")]);
+  const country = await shopperCountry(user);
+  const [tw, tc, s, allManual, allowed] = await Promise.all([getTranslations("wallet"), getTranslations("common"), getSettings(), getManualMethods(locale, "deposits"), payMethodsFor(country, "deposits", locale)]);
+  // Only what this customer's country may use (the others are never shown).
+  const ok = new Set(allowed.map((m) => m.id));
+  const manual = allManual.filter((m) => ok.has(`MANUAL:${m.id}`));
   return (
     <div className="max-w-2xl space-y-6">
       <div>
@@ -21,8 +28,10 @@ export default async function DepositPage({ params }: { params: Promise<{ locale
         <h1 className="display mt-1 text-2xl font-bold tracking-tight sm:text-3xl">{tw("depositTitle")}</h1>
       </div>
       <DepositForm
-        moncash={moncashAvailable(s.moncashEnabled)}
-        natcash={s.natcashEnabled}
+        initial={method}
+        card={ok.has("CARD")}
+        moncash={ok.has("MONCASH") && moncashAvailable(s.moncashEnabled)}
+        natcash={ok.has("NATCASH")}
         natcashName={s.natcashRecipientName}
         natcashPhone={s.natcashRecipientPhone}
         natcashQr={s.natcashQrUrl}

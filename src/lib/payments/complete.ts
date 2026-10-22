@@ -1,6 +1,6 @@
 import { prisma } from "../db";
 import { getSettings } from "../settings";
-import { creditPayment, chargeOrder } from "../wallet";
+import { creditPayment, chargeOrder, grantTopupBonus } from "../wallet";
 import { usdToHtg } from "../money";
 import { addEvent, fulfillOrder } from "../orders";
 import { notify } from "../notify";
@@ -45,6 +45,7 @@ export async function completePayment(
       },
     });
     await creditPayment(tx, updated, { hold, actorId: opts.actorId });
+    if (!hold && !intent.orderId) await grantTopupBonus(tx, updated, settings.topupBonus, settings.htgPerUsd);
 
     if (intent.orderId) {
       const order = await tx.order.findUniqueOrThrow({ where: { id: intent.orderId } });

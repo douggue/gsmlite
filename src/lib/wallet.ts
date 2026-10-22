@@ -139,3 +139,28 @@ export function quoteExchange(
   if (from === "HTG") return { to: "USD" as Currency, toAmount: Math.floor((net * 1_000_000) / rateMicro), rate, fee };
   return { to: "HTG" as Currency, toAmount: Math.floor((net * rateMicro) / 1_000_000), rate, fee };
 }
+
+/**
+ * Top-up bonus (Settings → topupBonus): firstPct on the customer's first top-up, otherwise pct on top-ups of at least
+ * minUsd. Paid once per payment, into the wallet, when the money becomes spendable (at once, or when a hold ends).
+ */
+export async function grantTopupBonus(tx: Tx, intent: PaymentIntent, bonus: { firstPct: number; pct: number; minUsd: number }, htgPerUsd: number) {
+  if (intent.orderId || intent.status !== "SUCCEEDED") return null;
+  const earlier = await tx.paymentIntent.count({ where: { userId: intent.userId, orderId: null, status: "SUCCEEDED", id: { not: intent.id }, createdAt: { lt: intent.createdAt } } });
+  const usd = intent.currency === "USD" ? intent.amount : Math.round(intent.amount / htgPerUsd);
+  const pct = earlier === 0 ? bonus.firstPct : usd >= bonus.minUsd ? bonus.pct : 0;
+  const amount = Math.floor((intent.amount * pct) / 100);
+  if (pct <= 0 || amount <= 0) return null;
+  const marketing = await systemAccount(tx, "marketing", intent.currency, "topup-bonus");
+  const wallet = await walletAccount(tx, intent.userId, intent.currency);
+  return post(tx, {
+    type: "BONUS",
+    idempotencyKey: `bonus:${intent.id}`,
+    description: `Top-up bonus +${pct}%`,
+    metadata: { paymentIntentId: intent.id, pct, first: earlier === 0 },
+    entries: [
+      { accountId: marketing.id, currency: intent.currency, amount: -amount },
+      { accountId: wallet.id, currency: intent.currency, amount },
+    ],
+  });
+}

@@ -55,6 +55,7 @@ export default async function StorePage({ params, searchParams }: { params: Prom
       cat: parent ?? p.category.slug,
       sub: parent ? p.category.slug : null,
       created: p.createdAt.getTime(),
+      art: { label: t(p.category.name, locale), title: t(p.cardTitle, locale) || t(p.name, locale), tag: t(p.cardTag, locale) || t(p.deliveryEstimate, locale), style: p.cardStyle },
       haystack: [...allNames(p.name), p.slug.replace(/-/g, " "), ...p.tags, ...(catNames.get(p.categoryId) ?? []), ...(parentId ? catNames.get(parentId) ?? [] : [])],
     };
   });

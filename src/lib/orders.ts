@@ -235,6 +235,8 @@ async function afterSettle(orderId: string, status: OrderStatus | null) {
  */
 export async function fulfillOrder(orderId: string, actorId?: string | null) {
   const openFlags = await prisma.riskFlag.count({ where: { orderId, status: "OPEN" } });
+  // A recent paid check of the same IMEI comes off this order (once).
+  await import("./check-credit").then((m) => m.creditChecksForOrder(orderId)).catch((e) => console.error("check credit", orderId, e));
 
   const result = await prisma.$transaction(async (tx) => {
     const [order] = await tx.$queryRaw<{ id: string; status: OrderStatus }[]>`

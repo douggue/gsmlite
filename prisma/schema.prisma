@@ -509,6 +509,8 @@ enum LedgerTxType {
   EXCHANGE
   ADJUSTMENT
   HOLD_RELEASE
+  /// Marketing credit: top-up bonus, referral reward, promotions
+  BONUS
 }
 
 model LedgerTransaction {
@@ -1050,4 +1052,47 @@ model HomeSlide {
   countries   String[]  @default([])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+/// Phone model per TAC (first 8 digits of the IMEI), for the free IMEI check.
+model TacModel {
+  tac       String   @id
+  brand     String
+  model     String
+  /// "import" (CSV in admin), "supplier" (free-check service) or "learned" (from a delivered check result)
+  source    String
+  updatedAt DateTime @updatedAt
+}
+
+/// Free IMEI checks, for the daily limit per account and device, and the customer's IMEI history.
+model FreeCheck {
+  id        String   @id @default(cuid())
+  userId    String
+  deviceId  String?
+  imei      String
+  brand     String?
+  model     String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([deviceId, createdAt])
+}
+
+/// Deal of the week: a sale price on one option between two dates (set and removed automatically).
+model Deal {
+  id           String    @id @default(cuid())
+  variantId    String
+  /// Deal price in USD cents (written to the option's sale price while the deal runs)
+  priceUsd     Int
+  /// Sale price the option had before, put back at the end
+  previousSale Int?
+  startsAt     DateTime  @default(now())
+  endsAt       DateTime
+  endedAt      DateTime?
+  /// Posted to the Telegram channel / customers
+  announcedAt  DateTime?
+  createdById  String?
+  createdAt    DateTime  @default(now())
+
+  @@index([endedAt, endsAt])
 }

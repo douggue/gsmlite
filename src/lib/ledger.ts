@@ -14,6 +14,8 @@ const SYSTEM_ACCOUNTS: Record<string, { type: LedgerAccountType; allowNegative: 
   revenue: { type: "REVENUE", allowNegative: true },
   fx: { type: "FX", allowNegative: true },
   adjustment: { type: "ADJUSTMENT", allowNegative: true },
+  /** Where bonuses and promotions are paid from (its negative balance = marketing spend) */
+  marketing: { type: "ADJUSTMENT", allowNegative: true },
 };
 
 export async function walletAccount(tx: Tx, userId: string, currency: Currency) {

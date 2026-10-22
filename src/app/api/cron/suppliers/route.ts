@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { pollSuppliers } from "@/lib/suppliers/dispatch";
 import { refreshBalance } from "@/lib/suppliers/sync";
+import { endExpiredDeals } from "@/lib/deals";
 
 export const maxDuration = 60;
 
@@ -17,6 +18,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
   const result = await pollSuppliers();
+  const dealsEnded = await endExpiredDeals();
   const minute = new Date().getUTCMinutes();
   let balances = 0;
   if (minute < 5 || (minute >= 30 && minute < 35)) {
@@ -26,5 +28,5 @@ export async function GET(req: NextRequest) {
     }
     await prisma.supplierLog.deleteMany({ where: { createdAt: { lt: new Date(Date.now() - 30 * 86_400_000) } } });
   }
-  return NextResponse.json({ ...result, balances });
+  return NextResponse.json({ ...result, balances, dealsEnded });
 }

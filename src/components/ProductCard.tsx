@@ -15,11 +15,10 @@ export async function ProductCard({ product }: { product: ProductWithVariants })
   const name = t(product.name, locale);
   const onSale = product.variants.some((v) => v.salePriceUsd);
   return (
-    <Link href={`/products/${product.slug}`} className="card lift animate-rise group flex flex-col bg-[linear-gradient(180deg,var(--surface-2),var(--surface))] p-3">
+    <Link href={`/products/${product.slug}`} className="card lift animate-rise group flex flex-col p-3">
       <div className="relative">
-        <ProductArt name={name} accent={product.accent} image={product.image} />
+        <ProductArt name={name} accent={product.accent} image={product.image} label={t(product.category.name, locale)} title={t(product.cardTitle, locale) || name} tag={t(product.cardTag, locale) || t(product.deliveryEstimate, locale)} cardStyle={product.cardStyle} />
         {onSale && <span className="badge absolute left-2 top-2 bg-danger text-white">−%</span>}
-        {product.tags?.[0] && <span className="badge absolute right-2 top-2 bg-[#0b0e10]/60 text-[11px] text-white backdrop-blur">{product.tags.slice(0, 2).join(" · ")}</span>}
       </div>
       <div className="flex flex-1 flex-col px-1 pb-1 pt-3">
         <h3 className="line-clamp-2 font-semibold leading-snug">{name}</h3>
