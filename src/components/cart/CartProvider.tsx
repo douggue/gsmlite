@@ -11,17 +11,21 @@ export type CartLine = {
   variantName: Record<string, string>;
   accent?: string | null;
   image?: string | null;
-  priceHtg: number;
+  /** Unit price in USD cents as shown when added (the server recomputes it at checkout) */
+  priceUsd: number;
+  /** IMEI services: one unit per identifier. Server credits: units ordered. */
   quantity: number;
   fields: Record<string, string>;
-  /** "Customer enters the amount" products: USD cents typed, and the price in USD (not converted at the store rate) */
-  amount?: number;
-  priceUsd?: number;
+  /** IMEI services: the IMEIs / serial numbers, one order line each */
+  identifiers?: string[];
+  /** SERVER services: allowed quantity range, so the cart's +/- respects it */
+  minQty?: number;
+  maxQty?: number;
 };
 
 /** Unit price of a cart line in the display currency. */
-export function linePrice(l: Pick<CartLine, "priceHtg" | "priceUsd">, currency: "HTG" | "USD", htgPerUsd: number) {
-  return currency === "USD" && l.priceUsd != null ? l.priceUsd : priceIn(l.priceHtg, currency, htgPerUsd);
+export function linePrice(l: Pick<CartLine, "priceUsd">, currency: "HTG" | "USD", htgPerUsd: number) {
+  return priceIn(l.priceUsd, currency, htgPerUsd);
 }
 
 type StoreCtx = {
@@ -37,10 +41,14 @@ type StoreCtx = {
 };
 
 const Ctx = createContext<StoreCtx | null>(null);
-const STORAGE_KEY = "hg_cart_v1";
 
-function lineKey(variantId: string, fields: Record<string, string>, amount?: number) {
-  return `${variantId}:${amount ? `$${amount}:` : ""}${Object.entries(fields).sort().map(([k, v]) => `${k}=${v}`).join("&")}`;
+function clampQty(l: Pick<CartLine, "minQty" | "maxQty">, q: number) {
+  return Math.max(l.minQty ?? 1, Math.min(l.maxQty ?? 10, q));
+}
+const STORAGE_KEY = "gl_cart_v1";
+
+function lineKey(variantId: string, fields: Record<string, string>, identifiers?: string[]) {
+  return `${variantId}:${(identifiers ?? []).join(",")}:${Object.entries(fields).sort().map(([k, v]) => `${k}=${v}`).join("&")}`;
 }
 
 export function CartProvider({ children, currency, htgPerUsd, signedIn = false }: { children: ReactNode; currency: "HTG" | "USD"; htgPerUsd: number; signedIn?: boolean }) {
@@ -81,16 +89,18 @@ export function CartProvider({ children, currency, htgPerUsd, signedIn = false }
   }, [lines, ready, signedIn]);
 
   const add = useCallback((line: Omit<CartLine, "key">) => {
-    const key = lineKey(line.variantId, line.fields, line.amount);
+    const key = lineKey(line.variantId, line.fields, line.identifiers);
     setLines((prev) => {
       const existing = prev.find((l) => l.key === key);
-      if (existing) return prev.map((l) => (l.key === key ? { ...l, quantity: Math.min(10, l.quantity + line.quantity) } : l));
+      // The same IMEIs for the same service are never added twice.
+      if (existing && line.identifiers?.length) return prev;
+      if (existing) return prev.map((l) => (l.key === key ? { ...l, quantity: clampQty(l, l.quantity + line.quantity) } : l));
       return [...prev, { ...line, key }].slice(-20);
     });
   }, []);
 
   const setQuantity = useCallback((key: string, quantity: number) => {
-    setLines((prev) => prev.map((l) => (l.key === key ? { ...l, quantity: Math.max(1, Math.min(10, quantity)) } : l)));
+    setLines((prev) => prev.map((l) => (l.key === key && !l.identifiers?.length ? { ...l, quantity: clampQty(l, quantity) } : l)));
   }, []);
 
   const remove = useCallback((key: string) => setLines((prev) => prev.filter((l) => l.key !== key)), []);

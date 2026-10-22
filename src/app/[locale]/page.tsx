@@ -15,7 +15,6 @@ import { t } from "@/lib/text";
 import Image from "next/image";
 import { ProductCard } from "@/components/ProductCard";
 import { CategoryCard } from "@/components/CategoryCard";
-import { HaitiEyebrow } from "@/components/HaitiEyebrow";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { ArrowRightIcon, BoltIcon, ChatIcon, PinIcon, ShieldIcon, WalletIcon } from "@/components/Icons";
 import { PayLogo } from "@/components/PayLogo";
@@ -227,7 +226,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
         <div className="hero-grid" aria-hidden />
         <div className="container-page relative grid items-center gap-10 py-14 sm:py-20 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="stagger flex flex-col gap-5">
-            <HaitiEyebrow text={heroText("eyebrow")} />
+            {heroText("eyebrow") && <p className="animate-rise text-sm font-bold uppercase tracking-[0.14em] text-[#7CE0A8]">{heroText("eyebrow")}</p>}
             <h1 className="display neon-text animate-rise text-4xl font-bold leading-[1.04] sm:text-5xl lg:text-6xl">{heroText("title")}</h1>
             <p className="animate-rise max-w-xl text-base text-[#b7c6e4] sm:text-lg">{heroText("subtitle")}</p>
             <div className="animate-rise flex flex-wrap gap-3">

@@ -5,7 +5,6 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { prisma } from "@/lib/db";
 import { minPrice, productCardInclude, searchProducts } from "@/lib/catalog";
 import { getDisplaySettings } from "@/lib/settings";
-import { isExchangeProduct } from "@/lib/amount";
 import { getUser } from "@/lib/session";
 import { t } from "@/lib/text";
 import { alternates } from "@/lib/seo";
@@ -15,8 +14,9 @@ import { ProductGallery } from "@/components/ProductGallery";
 import { ProductPurchase } from "@/components/ProductPurchase";
 import { BoltIcon, ShieldIcon } from "@/components/Icons";
 import type { FieldDef } from "@/lib/orders";
-import { lowStockVariants, recentSales } from "@/lib/trust";
-import { SalesPopup } from "@/components/SalesPopup";
+import { lowStockVariants } from "@/lib/trust";
+import { listPrice, priceContext, unitPriceUsd } from "@/lib/pricing";
+import type { IdentifierFormat } from "@/lib/imei";
 
 type P = Promise<{ locale: string; slug: string }>;
 
@@ -49,7 +49,7 @@ export default async function ProductPage({ params }: { params: P }) {
       )
     : null;
   const low = new Set(lowStockVariants(product.variants, stock, settings.lowStockLimit));
-  const sales = settings.salesPopupEnabled ? await recentSales(product.id, settings.moneyExchange) : [];
+  const ctx = await priceContext(user?.id);
   const related = (await searchProducts({ category: product.category.slug, take: 5 })).filter((p) => p.id !== product.id).slice(0, 4);
   const name = t(product.name, locale);
 
@@ -62,7 +62,7 @@ export default async function ProductPage({ params }: { params: P }) {
     brand: { "@type": "Brand", name: settings.businessName },
     offers: {
       "@type": "AggregateOffer",
-      priceCurrency: "HTG",
+      priceCurrency: "USD",
       lowPrice: (minPrice(product) / 100).toFixed(2),
       offerCount: product.variants.length,
       availability: "https://schema.org/InStock",
@@ -109,22 +109,26 @@ export default async function ProductPage({ params }: { params: P }) {
               name: product.name as Record<string, string>,
               accent: product.accent,
               image: product.image,
+              serviceType: product.serviceType,
+              identifierLabel: (product.identifierLabel ?? null) as Record<string, string> | null,
+              identifierFormat: product.identifierFormat as IdentifierFormat,
+              allowBulk: product.allowBulk,
               fields: product.fields as FieldDef[],
               variants: product.variants.map((v) => ({
                 id: v.id,
                 name: v.name as Record<string, string>,
-                priceHtg: v.priceHtg,
-                salePriceHtg: v.salePriceHtg,
+                listUsd: listPrice(v),
+                priceUsd: unitPriceUsd(v, ctx),
+                minQty: v.minQty,
+                maxQty: v.maxQty,
                 inStock: !v.soldOut && (stock ? (stock[v.id] ?? 0) > 0 : true),
                 lowStock: low.has(v.id),
               })),
             }}
-            pricing={isExchangeProduct(settings.moneyExchange, product.category) ? settings.moneyExchange : undefined}
             saved={saved.map((s) => ({ id: s.id, label: s.label, values: s.values as Record<string, string> }))}
           />
         </div>
       </div>
-      {sales.length > 0 && <SalesPopup sales={sales} product={{ name, image: product.image, accent: product.accent }} perVisit={Math.min(5, Math.max(1, settings.salesPopupPerVisit))} />}
       {related.length > 0 && (
         <section className="mt-16">
           <h2 className="text-xl font-bold">{tp("related")}</h2>

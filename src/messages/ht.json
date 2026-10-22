@@ -160,7 +160,15 @@
     "lowStock": "Stòk la ap fini",
     "lowStockHint": "{name}: pran l kounye a pandan l disponib.",
     "inStock": "Disponib",
-    "soldOut": "Pa disponib"
+    "soldOut": "Pa disponib",
+    "imeiMissing": "Mete {label} a",
+    "imeiOneOnly": "Yon sèl {label} pou sèvis sa a",
+    "onePerLine": "youn pa liy",
+    "imeiInvalid": "pa yon IMEI valab (15 chif)",
+    "idInvalid": "pa valab",
+    "imeiHelp": "Tape *#06# sou telefòn nan pou wè IMEI a. Chak telefòn trete epi ranbouse apa.",
+    "total": "Total",
+    "orderNow": "Kòmande kounye a"
   },
   "cart": {
     "title": "Panye ou",

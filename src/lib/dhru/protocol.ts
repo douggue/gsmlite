@@ -180,10 +180,10 @@ export function replyError(reply: DhruReply): string | null {
 
 /** "$1,234.50", "1234.5", 12 → cents. */
 export function toCents(v: unknown): number | null {
-  if (typeof v === "number" && Number.isFinite(v)) return Math.round(v * 100);
-  if (typeof v !== "string") return null;
-  const n = Number(v.replace(/[^\d.-]/g, ""));
-  return v.trim() && Number.isFinite(n) ? Math.round(n * 100) : null;
+  const n = typeof v === "number" ? v : typeof v === "string" && v.trim() ? Number(v.replace(/[^\d.-]/g, "")) : NaN;
+  if (!Number.isFinite(n)) return null;
+  // toPrecision removes float noise first (1.005 * 100 = 100.49999…), so half-cents round up as people expect.
+  return Math.round(Number((n * 100).toPrecision(12)));
 }
 
 export function parseAccountInfo(reply: DhruReply): { credit: number | null; currency: string | null; email: string | null } {

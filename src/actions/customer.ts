@@ -80,11 +80,12 @@ const cartLine = z.object({
   variantName: z.record(z.string().max(200)),
   accent: z.string().max(20).nullable().optional(),
   image: z.string().max(500).nullable().optional(),
-  priceHtg: z.number().int().nonnegative(),
-  quantity: z.number().int().min(1).max(10),
-  fields: z.record(z.string().max(200)),
-  amount: z.number().int().positive().optional(),
-  priceUsd: z.number().int().nonnegative().optional(),
+  priceUsd: z.number().int().nonnegative(),
+  quantity: z.number().int().min(1).max(100_000),
+  fields: z.record(z.string().max(1000)),
+  identifiers: z.array(z.string().max(100)).max(100).optional(),
+  minQty: z.number().int().positive().optional(),
+  maxQty: z.number().int().positive().optional(),
 });
 
 /** The cart follows the customer across devices. Prices are re-checked on the server at checkout anyway. */

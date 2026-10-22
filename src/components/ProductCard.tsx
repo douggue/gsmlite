@@ -13,7 +13,7 @@ export async function ProductCard({ product }: { product: ProductWithVariants })
   const tr = await getTranslations("common");
   const tp = await getTranslations("product");
   const name = t(product.name, locale);
-  const onSale = product.variants.some((v) => v.salePriceHtg);
+  const onSale = product.variants.some((v) => v.salePriceUsd);
   return (
     <Link href={`/products/${product.slug}`} className="card lift animate-rise group flex flex-col bg-[linear-gradient(180deg,var(--surface-2),var(--surface))] p-3">
       <div className="relative">
@@ -33,7 +33,7 @@ export async function ProductCard({ product }: { product: ProductWithVariants })
         <div className="mt-auto flex flex-col gap-2.5 pt-3">
           <p className="text-sm">
             <span className="text-muted">{tr("from")} </span>
-            <Price htg={minPrice(product)} className="font-bold text-text" />
+            <Price usd={minPrice(product)} className="font-bold text-text" />
           </p>
           {product.variants.length > 0 && product.variants.every((v) => v.soldOut) ? (
             <span className="flex min-h-10 w-full items-center justify-center rounded-xl bg-surface-2 px-3 text-sm font-bold text-danger">{tp("soldOut")}</span>

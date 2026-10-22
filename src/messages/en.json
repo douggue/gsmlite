@@ -160,7 +160,15 @@
     "lowStock": "Stock is running low",
     "lowStockHint": "{name}: grab it while it’s available.",
     "inStock": "Available",
-    "soldOut": "Sold out"
+    "soldOut": "Sold out",
+    "imeiMissing": "Enter the {label}",
+    "imeiOneOnly": "Only one {label} for this service",
+    "onePerLine": "one per line",
+    "imeiInvalid": "not a valid IMEI (15 digits)",
+    "idInvalid": "not valid",
+    "imeiHelp": "Dial *#06# on the phone to see its IMEI. Each phone is processed and refunded on its own.",
+    "total": "Total",
+    "orderNow": "Order now"
   },
   "cart": {
     "title": "Your cart",

@@ -40,7 +40,7 @@ export function CheckoutForm({ balances, moncashEnabled, natcashEnabled, manualM
     setError("");
     start(async () => {
       const res = await placeOrder({
-        items: store.lines.map((l) => ({ variantId: l.variantId, quantity: l.quantity, fields: l.fields, ...(l.amount ? { amount: l.amount } : {}) })),
+        items: store.lines.map((l) => ({ variantId: l.variantId, quantity: l.quantity, fields: l.fields, ...(l.identifiers?.length ? { identifiers: l.identifiers } : {}) })),
         currency,
         method: method.startsWith("MANUAL:") ? "MANUAL" : method,
         manualMethodId: method.startsWith("MANUAL:") ? method.slice(7) : undefined,
@@ -65,7 +65,7 @@ export function CheckoutForm({ balances, moncashEnabled, natcashEnabled, manualM
       title: tc("wallet"),
       hint: `${tc("walletBalance", { balance: fmt(balances.HTG, "HTG") })} · ${fmt(balances.USD, "USD")}`,
       enabled: true,
-      badge: <span className="rounded-md bg-navy px-2 py-1 text-[11px] font-extrabold text-white">HG</span>,
+      badge: <span className="rounded-md bg-navy px-2 py-1 text-[11px] font-extrabold text-white">GL</span>,
     },
     ...manualMethods.map((m) => ({
       id: `MANUAL:${m.id}`,

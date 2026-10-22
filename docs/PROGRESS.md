@@ -244,6 +244,8 @@ Settings area with a left list of sections, each its own page:
 Every change logged; sensitive sections ask for the 2FA code again.
 
 ## Still to do
+0. Known limit: prices are whole cents. Suppliers sometimes price credits below a cent precision (e.g. $0.125 per credit);
+   switch per-unit cost/price to tenths of a cent (or price per 10/100 credits) before selling such services.
 1. Fix remaining type errors (storefront pages still use `priceHtg`: product page, ProductPurchase, ProductCard, StoreBrowser, cart, demo catalog, auto-refund test).
 2. Admin → Suppliers screen (add supplier, test, sync, browse/import services, needs-attention list for UNKNOWN / account problems, logs).
 3. `/api/cron/suppliers` (poll every few minutes; Vercel Hobby only allows daily cron → use an external cron or Pro).

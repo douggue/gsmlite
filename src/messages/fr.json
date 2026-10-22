@@ -160,7 +160,15 @@
     "lowStock": "Stock presque épuisé",
     "lowStockHint": "{name} : prenez-le maintenant tant qu’il est disponible.",
     "inStock": "Disponible",
-    "soldOut": "Épuisé"
+    "soldOut": "Épuisé",
+    "imeiMissing": "Saisissez le {label}",
+    "imeiOneOnly": "Un seul {label} pour ce service",
+    "onePerLine": "un par ligne",
+    "imeiInvalid": "IMEI invalide (15 chiffres)",
+    "idInvalid": "invalide",
+    "imeiHelp": "Composez *#06# sur le téléphone pour voir l'IMEI. Chaque téléphone est traité et remboursé séparément.",
+    "total": "Total",
+    "orderNow": "Commander"
   },
   "cart": {
     "title": "Votre panier",

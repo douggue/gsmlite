@@ -14,7 +14,7 @@ async function paidOrder(hoursAgo: number) {
     await post(tx, { type: "DEPOSIT", idempotencyKey: `f:${user.id}`, description: "t", entries: [{ accountId: c.id, currency: "HTG", amount: -500_00 }, { accountId: w.id, currency: "HTG", amount: 500_00 }] });
   });
   const category = await prisma.category.upsert({ where: { slug: "test-cat" }, create: { slug: "test-cat", name: { en: "Test" } }, update: {} });
-  const product = await prisma.product.create({ data: { slug: `p-${Math.random().toString(36).slice(2)}`, categoryId: category.id, name: { en: "P" }, description: {}, isPublished: true, variants: { create: { name: { en: "V" }, priceHtg: 300_00 } } }, include: { variants: true } });
+  const product = await prisma.product.create({ data: { slug: `p-${Math.random().toString(36).slice(2)}`, categoryId: category.id, name: { en: "P" }, description: {}, isPublished: true, variants: { create: { name: { en: "V" }, priceUsd: 300_00 } } }, include: { variants: true } });
   const order = await prisma.order.create({
     data: {
       userId: user.id, currency: "HTG", subtotal: 300_00, total: 300_00, paymentMethod: "WALLET", accessToken: `t${Math.random()}`, status: "PROCESSING",

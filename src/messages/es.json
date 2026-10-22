@@ -160,7 +160,15 @@
     "lowStock": "Quedan pocas unidades",
     "lowStockHint": "{name}: aprovéchalo mientras está disponible.",
     "inStock": "Disponible",
-    "soldOut": "Agotado"
+    "soldOut": "Agotado",
+    "imeiMissing": "Ingrese el {label}",
+    "imeiOneOnly": "Solo un {label} para este servicio",
+    "onePerLine": "uno por línea",
+    "imeiInvalid": "IMEI no válido (15 dígitos)",
+    "idInvalid": "no válido",
+    "imeiHelp": "Marque *#06# en el teléfono para ver su IMEI. Cada teléfono se procesa y reembolsa por separado.",
+    "total": "Total",
+    "orderNow": "Pedir ahora"
   },
   "cart": {
     "title": "Tu carrito",

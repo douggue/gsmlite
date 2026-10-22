@@ -395,7 +395,7 @@ function Tile({ p, fav, onFav }: { p: StoreProduct; fav: boolean; onFav: () => v
         <div className="mt-auto flex flex-col gap-2.5 pt-3">
           <p className="text-sm">
             <span className="text-muted">{tc("from")} </span>
-            <Price htg={p.price} className="font-bold text-text" />
+            <Price usd={p.price} className="font-bold text-text" />
           </p>
           {p.soldOut ? (
             <span className="flex min-h-10 w-full items-center justify-center rounded-xl bg-surface-2 px-3 text-sm font-bold text-danger">{tp("soldOut")}</span>
@@ -424,7 +424,7 @@ function Row({ p, fav, onFav }: { p: StoreProduct; fav: boolean; onFav: () => vo
         <div className="mt-2 flex items-center justify-between gap-2">
           <p className="text-sm">
             <span className="text-muted">{tc("from")} </span>
-            <Price htg={p.price} className="font-bold text-text" />
+            <Price usd={p.price} className="font-bold text-text" />
             {p.onSale && <span className="badge ml-1.5 bg-danger text-white">−%</span>}
           </p>
           {p.soldOut ? (
