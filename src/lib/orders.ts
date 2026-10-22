@@ -9,6 +9,9 @@ import { assertWithinNewAccountLimit, flag } from "./risk";
 import { notify } from "./notify";
 import { t } from "./text";
 import { moncashAvailable } from "./payments/moncash";
+import { cardAvailable } from "./payments/card";
+import { methodAllowed } from "./pay-methods";
+import { allowedIn } from "./countries";
 import { maybeRewardReferral } from "./referrals";
 import { parseIdentifiers, type IdentifierFormat } from "./imei";
 import { priceContext, unitPriceUsd } from "./pricing";
@@ -78,7 +81,7 @@ type Line = {
  * Turn cart items into order lines with server-side prices and validation.
  * IMEI services become one line per identifier, so each phone is processed, tracked and refunded on its own.
  */
-export async function buildLines(userId: string, items: CartItemInput[], currency: Currency, htgPerUsd: number): Promise<Line[]> {
+export async function buildLines(userId: string, items: CartItemInput[], currency: Currency, htgPerUsd: number, country?: string | null): Promise<Line[]> {
   const variants = await prisma.productVariant.findMany({
     where: { id: { in: items.map((i) => i.variantId) }, isActive: true, product: { isPublished: true } },
     include: { product: true },
@@ -88,6 +91,7 @@ export async function buildLines(userId: string, items: CartItemInput[], currenc
   for (const item of items) {
     const v = variants.find((x) => x.id === item.variantId);
     if (!v || v.soldOut) throw new OrderError("unavailable");
+    if (country !== undefined && !allowedIn(v.product, country)) throw new OrderError("not_in_country");
     const fieldValues = validateFields(v.product.fields as FieldDef[], item.fields);
     const unitUsd = unitPriceUsd(v, ctx);
     const base = {
@@ -128,17 +132,28 @@ export async function createOrder(input: {
   manualMethodId?: string;
   recipientNote?: string;
   source?: "WEB" | "API";
+  /** Shopper's country: services and payment methods not offered there are refused */
+  country?: string | null;
 }) {
   const settings = await getSettings();
-  const currency: Currency = input.method === "WALLET" ? input.currency : "HTG";
+  let manualCurrency: Currency = "HTG";
   if (input.method === "MONCASH" && !moncashAvailable(settings.moncashEnabled)) throw new OrderError("method_unavailable");
   if (input.method === "NATCASH" && !settings.natcashEnabled) throw new OrderError("method_unavailable");
+  if (input.method === "CARD" && !cardAvailable(settings.cardEnabled)) throw new OrderError("method_unavailable");
   if (input.method === "MANUAL") {
     const m = input.manualMethodId ? await prisma.manualMethod.findUnique({ where: { id: input.manualMethodId } }) : null;
     if (!m || !m.isEnabled || !m.allowOrders) throw new OrderError("method_unavailable");
+    manualCurrency = m.currency;
   }
+  if (input.country !== undefined) {
+    const id = input.method === "MANUAL" ? `MANUAL:${input.manualMethodId}` : input.method;
+    if (!(await methodAllowed(id, input.country, "orders"))) throw new OrderError("method_unavailable");
+  }
+  // Wallet: the currency the customer picked. Otherwise the method's own currency (MonCash/NatCash HTG, card USD).
+  const currency: Currency =
+    input.method === "WALLET" ? input.currency : input.method === "CARD" ? "USD" : input.method === "MANUAL" ? manualCurrency : "HTG";
 
-  const lines = await buildLines(input.userId, input.items, currency, settings.htgPerUsd);
+  const lines = await buildLines(input.userId, input.items, currency, settings.htgPerUsd, input.country);
   const subtotal = lines.reduce((s, l) => s + l.unitPrice * l.quantity, 0);
   const totalHtg = lines.reduce((s, l) => s + priceIn(l.unitUsd, "HTG", settings.htgPerUsd) * l.quantity, 0);
   const user = await prisma.user.findUniqueOrThrow({ where: { id: input.userId } });
@@ -248,7 +263,7 @@ export async function fulfillOrder(orderId: string, actorId?: string | null) {
           data: { status: "ASSIGNED", assignedAt: new Date(), orderItemId: item.id },
         });
       }
-      await tx.orderItem.update({ where: { id: item.id }, data: { status: "DELIVERED" } });
+      await tx.orderItem.update({ where: { id: item.id }, data: { status: "DELIVERED", finishedAt: new Date() } });
     }
 
     const status = await settleOrder(tx, orderId, actorId);
@@ -274,7 +289,7 @@ export async function deliverItemManually(itemId: string, note: string, actorId:
   const status = await prisma.$transaction(async (tx) => {
     const item = await tx.orderItem.findUniqueOrThrow({ where: { id: itemId } });
     if (item.status !== "PENDING") throw new OrderError("not_pending");
-    await tx.orderItem.update({ where: { id: itemId }, data: { status: "DELIVERED", deliveryNote: note.slice(0, 5000) } });
+    await tx.orderItem.update({ where: { id: itemId }, data: { status: "DELIVERED", finishedAt: new Date(), deliveryNote: note.slice(0, 5000) } });
     return { orderId: item.orderId, status: await settleOrder(tx, item.orderId, actorId) };
   });
   await afterSettle(status.orderId, status.status);
@@ -293,7 +308,7 @@ export async function rejectItem(itemId: string, actorId: string | null, reason:
     if (["PAID", "PROCESSING", "FAILED"].includes(item.order.status)) {
       await refundItemToWallet(tx, item.order, item, actorId, reason);
     }
-    await tx.orderItem.update({ where: { id: itemId }, data: { status: "FAILED", refundedAt: new Date(), deliveryNote: reason.slice(0, 5000) } });
+    await tx.orderItem.update({ where: { id: itemId }, data: { status: "FAILED", refundedAt: new Date(), finishedAt: new Date(), deliveryNote: reason.slice(0, 5000) } });
     return { orderId: item.orderId, status: await settleOrder(tx, item.orderId, actorId) };
   });
   if (out) await afterSettle(out.orderId, out.status);

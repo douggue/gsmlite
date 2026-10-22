@@ -11,10 +11,13 @@ const L = (ht: string, fr: string, en: string, es: string) => ({ ht, fr, en, es 
 const usd = (n: number) => Math.round(n * 100);
 
 const categories = [
-  { slug: "carrier-unlock", icon: "🔓", name: L("Debloke operatè", "Déblocage opérateur", "Carrier unlock", "Liberación de operador"), sortOrder: 1 },
-  { slug: "imei-checks", icon: "🔎", name: L("Tcheke IMEI", "Vérification IMEI", "IMEI checks", "Verificación IMEI"), sortOrder: 2 },
-  { slug: "tool-licenses", icon: "🛠️", name: L("Lisans ak kredi zouti", "Licences et crédits d'outils", "Tool licenses & credits", "Licencias y créditos"), sortOrder: 3 },
-  { slug: "remote-services", icon: "💻", name: L("Sèvis a distans", "Services à distance", "Remote services", "Servicios remotos"), sortOrder: 4 },
+  { slug: "carrier-unlock", icon: "🔓", code: "CU", isHot: true, name: L("Debloke operatè", "Déblocage opérateur", "Carrier unlock", "Liberación de operador"), description: L("Nenpòt rezo, ak IMEI", "Tout réseau, par IMEI", "Any network, by IMEI", "Cualquier red, por IMEI"), sortOrder: 1 },
+  { slug: "imei-checks", icon: "🔎", code: "IC", name: L("Tchèk IMEI ak operatè", "Vérification IMEI et opérateur", "IMEI & carrier checks", "Verificación IMEI y operador"), description: L("Blokaj, lis nwa, garanti", "Blocage, liste noire, garantie", "Lock, blacklist, warranty", "Bloqueo, lista negra, garantía"), sortOrder: 2 },
+  { slug: "tool-licenses", icon: "🛠️", code: "TC", name: L("Kredi zouti", "Crédits d'outils", "Tool credits", "Créditos de herramientas"), description: L("Kredi ak lisans", "Crédits et licences", "Credits & licenses", "Créditos y licencias"), sortOrder: 3 },
+  { slug: "remote-services", icon: "💻", code: "DF", name: L("Done ak firmware", "Données et firmware", "Data & firmware", "Datos y firmware"), description: L("FRP, flash, fichye", "FRP, flash, fichiers", "FRP, flashing, files", "FRP, flasheo, archivos"), sortOrder: 4 },
+  { slug: "unlocktool", icon: "🔑", code: "UT", isTool: true, isHot: true, name: L("UnlockTool", "UnlockTool", "UnlockTool", "UnlockTool"), sortOrder: 5 },
+  { slug: "chimera", icon: "🔑", code: "CH", isTool: true, name: L("Chimera", "Chimera", "Chimera", "Chimera"), sortOrder: 6 },
+  { slug: "octoplus", icon: "🔑", code: "OP", isTool: true, name: L("Octoplus", "Octoplus", "Octoplus", "Octoplus"), sortOrder: 7 },
 ];
 
 type SeedProduct = {
@@ -31,6 +34,8 @@ type SeedProduct = {
   variants: { name: ReturnType<typeof L>; price: number; minQty?: number; maxQty?: number }[];
   codes?: number;
   tags?: string[];
+  card?: { title: ReturnType<typeof L>; tag: ReturnType<typeof L>; style: "ink" | "green" | "mint" | "slate" };
+  hideFromGoogle?: boolean;
 };
 
 const products: SeedProduct[] = [
@@ -49,6 +54,7 @@ const products: SeedProduct[] = [
       { name: L("Premium", "Premium", "Premium", "Premium"), price: 45 },
     ],
     tags: ["Apple", "USA"],
+    card: { title: L("iPhone USA AT&T", "iPhone USA AT&T", "iPhone USA AT&T", "iPhone USA AT&T"), tag: L("IMEI pwòp", "IMEI propre", "Clean IMEI", "IMEI limpio"), style: "ink" },
   },
   {
     slug: "samsung-network-unlock-code", category: "carrier-unlock", accent: "#1F7A4D", fulfillment: "MANUAL", serviceType: "IMEI",
@@ -71,19 +77,26 @@ const products: SeedProduct[] = [
     delivery: L("Touswit", "Immédiat", "Instant", "Inmediato"),
     variants: [{ name: L("Tchèk", "Vérification", "Check", "Verificación"), price: 1.5 }],
     tags: ["Apple", "Samsung"],
+    card: { title: L("Operatè + lis nwa", "Opérateur + liste noire", "Carrier + blacklist", "Operador + lista negra"), tag: L("Imedya", "Instantané", "Instant", "Instantáneo"), style: "mint" },
   },
   {
-    slug: "unlocktool-license", category: "tool-licenses", accent: "#2B2F35", featured: true, fulfillment: "CODE_INVENTORY", serviceType: "SERVER", codes: 5,
+    slug: "unlocktool-license", category: "unlocktool", accent: "#2B2F35", featured: true, fulfillment: "CODE_INVENTORY", serviceType: "SERVER", codes: 5,
     name: L("Lisans UnlockTool", "Licence UnlockTool", "UnlockTool license", "Licencia UnlockTool"),
     description: L("Kle lisans livre touswit.", "Clé de licence livrée immédiatement.", "License key delivered instantly.", "Clave de licencia entregada al instante."),
     delivery: L("Touswit", "Immédiat", "Instant", "Inmediato"),
     variants: [
-      { name: L("3 mwa", "3 mois", "3 months", "3 meses"), price: 20 },
-      { name: L("12 mwa", "12 mois", "12 months", "12 meses"), price: 50 },
+      { name: L("12 mwa · Nouvo aktivasyon", "12 mois · Nouvelle activation", "12 months · New activation", "12 meses · Nueva activación"), price: 50 },
+      { name: L("12 mwa · Renouvèlman", "12 mois · Renouvellement", "12 months · Renewal", "12 meses · Renovación"), price: 45 },
+      { name: L("6 mwa · Nouvo aktivasyon", "6 mois · Nouvelle activation", "6 months · New activation", "6 meses · Nueva activación"), price: 32 },
+      { name: L("6 mwa · Renouvèlman", "6 mois · Renouvellement", "6 months · Renewal", "6 meses · Renovación"), price: 29 },
+      { name: L("3 mwa · Nouvo aktivasyon", "3 mois · Nouvelle activation", "3 months · New activation", "3 meses · Nueva activación"), price: 20 },
+      { name: L("3 mwa · Renouvèlman", "3 mois · Renouvellement", "3 months · Renewal", "3 meses · Renovación"), price: 18 },
     ],
+    card: { title: L("UnlockTool 12 mwa", "UnlockTool 12 mois", "UnlockTool 12 months", "UnlockTool 12 meses"), tag: L("Nouvo aktivasyon", "Nouvelle activation", "New activation", "Nueva activación"), style: "green" },
   },
   {
-    slug: "chimera-credits", category: "tool-licenses", accent: "#2B2F35", fulfillment: "MANUAL", serviceType: "SERVER",
+    slug: "chimera-credits", category: "chimera", accent: "#2B2F35", featured: true, fulfillment: "MANUAL", serviceType: "SERVER",
+    card: { title: L("Kredi Chimera", "Crédits Chimera", "Chimera credits", "Créditos Chimera"), tag: L("10–1000", "10–1000", "10–1000", "10–1000"), style: "slate" },
     name: L("Kredi Chimera", "Crédits Chimera", "Chimera credits", "Créditos Chimera"),
     description: L("Kredi mete sou kont ou.", "Crédits ajoutés à votre compte.", "Credits added to your account.", "Créditos añadidos a su cuenta."),
     delivery: L("15–60 min", "15–60 min", "15–60 min", "15–60 min"),
@@ -91,7 +104,8 @@ const products: SeedProduct[] = [
     variants: [{ name: L("Pa kredi", "Par crédit", "Per credit", "Por crédito"), price: 0.6, minQty: 10, maxQty: 1000 }],
   },
   {
-    slug: "samsung-frp-remove-remote", category: "remote-services", accent: "#111418", fulfillment: "MANUAL", serviceType: "REMOTE",
+    slug: "samsung-frp-remove-remote", category: "remote-services", accent: "#111418", featured: true, hideFromGoogle: true, fulfillment: "MANUAL", serviceType: "REMOTE",
+    card: { title: L("Retire FRP Samsung", "Suppression FRP Samsung", "Samsung FRP remove", "Eliminar FRP Samsung"), tag: L("30 min", "30 min", "30 min", "30 min"), style: "ink" },
     name: L("Retire FRP Samsung", "Suppression FRP Samsung", "Samsung FRP remove", "Eliminar FRP Samsung"),
     description: L("Fèt a distans sou òdinatè ou.", "Fait à distance sur votre ordinateur.", "Done remotely on your computer.", "Se hace a distancia en su computadora."),
     delivery: L("30 min", "30 min", "30 min", "30 min"),
@@ -104,26 +118,47 @@ const products: SeedProduct[] = [
   },
 ];
 
+products.push({
+  slug: "octoplus-samsung-activation", category: "octoplus", accent: "#2B2F35", fulfillment: "MANUAL", serviceType: "SERVER",
+  name: L("Aktivasyon Octoplus Samsung", "Activation Octoplus Samsung", "Octoplus Samsung activation", "Activación Octoplus Samsung"),
+  description: L("Aktivasyon mete sou bwat ou.", "Activation ajoutée à votre boîtier.", "Activation added to your box.", "Activación añadida a su caja."),
+  delivery: L("1–6 è", "1–6 h", "1–6 h", "1–6 h"),
+  fields: [{ key: "serial", label: L("Nimewo seri bwat la", "Numéro de série du boîtier", "Box serial number", "Número de serie de la caja"), type: "text", required: true }],
+  variants: [
+    { name: L("12 mwa · Nouvo aktivasyon", "12 mois · Nouvelle activation", "12 months · New activation", "12 meses · Nueva activación"), price: 40 },
+    { name: L("12 mwa · Renouvèlman", "12 mois · Renouvellement", "12 months · Renewal", "12 meses · Renovación"), price: 36 },
+  ],
+});
+
 export async function seedDemoCatalog(prisma: PrismaClient) {
   for (const c of categories) {
-    await prisma.category.upsert({ where: { slug: c.slug }, create: c, update: {} });
+    await prisma.category.upsert({ where: { slug: c.slug }, create: c, update: { code: c.code, isTool: !!c.isTool, isHot: !!c.isHot, description: c.description } });
   }
   const cats = Object.fromEntries((await prisma.category.findMany()).map((c) => [c.slug, c.id]));
 
   let order = 0;
   for (const p of products) {
     const existing = await prisma.product.findUnique({ where: { slug: p.slug } });
-    if (existing) continue;
+    const look = {
+      categoryId: cats[p.category],
+      isFeatured: !!p.featured,
+      hideFromGoogle: !!p.hideFromGoogle,
+      ...(p.card ? { cardTitle: p.card.title, cardTag: p.card.tag, cardStyle: p.card.style } : {}),
+    };
+    if (existing) {
+      // Demo rows from an older seed get the new presentation fields; prices and options are left alone.
+      await prisma.product.update({ where: { id: existing.id }, data: look });
+      continue;
+    }
     const created = await prisma.product.create({
       data: {
         slug: p.slug,
-        categoryId: cats[p.category],
+        ...look,
         name: p.name,
         description: p.description,
         deliveryEstimate: p.delivery,
         accent: p.accent,
         isPublished: true,
-        isFeatured: !!p.featured,
         fulfillmentType: p.fulfillment,
         serviceType: p.serviceType,
         fields: (p.fields ?? []) as object[],

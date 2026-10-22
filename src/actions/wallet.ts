@@ -15,6 +15,10 @@ import { notify } from "@/lib/notify";
 import { savePrivateImage, uploadsEnabled } from "@/lib/storage";
 import { normalizePhone } from "@/lib/phone";
 import { mustVerifyEmail } from "@/lib/verify-email";
+import { methodAllowed } from "@/lib/pay-methods";
+import { shopperCountry } from "@/lib/prefs";
+import { cardAvailable } from "@/lib/payments/card";
+import { startCardPayment } from "@/lib/payments/start";
 
 export type ActionResult<T = object> = ({ ok: true } & T) | { ok: false; error: string };
 
@@ -48,9 +52,12 @@ export async function createDeposit(form: FormData): Promise<ActionResult<{ redi
   const settings = await getSettings();
   const method = form.get("method");
   const amount = parseAmount(String(form.get("amount") ?? ""));
+  // Only methods offered in the shopper's country (they never see the others either).
+  const methodId = method === "MANUAL" ? `MANUAL:${String(form.get("manualMethodId") ?? "")}` : String(method);
+  if (!(await methodAllowed(methodId, await shopperCountry(user), "deposits"))) return { ok: false, error: "method_unavailable" };
   // Crypto methods credit the USD wallet: the amount is in USD, limits are compared in HTG.
   const manual = method === "MANUAL" ? await prisma.manualMethod.findUnique({ where: { id: String(form.get("manualMethodId") ?? "") } }) : null;
-  const currency = manual?.currency ?? "HTG";
+  const currency = method === "CARD" ? "USD" : manual?.currency ?? "HTG";
   const amountHtg = amount ? (currency === "USD" ? usdToHtg(amount, settings.htgPerUsd) : amount) : 0;
   if (!amount || amountHtg < settings.minDepositHtg || amountHtg > settings.maxDepositHtg) return { ok: false, error: "amount" };
 
@@ -60,6 +67,11 @@ export async function createDeposit(form: FormData): Promise<ActionResult<{ redi
   } catch (e) {
     if (e instanceof LimitExceededError) return { ok: false, error: "new_account_limit" };
     throw e;
+  }
+
+  if (method === "CARD") {
+    if (!cardAvailable(settings.cardEnabled)) return { ok: false, error: "method_unavailable" };
+    return { ok: true, redirect: await startCardPayment(user, amount) };
   }
 
   if (method === "MONCASH") {
@@ -111,7 +123,7 @@ export async function submitOrderNatcash(form: FormData): Promise<ActionResult> 
     await prisma.$transaction(async (tx) => {
       await tx.paymentIntent.create({
         data: {
-          userId: user.id, orderId: order.id, provider: order.paymentMethod === "MANUAL" ? "MANUAL" : "NATCASH", manualMethodId: order.manualMethodId, amount: order.total, currency: "HTG", status: "REVIEW",
+          userId: user.id, orderId: order.id, provider: order.paymentMethod === "MANUAL" ? "MANUAL" : "NATCASH", manualMethodId: order.manualMethodId, amount: order.total, currency: order.currency, status: "REVIEW",
           providerRef: ref.data.toUpperCase(), payerPhone: phone.success ? phone.data || null : null, evidencePath,
         },
       });

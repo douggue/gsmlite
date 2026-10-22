@@ -61,6 +61,22 @@ export type Settings = {
   homepageHistory: { at: string; by: string; config: unknown }[];
   theme: ThemeConfig;
   themeHistory: { at: string; by: string; theme: ThemeConfig }[];
+  /** Country used when the visitor's location is unknown (no Cloudflare/Vercel header) and the account has none */
+  defaultCountry: string;
+  /** Who sees the built-in payment methods (same rule as services: all / only / except + ISO codes) */
+  payCountries: Record<"moncash" | "natcash" | "card", { countryMode: string; countries: string[] }>;
+  /** Card payments (Stripe Checkout). Also needs STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET in the hosting env. */
+  cardEnabled: boolean;
+  /** Public Telegram channel or chat link shown to customers (e.g. https://t.me/gsmlite) */
+  telegramUrl: string;
+  /** Free IMEI checks per day for one account (and one device) */
+  freeChecksPerDay: number;
+  /** Wallet top-up bonus: % on the first top-up, % on top-ups of at least minUsd (cents); 0 = off */
+  topupBonus: { firstPct: number; pct: number; minUsd: number };
+  /** Defaults on the supplier import screen */
+  supplierDefaults: { markupPct: number; minProfitUsd: number; round: "99" | "49" | "none" };
+  /** Success rate: shown once a service has this many finished orders in 90 days; alert / auto-pause under these % (0 = off) */
+  successRate: { minOrders: number; alertBelowPct: number; pauseBelowPct: number };
 };
 
 export type NavLink = { label: Record<string, string>; href: string };
@@ -165,6 +181,18 @@ export const DEFAULT_SETTINGS: Settings = {
   newsletterEnabled: false,
   requireEmailVerification: true,
   maxAccountsPerDevice: 3,
+  defaultCountry: "HT",
+  payCountries: {
+    moncash: { countryMode: "only", countries: ["HT"] },
+    natcash: { countryMode: "only", countries: ["HT"] },
+    card: { countryMode: "all", countries: [] },
+  },
+  cardEnabled: false,
+  telegramUrl: "",
+  freeChecksPerDay: 3,
+  topupBonus: { firstPct: 10, pct: 3, minUsd: 5000 },
+  supplierDefaults: { markupPct: 35, minProfitUsd: 50, round: "99" },
+  successRate: { minOrders: 20, alertBelowPct: 80, pauseBelowPct: 0 },
 };
 
 export async function getSettings(): Promise<Settings> {

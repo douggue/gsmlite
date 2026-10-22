@@ -45,6 +45,8 @@ model User {
   role             Role          @default(CUSTOMER)
   status           AccountStatus @default(ACTIVE)
   locale           String        @default("ht")
+  /// Country on the account (ISO code), set from the visitor's location at sign-up; decides services and payment methods
+  country          String?
   displayCurrency  Currency      @default(HTG)
   twoFactorEnabled Boolean?      @default(false)
   customRoleId     String?
@@ -171,6 +173,14 @@ model Category {
   cover       String?
   sortOrder   Int        @default(0)
   isVisible   Boolean    @default(true)
+  /// Shown in the category menu row (desktop) and the home tiles
+  inMenu      Boolean    @default(true)
+  /// "Hot" badge in the menu
+  isHot       Boolean    @default(false)
+  /// A repair tool (UnlockTool, Chimera…): listed under "Shop by tool" and "Top tools"
+  isTool      Boolean    @default(false)
+  /// Two-letter badge (e.g. "UT"); empty = from the name
+  code        String?
   parentId    String?
   parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id])
   children    Category[] @relation("CategoryTree")
@@ -225,6 +235,15 @@ model Product {
   identifierFormat String           @default("imei")
   /// Several identifiers in one order, one per line (each becomes its own order line)
   allowBulk        Boolean          @default(true)
+  /// Where it is sold: "all" (worldwide), "only" (just `countries`) or "except" (everywhere but `countries`). ISO codes.
+  countryMode      String           @default("all")
+  countries        String[]         @default([])
+  /// FRP, iCloud, MDM…: no Google page, noindex, kept out of the sitemap, hubs and public price list; signed-in customers only
+  hideFromGoogle   Boolean          @default(false)
+  /// Card art: short title (2 lines), ribbon text, and color ("ink", "green", "mint", "slate"). Empty = from name and delivery time.
+  cardTitle        Json?
+  cardTag          Json?
+  cardStyle        String           @default("ink")
   variants         ProductVariant[]
   reviews          Review[]
   createdAt        DateTime         @default(now())
@@ -323,6 +342,8 @@ enum PaymentMethodKind {
   MONCASH
   NATCASH
   MANUAL
+  /// Visa/Mastercard through Stripe Checkout (USD)
+  CARD
 }
 
 model Order {
@@ -381,10 +402,13 @@ model OrderItem {
   /// Result shown to the customer: unlock code, check report, rejection reason (from staff or the supplier)
   deliveryNote   String?
   refundedAt     DateTime?
+  /// When the line got its result or was refunded (real delivery time and success rate per service)
+  finishedAt     DateTime?
   codes          CodeItem[]
   supplierOrders SupplierOrder[]
 
   @@index([identifier])
+  @@index([variantId, finishedAt])
 }
 
 /// Append-only order history
@@ -407,6 +431,8 @@ enum PaymentProvider {
   NATCASH
   /// Other manual methods configured in Admin → Payment methods (bank transfer, other wallets…)
   MANUAL
+  /// Stripe Checkout; providerRef = Checkout Session id
+  CARD
 }
 
 enum PaymentStatus {
@@ -707,6 +733,10 @@ model Referral {
 model NewsArticle {
   id          String    @id @default(cuid())
   slug        String    @unique
+  /// "post" (news), "tool" (tool update: toolName + version), "feature", "security", "howto"
+  kind        String    @default("post")
+  toolName    String?
+  version     String?
   title       Json
   excerpt     Json      @default("{}")
   body        Json      @default("{}")
@@ -768,6 +798,9 @@ model ManualMethod {
   /// Wallet credited by deposits: HTG for mobile money, USD for USDT
   currency        Currency        @default(HTG)
   isEnabled       Boolean         @default(true)
+  /// Countries that see this method: "all", "only" or "except" + ISO codes. Nobody else sees anything about it.
+  countryMode     String          @default("all")
+  countries       String[]        @default([])
   allowDeposits   Boolean         @default(true)
   allowOrders     Boolean         @default(true)
   sortOrder       Int             @default(0)
@@ -993,4 +1026,28 @@ model GroupPrice {
   priceUsd     Int
 
   @@id([priceGroupId, variantId])
+}
+
+/// Home page offer slider (admin → Homepage). Shown between its dates, only in its countries.
+model HomeSlide {
+  id          String    @id @default(cuid())
+  /// Small labels above the title, e.g. "OFFER" and "FIRST TOP-UP · OCT 1–31" (per language)
+  tag         Json      @default("{}")
+  label       Json      @default("{}")
+  title       Json
+  /// One line per bullet, per language
+  bullets     Json      @default("{}")
+  buttonText  Json      @default("{}")
+  buttonHref  String    @default("/")
+  button2Text Json      @default("{}")
+  button2Href String?
+  image       String?
+  isActive    Boolean   @default(true)
+  startsAt    DateTime?
+  endsAt      DateTime?
+  sortOrder   Int       @default(0)
+  countryMode String    @default("all")
+  countries   String[]  @default([])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }

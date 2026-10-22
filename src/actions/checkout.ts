@@ -7,11 +7,13 @@ import { LimitExceededError } from "@/lib/risk";
 import { createMoncashPayment } from "@/lib/payments/moncash";
 import { z } from "zod";
 import { mustVerifyEmail } from "@/lib/verify-email";
+import { shopperCountry } from "@/lib/prefs";
+import { startCardPayment } from "@/lib/payments/start";
 
 const input = z.object({
   items: cartSchema,
   currency: z.enum(["HTG", "USD"]),
-  method: z.enum(["WALLET", "MONCASH", "NATCASH", "MANUAL"]),
+  method: z.enum(["WALLET", "MONCASH", "NATCASH", "MANUAL", "CARD"]),
   manualMethodId: z.string().max(64).optional(),
   note: z.string().max(300).optional(),
 });
@@ -31,7 +33,7 @@ export async function placeOrder(raw: unknown): Promise<PlaceOrderResult> {
   const { items, currency, method, note, manualMethodId } = parsed.data;
 
   try {
-    const order = await createOrder({ userId: user.id, items, currency, method, manualMethodId, recipientNote: note });
+    const order = await createOrder({ userId: user.id, items, currency, method, manualMethodId, recipientNote: note, country: await shopperCountry(user) });
     await rememberPlayerIds(user.id, items);
 
     if (method === "MONCASH") {
@@ -40,6 +42,9 @@ export async function placeOrder(raw: unknown): Promise<PlaceOrderResult> {
       });
       const url = await createMoncashPayment(intent.id, intent.amount);
       return { ok: true, orderId: order.id, redirect: url };
+    }
+    if (method === "CARD") {
+      return { ok: true, orderId: order.id, redirect: await startCardPayment(user, order.total, { orderId: order.id, number: order.number }) };
     }
     return { ok: true, orderId: order.id };
   } catch (e) {

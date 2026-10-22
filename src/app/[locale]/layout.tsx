@@ -7,9 +7,12 @@ import { routing } from "@/i18n/routing";
 import { getDisplaySettings } from "@/lib/settings";
 import { getDisplayCurrency } from "@/lib/prefs";
 import { CartProvider } from "@/components/cart/CartProvider";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { SiteHeader } from "@/components/shop/SiteHeader";
+import { SiteFooter } from "@/components/shop/SiteFooter";
+import { payMethodsFor } from "@/lib/pay-methods";
+import { shopperCountry } from "@/lib/prefs";
+import { getCategories } from "@/lib/catalog";
+import { t as txt } from "@/lib/text";
 import { BottomNav, ThemeKeeper } from "@/components/HeaderClient";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { alternates } from "@/lib/seo";
@@ -60,6 +63,8 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   // Light/dark: the visitor's saved choice (cookie), else the store default. Rendered by the server, so it never flashes.
   const themeCookie = jar.get("gl_theme")?.value;
   const dark = themeCookie ? themeCookie === "dark" : fullTheme(settings.theme).defaultMode === "dark";
+  const country = await shopperCountry(user);
+  const [methods, cats] = await Promise.all([payMethodsFor(country, "orders", locale), getCategories({ country, signedIn: !!user })]);
 
   return (
     <html lang={locale} suppressHydrationWarning className={`${sans.variable} ${display.variable}${dataSaver ? " data-saver" : ""}${dark ? " dark" : ""}`} {...themeAttrs(settings.theme)}>
@@ -76,10 +81,9 @@ export default async function LocaleLayout({ children, params }: { children: Rea
         <NextIntlClientProvider>
           <CartProvider currency={currency} htgPerUsd={settings.htgPerUsd} signedIn={!!user}>
             <AnnouncementBar settings={settings} locale={locale} />
-            <Header />
+            <SiteHeader />
             <main id="main">{children}</main>
-            <Footer settings={settings} />
-            <WhatsAppButton number={settings.whatsappNumber} />
+            <SiteFooter settings={settings} methods={methods} categories={cats.filter((c) => c.inMenu).map((c) => ({ slug: c.slug, name: txt(c.name, locale) }))} />
             {/* Room for the phone bottom navigation so it never covers the footer */}
             <div className="md:hidden" style={{ height: "calc(4rem + env(safe-area-inset-bottom, 0px))" }} aria-hidden />
             <BottomNav signedIn={!!user} />

@@ -9,7 +9,7 @@ import { localeNames, locales, type Locale } from "@/i18n/routing";
 import { setCurrency, saveLocalePreference } from "@/actions/prefs";
 import { authClient } from "@/lib/auth-client";
 import { useStore } from "./cart/CartProvider";
-import { BagIcon, BookIcon, CartIcon, CloseIcon, FileIcon, HelpIcon, HomeIcon, LoginIcon, LogoutIcon, MenuIcon, MoonIcon, NewsIcon, StoreIcon, SunIcon, TagIcon, UserIcon, UserPlusIcon, WalletIcon } from "./Icons";
+import { ReceiptIcon, BagIcon, BookIcon, CartIcon, CloseIcon, FileIcon, HelpIcon, HomeIcon, LoginIcon, LogoutIcon, MenuIcon, MoonIcon, NewsIcon, StoreIcon, SunIcon, TagIcon, UserIcon, UserPlusIcon, WalletIcon } from "./Icons";
 
 /**
  * Keeps light/dark after client-side navigation. Changing language re-renders <html> from the server,
@@ -413,15 +413,15 @@ function useKeyboardFlag() {
 /** Phone-only bottom navigation: the five places customers go most. */
 export function BottomNav({ signedIn }: { signedIn: boolean }) {
   const t = useTranslations("common");
+  const tg = useTranslations("gl.nav");
   const pathname = usePathname();
-  const { count, ready } = useStore();
   useKeyboardFlag();
+  const gate = (href: string) => (signedIn ? href : `/auth/login?next=${encodeURIComponent(href)}`);
   const items = [
-    { href: "/", label: t("home"), icon: HomeIcon, active: pathname === "/" },
-    { href: "/store", label: t("store"), icon: StoreIcon, active: pathname.startsWith("/store") || pathname.startsWith("/categories") || pathname.startsWith("/products") },
-    { href: "/cart", label: t("cart"), icon: CartIcon, active: pathname.startsWith("/cart") || pathname.startsWith("/checkout"), badge: ready ? count : 0 },
-    { href: signedIn ? "/account/wallet" : "/auth/login?next=/account/wallet", label: t("wallet"), icon: WalletIcon, active: pathname.startsWith("/account/wallet") },
-    { href: signedIn ? "/account" : "/auth/login", label: t("tabAccount"), icon: UserIcon, active: (pathname.startsWith("/account") && !pathname.startsWith("/account/wallet")) || pathname.startsWith("/auth") },
+    { href: "/", label: tg("home"), icon: HomeIcon, active: pathname === "/", badge: 0 },
+    { href: "/store", label: tg("services"), icon: StoreIcon, active: ["/store", "/categories", "/products", "/check", "/prices"].some((p) => pathname.startsWith(p)), badge: 0 },
+    { href: gate("/account/orders"), label: tg("orders"), icon: ReceiptIcon, active: pathname.startsWith("/account/orders") || pathname.startsWith("/order-status"), badge: 0 },
+    { href: gate("/account/wallet"), label: tg("wallet"), icon: WalletIcon, active: pathname.startsWith("/account/wallet"), badge: 0 },
   ];
   return (
     <nav
@@ -429,7 +429,7 @@ export function BottomNav({ signedIn }: { signedIn: boolean }) {
       className="kb-hide fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 backdrop-blur md:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)", paddingLeft: "env(safe-area-inset-left, 0px)", paddingRight: "env(safe-area-inset-right, 0px)" }}
     >
-      <ul className="mx-auto grid h-16 max-w-md grid-cols-5">
+      <ul className="mx-auto grid h-16 max-w-md grid-cols-4">
         {items.map(({ href, label, icon: Icon, active, badge }) => (
           <li key={label} className="min-w-0">
             <Link

@@ -1,288 +1,420 @@
 import { siteUrl } from "@/lib/site-url";
-import { Fragment } from "react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { prisma } from "@/lib/db";
 import { getUser } from "@/lib/session";
 import { isStaff } from "@/lib/permissions";
-import { normalizeHomepage } from "@/lib/homepage";
+import { normalizeHomepage, type HomeSectionId } from "@/lib/homepage";
 import { pageSeo } from "@/lib/seo";
-import { NewsCard } from "@/components/NewsCard";
 import { Link } from "@/i18n/navigation";
-import { getCategories, searchProducts } from "@/lib/catalog";
-import { fullTheme, getDisplaySettings } from "@/lib/settings";
+import { getDisplaySettings } from "@/lib/settings";
 import { t } from "@/lib/text";
-import Image from "next/image";
-import { ProductCard } from "@/components/ProductCard";
-import { CategoryCard } from "@/components/CategoryCard";
+import { homeData } from "@/lib/storefront";
+import { listNames } from "@/lib/pay-methods";
+import { storeNumbers, systemsOnline } from "@/lib/service-stats";
+import { durationParts } from "@/lib/duration";
+import { Price } from "@/components/Money";
 import { ReviewsSection } from "@/components/ReviewsSection";
-import { ArrowRightIcon, BoltIcon, ChatIcon, PinIcon, ShieldIcon, WalletIcon } from "@/components/Icons";
-import { PayLogo } from "@/components/PayLogo";
+import { SearchBox } from "@/components/shop/SearchBox";
+import { ServiceCard } from "@/components/shop/ServiceCard";
+import { HomeSlider, type Slide } from "@/components/shop/HomeSlider";
+import { ToolTabs } from "@/components/shop/ToolTabs";
+import { ArrowRightIcon, CheckListIcon, ChipIcon, KeyIcon, UnlockPhoneIcon } from "@/components/Icons";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   return pageSeo(locale, "/", "");
 }
 
+/** Icon for a home tile, from the category's name (any language) */
+function tileIcon(slug: string, i: number) {
+  const s = slug.toLowerCase();
+  if (/check|imei|verif/.test(s)) return CheckListIcon;
+  if (/credit|tool|licen|key/.test(s)) return KeyIcon;
+  if (/firm|frp|data|file|flash|mdm/.test(s)) return ChipIcon;
+  if (/unlock|carrier|network|debl/.test(s)) return UnlockPhoneIcon;
+  return [UnlockPhoneIcon, CheckListIcon, KeyIcon, ChipIcon][i % 4];
+}
 
-/** Phone-service icons between the words of the scrolling band (drawn, so they look the same on every phone). */
-const MARQUEE_ICONS = [
-  // open lock
-  "M7 11V7a5 5 0 0 1 9.6-1.9 M5 11h14v10H5Z M12 15v2",
-  // phone
-  "M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z M11 18h2",
-  // magnifier (IMEI check)
-  "M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14Z m9 16-4.3-4.3",
-  // lightning
-  "M13 2 4 14h7l-1 8 9-12h-7Z",
-];
-const MARQUEE_COLORS = ["#7CE0A8", "#FFFFFF", "#7CE0A8", "#FFFFFF"];
-function MarqueeIcon({ n }: { n: number }) {
-  const color = MARQUEE_COLORS[n % MARQUEE_COLORS.length];
+function SectionHead({ title, sub, href, linkLabel }: { title: string; sub?: string; href?: string; linkLabel?: string }) {
   return (
-    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-black/25 shadow-inner ring-1 ring-white/20" style={{ color }}>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ filter: `drop-shadow(0 0 6px ${color})` }}>
-        <path d={MARQUEE_ICONS[n % MARQUEE_ICONS.length]} />
-      </svg>
-    </span>
+    <div className="flex items-center justify-between gap-4 bg-[#111418] px-5 py-3.5 text-white">
+      <span>
+        <b className="display block text-xl">{title}</b>
+        {sub && <span className="text-[13px] text-[#c9cfc6]">{sub}</span>}
+      </span>
+      {href && linkLabel && <Link href={href} className="inline-flex min-h-10 shrink-0 items-center rounded-xl bg-white px-3.5 text-sm font-semibold text-[#111418]">{linkLabel} →</Link>}
+    </div>
   );
 }
+
 export default async function HomePage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ preview?: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const sp = await searchParams;
   const viewer = sp.preview ? await getUser() : null;
   const preview = !!viewer && isStaff(viewer.role) && !!viewer.twoFactorEnabled;
-  const [th, tc, tf, featured, categories, settings, news] = await Promise.all([
-    getTranslations("home"),
-    getTranslations("common"),
-    getTranslations("faq"),
-    searchProducts({ featured: true, take: 8 }),
-    getCategories(),
-    getDisplaySettings(),
-    prisma.newsArticle.findMany({ where: { isPublished: true, publishedAt: { lte: new Date() } }, orderBy: { publishedAt: "desc" }, take: 3 }),
-  ]);
+  const [g, settings, data, numbers, online] = await Promise.all([getTranslations("gl"), getDisplaySettings(), homeData(locale), storeNumbers(), systemsOnline()]);
   const home = normalizeHomepage(preview ? settings.homepageDraft : settings.homepage);
-
-  const orgJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: settings.businessName,
-    url: siteUrl(),
-    address: settings.businessAddress,
-  };
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: [1, 2, 3, 4].map((i) => ({
-      "@type": "Question",
-      name: tf(`q${i}`),
-      acceptedAnswer: { "@type": "Answer", text: tf(`a${i}`) },
-    })),
+  const show = (id: HomeSectionId) => home.sections.find((s) => s.id === id)?.visible !== false;
+  const methods = listNames(data.methods, locale);
+  const signedIn = !!data.user;
+  const gate = (href: string) => (signedIn ? href : `/auth/login?next=${encodeURIComponent(href)}`);
+  const dur = (m: number | null) => {
+    if (m == null) return null;
+    const d = durationParts(m);
+    return g(`time.${d.key}`, { n: d.n });
   };
 
-  const marquee = (fullTheme(settings.theme).marquee[locale] ?? "").split(",").map((w) => w.trim()).filter(Boolean).slice(0, 12);
+  // Offers from Admin → Homepage; without any, two built-in ones (top-up bonus only when it is switched on).
+  const slides: Slide[] = data.slides.length
+    ? data.slides
+    : [
+        ...(settings.topupBonus.firstPct > 0
+          ? [{
+              id: "topup", tag: g("home.slideTopupTag"), label: g("home.slideTopupLabel"), title: g("home.slideTopupTitle", { pct: settings.topupBonus.firstPct }),
+              bullets: [...(methods ? [g("home.slideTopup1", { methods })] : []), g("home.slideTopup2"), g("home.slideTopup3")],
+              buttonText: g("home.slideTopupBtn"), buttonHref: gate("/account/wallet/deposit"),
+              button2Text: g("home.slideWhatsapp"), button2Href: `https://wa.me/${settings.whatsappNumber}`,
+            }]
+          : []),
+        {
+          id: "check", tag: g("home.slideCheckTag"), label: g("home.slideCheckLabel"), title: g("home.slideCheckTitle"),
+          bullets: [g("home.slideCheck1"), g("home.slideCheck2"), g("home.slideCheck3")], buttonText: g("home.slideCheckBtn"), buttonHref: "/check",
+        },
+      ];
 
-  const heroText = (k: "eyebrow" | "title" | "subtitle") =>
-    t(home.hero[k], locale) || th(k === "eyebrow" ? "eyebrow" : k === "title" ? "heroTitle" : "heroSubtitle");
-
-  const blocks: Record<string, React.ReactNode> = {
-    categories: (
-      <>
-<section className="container-page mt-12">
-        <div className="mb-5 flex items-end justify-between gap-4">
-          <h2 className="display text-2xl font-bold tracking-tight sm:text-3xl">{th("categoriesTitle")}</h2>
-          <Link href="/categories" className="text-sm font-semibold text-primary">{tc("viewAll")}</Link>
-        </div>
-        <div className="stagger grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-          {categories.map((c, i) => (
-            <CategoryCard key={c.id} href={`/categories/${c.slug}`} name={t(c.name, locale)} count={`${c._count.products} ${tc("products")}`} cover={c.cover} image={c.image} icon={c.icon} index={i} />
-          ))}
-        </div>
-      </section>
-      </>
-    ),
-    featured: (
-      <>
-<section className="container-page mt-14">
-        <div className="mb-5 flex items-end justify-between gap-4">
-          <h2 className="display text-2xl font-bold tracking-tight sm:text-3xl">{th("featured")}</h2>
-          <Link href="/store" className="text-sm font-semibold text-primary">{tc("viewAll")}</Link>
-        </div>
-        <div className="stagger grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {featured.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
-      </section>
-      </>
-    ),
-    howItWorks: (
-      <>
-<section className="container-page mt-16">
-        <div className="card overflow-hidden p-6 sm:p-10">
-          <h2 className="display text-2xl font-bold tracking-tight sm:text-3xl">{th("howToPayTitle")}</h2>
-          <p className="mt-1 text-muted">{th("howToPaySubtitle")}</p>
-          <ol className="mt-8 grid gap-8 sm:grid-cols-3">
-            {[1, 2, 3].map((i) => (
-              <li key={i} className="flex flex-col gap-2">
-                <span className="display text-4xl font-bold text-primary" aria-hidden>0{i}</span>
-                <h3 className="text-lg font-bold">{th(`step${i}Title`)}</h3>
-                <p className="text-sm text-muted">{th(`step${i}Body`)}</p>
-              </li>
-            ))}
-          </ol>
-          <Link href="/guides" className="mt-8 inline-flex items-center gap-1 text-sm font-semibold text-primary">
-            {th("payGuideLink")} <ArrowRightIcon width={16} height={16} />
-          </Link>
-        </div>
-      </section>
-      </>
-    ),
-    wallet: (
-      <>
-<section className="container-page mt-6">
-        <div className="relative flex flex-col items-start gap-5 overflow-hidden rounded-3xl bg-[linear-gradient(135deg,#2fa36a,#1f7a4d_45%,#0f3d27)] p-6 text-white shadow-[0_26px_50px_-24px_var(--glow)] sm:flex-row sm:items-center sm:p-8">
-          <span aria-hidden className="ds-hide pointer-events-none absolute -right-10 -top-16 h-56 w-56 rounded-full bg-[#7ce0a8]/40 blur-3xl" />
-          <span className="relative grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white/20"><WalletIcon /></span>
-          <div className="relative flex-1">
-            <h2 className="display text-xl font-bold sm:text-2xl">{th("walletTitle")}</h2>
-            <p className="mt-1 text-sm text-[#dbe7ff]">{th("walletBody")}</p>
-          </div>
-          <Link href="/account/wallet" className="btn relative bg-white text-[#0f3d27] hover:bg-[#e4f3ea]">{th("walletCta")}</Link>
-        </div>
-      </section>
-      </>
-    ),
-    reviews: <ReviewsSection locale={locale} />,
-    trust: (
-      <>
-<section className="container-page mt-16">
-        <h2 className="display text-2xl font-bold tracking-tight sm:text-3xl">{th("trustTitle")}</h2>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            [BoltIcon, "trustDelivery"],
-            [ShieldIcon, "trustSecure"],
-            [ChatIcon, "trustSupport"],
-            [PinIcon, "trustLocal"],
-          ].map(([Icon, key]) => {
-            const I = Icon as typeof BoltIcon;
-            const k = key as string;
-            return (
-              <div key={k} className="card p-5">
-                <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary-soft text-primary"><I /></span>
-                <h3 className="mt-3 font-semibold">{th(k)}</h3>
-                <p className="mt-1 text-sm text-muted">{th(`${k}Body`)}</p>
-              </div>
-            );
-          })}
-        </div>
-        <p className="mt-4 text-sm text-muted">
-          {settings.businessName} · {settings.businessAddress} · {settings.supportHours}
-        </p>
-      </section>
-      </>
-    ),
-    faq: (
-      <>
-<section className="container-page mt-16">
-        <h2 className="display text-2xl font-bold tracking-tight sm:text-3xl">{th("faqTitle")}</h2>
-        <div className="mt-6 divide-y divide-border rounded-2xl border border-border bg-surface">
-          {[1, 2, 3, 4].map((i) => (
-            <details key={i} className="group p-5">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">
-                {tf(`q${i}`)}
-                <span className="text-muted transition-transform group-open:rotate-45" aria-hidden>+</span>
-              </summary>
-              <p className="mt-3 text-sm text-muted">{tf(`a${i}`)}</p>
-            </details>
-          ))}
-        </div>
-      </section>
-      </>
-    ),
-    news: news.length > 0 ? (
-      <section className="container-page mt-16">
-        <div className="mb-5 flex items-end justify-between gap-4">
-          <h2 className="display text-2xl font-bold tracking-tight sm:text-3xl">{th("newsTitle")}</h2>
-          <Link href="/news" className="text-sm font-semibold text-primary">{tc("viewAll")}</Link>
-        </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          {news.map((n) => <NewsCard key={n.id} article={n} locale={locale} />)}
-        </div>
-      </section>
-    ) : null,
-  };
+  const faq = [1, 2, 3, 4].map((i) => ({
+    q: g(`home.q${i}`),
+    a: i === 2 ? (methods ? g("home.a2", { methods }) : g("home.a2Wallet")) : g(`home.a${i}`),
+  }));
+  const jsonLd = [
+    { "@context": "https://schema.org", "@type": "Organization", name: settings.businessName, url: siteUrl(), address: settings.businessAddress },
+    { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
+  ];
+  const stats = [
+    numbers.delivered > 0 && { v: numbers.delivered.toLocaleString(locale === "ht" ? "fr" : locale), l: g("home.statDelivered") },
+    numbers.customers > 0 && { v: numbers.customers.toLocaleString(locale === "ht" ? "fr" : locale), l: g("home.statCustomers") },
+    numbers.medianMinutes != null && { v: dur(numbers.medianMinutes), l: g("home.statAvg") },
+    numbers.services > 0 && { v: String(numbers.services), l: g("home.statServices") },
+  ].filter(Boolean) as { v: string; l: string }[];
+  const status = (
+    <span className={`inline-flex items-center gap-1.5 text-[13px] font-semibold ${online ? "text-[#7ce0a8]" : "text-[#ffb547]"}`}>
+      <span className={`h-2 w-2 rounded-full ${online ? "bg-[#7ce0a8]" : "bg-[#ffb547]"}`} />
+      {online ? g("home.statusOnline") : g("home.statusIssues")}
+    </span>
+  );
+  const credits = data.categories.find((c) => /credit|server/i.test(c.slug));
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([orgJsonLd, faqJsonLd]) }} />
+      {jsonLd.map((j, i) => <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(j) }} />)}
 
-      {preview && (
-        <div className="bg-warning px-4 py-2 text-center text-sm font-semibold text-midnight">Preview of the unpublished homepage draft</div>
-      )}
-      {/* Hero (always first, always dark) */}
-      <section className="hero-dark relative overflow-hidden">
-        <div className="hero-grid" aria-hidden />
-        <div className="container-page relative grid items-center gap-10 py-14 sm:py-20 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="stagger flex flex-col gap-5">
-            {heroText("eyebrow") && <p className="animate-rise text-sm font-bold uppercase tracking-[0.14em] text-[#7CE0A8]">{heroText("eyebrow")}</p>}
-            <h1 className="display neon-text animate-rise text-4xl font-bold leading-[1.04] sm:text-5xl lg:text-6xl">{heroText("title")}</h1>
-            <p className="animate-rise max-w-xl text-base text-[#c9cfc6] sm:text-lg">{heroText("subtitle")}</p>
-            <div className="animate-rise flex flex-wrap gap-3">
-              <Link href={home.ctaHref || "/store"} className="btn-primary glow-btn neon-pulse min-h-13 px-6 text-base">
-                {tc("shopNow")} <ArrowRightIcon width={18} height={18} />
-              </Link>
-              <Link href="/categories" className="btn min-h-13 border border-white/25 px-6 text-base text-white hover:bg-white/10">
-                {tc("browseCategories")}
-              </Link>
-            </div>
-            <div className="animate-rise flex flex-wrap items-center gap-3 text-sm text-[#c9cfc6]">
-              <PayLogo brand="moncash" height={25} />
-              <PayLogo brand="natcash" height={25} />
-              <Link href="/guides" className="underline-offset-4 hover:text-white hover:underline">{th("payGuideLink")}</Link>
-            </div>
+      {/* ─────────── Phones (mockup "Home") ─────────── */}
+      <div className="lg:hidden">
+        <section className="container-page pb-5 pt-3">
+          <h1 className="display text-[34px] leading-[1.05] tracking-tight">{g("home.title")}</h1>
+          <p className="mt-2.5 text-[15px] leading-relaxed text-muted">{methods ? g("home.subtitle", { methods }) : g("home.subtitleWallet")}</p>
+          <div className="mt-4">
+            <SearchBox label={g("home.searchLabel")} placeholder={g("home.searchPlaceholder")} buttonLabel={g("home.searchButton")} />
+            <p className="mt-1.5 text-xs text-muted">{g.rich("home.imeiTip", { mono: (c) => <span className="font-mono">{c}</span> })}</p>
           </div>
-          {settings.heroImageUrl ? (
-            <div className="ds-hide animate-rise relative aspect-[4/3] overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
-              <Image src={settings.heroImageUrl} alt="" fill priority sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" />
+        </section>
+
+        {data.categories.length > 0 && (
+          <section aria-labelledby="m-cats" className="container-page">
+            <h2 id="m-cats" className="mb-2.5 text-[13px] font-semibold uppercase tracking-[0.08em] text-muted">{g("home.services")}</h2>
+            <div className="grid grid-cols-2 gap-2.5">
+              {data.categories.slice(0, 4).map((c, i) => {
+                const Icon = tileIcon(`${c.slug} ${t(c.name, "en")}`, i);
+                const first = i === 0;
+                return (
+                  <Link key={c.id} href={`/categories/${c.slug}`}
+                    className={`flex min-h-28 flex-col justify-between gap-4 rounded-2xl p-3.5 ${first ? "bg-[#111418] text-white" : "border border-border bg-surface"}`}>
+                    <Icon width={26} height={26} className={first ? "text-[#7ce0a8]" : "text-primary"} />
+                    <span>
+                      <b className="block text-base leading-tight">{t(c.name, locale)}</b>
+                      {t(c.description, locale) && <span className={`line-clamp-1 text-xs ${first ? "text-[#b9c0b6]" : "text-muted"}`}>{t(c.description, locale)}</span>}
+                    </span>
+                  </Link>
+                );
+              })}
             </div>
-          ) : (
-            <div className="relative hidden h-[400px] lg:block" aria-hidden>
-              <div className="animate-rise absolute right-6 top-2 flex h-[340px] w-[280px] rotate-3 flex-col justify-end rounded-3xl border border-white/10 bg-[radial-gradient(circle_at_50%_35%,#ff9a3c,#c2341d_45%,#3a0e18)] p-6 shadow-[0_30px_80px_-30px_rgba(255,120,60,.6)]">
-                <span className="display text-6xl font-bold leading-none">{featured[0] ? t(featured[0].name, locale).slice(0, 2).toUpperCase() : "HG"}</span>
-                <span className="mt-3 font-bold">{featured[0] ? t(featured[0].name, locale) : "GSMLite"}</span>
-                <span className="text-sm opacity-80">{th("trustDelivery")}</span>
-              </div>
-              <div className="animate-rise absolute left-0 top-16 flex w-60 flex-col gap-2 rounded-2xl border border-[#7ce0a8]/35 bg-[#0e1830]/90 p-4 shadow-[0_0_40px_-12px_rgba(70,216,255,.6)] backdrop-blur">
-                <span className="text-xs font-semibold text-[#8fa3c8]">{tc("codeReady")}</span>
-                <span className="font-mono text-sm tracking-wider text-[#7ce0a8]">XXXX-XXXX-XXXX</span>
-                <span className="flex items-center gap-1.5 text-sm font-bold text-[#2fd27f]"><BoltIcon width={16} height={16} /> {th("trustDelivery")}</span>
-              </div>
-              <div className="animate-rise absolute bottom-0 left-0 flex w-52 flex-col gap-1 rounded-2xl bg-[linear-gradient(135deg,#1f7a4d,#1340a8)] p-4 shadow-[0_24px_50px_-20px_rgba(47,116,255,.9)]">
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#d3eedd]">{tc("wallet")}</span>
-                <span className="text-2xl font-extrabold">HTG · USD</span>
-                <span className="text-sm text-[#d3eedd]">{th("walletTitle")}</span>
-              </div>
+          </section>
+        )}
+
+        <section className="container-page mt-4">
+          <Link href="/check" className="flex items-center justify-between gap-3 rounded-2xl border-2 border-primary bg-surface p-4">
+            <span>
+              <b className="block text-[15px]">{g("home.checkTitle")}</b>
+              <span className="text-[13px] text-muted">{g("home.checkSub")}</span>
+            </span>
+            <ArrowRightIcon className="shrink-0 text-primary" />
+          </Link>
+        </section>
+
+        {show("deals") && data.best.length > 0 && (
+          <section aria-labelledby="m-pop" className="container-page mt-6">
+            <div className="flex items-baseline justify-between">
+              <h2 id="m-pop" className="mb-2.5 text-[13px] font-semibold uppercase tracking-[0.08em] text-muted">{g("home.popular")}</h2>
+              <Link href="/store" className="text-sm font-semibold text-primary">{g("home.allServices")}</Link>
             </div>
-          )}
-        </div>
-      </section>
-      {marquee.length > 0 && (
-        <div className="marquee marquee-color text-white" aria-hidden>
-          <div className="marquee-track">
-            {[0, 1].map((copy) => (
-              <div key={copy} className="display flex shrink-0 items-center gap-8 py-3.5 pr-8 text-lg font-bold sm:text-xl">
-                {marquee.map((w, i) => (
-                  <Fragment key={i}><span className="whitespace-nowrap">{w}</span><MarqueeIcon n={i} /></Fragment>
+            <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface">
+              {data.best.slice(0, 5).map((p) => (
+                <Link key={p.id} href={`/products/${p.slug}`} className="flex items-center gap-3 p-3.5">
+                  <span className="min-w-0 flex-1">
+                    <b className="block truncate text-[15px]">{p.name}</b>
+                    {p.delivery && <span className={`text-[13px] ${/instant|imedya|instantan/i.test(p.delivery) ? "font-semibold text-primary" : "text-muted"}`}>{p.delivery}</span>}
+                  </span>
+                  <b className="text-[15px] tabular-nums"><Price usd={p.price} /></b>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {show("howItWorks") && (
+          <section className="container-page mt-6">
+            <div className="rounded-2xl bg-primary-soft p-4">
+              <b className="text-[15px]">{g("home.howTitle")}</b>
+              <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm leading-relaxed">
+                <li>{g("home.how1")}</li>
+                <li>{methods ? g("home.how2", { methods }) : g("home.how2Wallet")}</li>
+                <li>{g("home.how3")}</li>
+                <li>{g("home.how4")}</li>
+              </ol>
+            </div>
+          </section>
+        )}
+      </div>
+
+      {/* ─────────── Wide screens (mockup "Desktop") ─────────── */}
+      <div className="container-page hidden space-y-5 pt-5 lg:block">
+        {show("slider") && (
+          <div className="grid grid-cols-[300px_1fr_300px] gap-5">
+            <aside aria-labelledby="d-top" className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
+              <h2 id="d-top" className="bg-[#111418] px-4 py-3.5 font-semibold text-white">{g("home.topCategories")}</h2>
+              <ul className="flex-1 divide-y divide-border">
+                {data.categories.slice(0, 8).map((c) => (
+                  <li key={c.id}>
+                    <Link href={`/categories/${c.slug}`} className="flex items-center gap-3 px-4 py-3 text-[15px] hover:bg-surface-2">
+                      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary-soft text-[11px] font-bold text-primary">{c.code || t(c.name, "en").slice(0, 2).toUpperCase()}</span>
+                      {t(c.name, locale)}
+                    </Link>
+                  </li>
                 ))}
+              </ul>
+              <Link href="/categories" className="px-4 py-3 text-sm font-semibold text-primary underline">{g("home.viewAllCategories")} →</Link>
+            </aside>
+            <HomeSlider slides={slides} prevLabel={g("home.prev")} nextLabel={g("home.next")} />
+            <aside className="flex flex-col gap-5">
+              <div className="rounded-2xl border border-border bg-surface p-5">
+                {data.user ? (
+                  <>
+                    <b className="text-xl">{g("home.welcomeBack", { name: data.user.name.split(" ")[0] })}</b>
+                    <p className="mt-1.5 text-sm text-muted">{g("home.welcomeBackText")}</p>
+                    <div className="mt-4 grid grid-cols-2 gap-2">
+                      <Link href="/account/orders" className="btn-primary min-h-11">{g("home.myOrders")}</Link>
+                      <Link href="/account/wallet/deposit" className="btn-secondary min-h-11">{g("home.addFunds")}</Link>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <b className="text-xl">{g("home.welcome")}</b>
+                    <p className="mt-1.5 text-sm text-muted">{g("home.welcomeText")}</p>
+                    <div className="mt-4 grid grid-cols-2 gap-2">
+                      <Link href="/auth/login" className="btn-primary min-h-11">{g("header.signIn")}</Link>
+                      <Link href="/auth/register" className="btn-secondary min-h-11">{g("home.register")}</Link>
+                    </div>
+                  </>
+                )}
               </div>
+              <nav aria-labelledby="d-ql" className="flex-1 overflow-hidden rounded-2xl border border-border bg-surface">
+                <h2 id="d-ql" className="border-b border-border px-4 py-3 font-semibold">{g("home.quickLinks")}</h2>
+                {[
+                  { href: "/check", b: g("home.qlCheck"), s: g("home.qlCheckSub") },
+                  { href: "/deals", b: g("home.qlDeal"), s: g("home.qlDealSub") },
+                  { href: "/store?sort=popular", b: g("home.qlBest"), s: g("home.qlBestSub") },
+                ].map((q) => (
+                  <Link key={q.href} href={q.href} className="block border-b border-border px-4 py-3 hover:bg-surface-2">
+                    <b className="block">{q.b}</b><span className="text-[13px] text-muted">{q.s}</span>
+                  </Link>
+                ))}
+                <Link href="/status" className="block px-4 py-3 hover:bg-surface-2">
+                  <b className="block">{g("home.qlStatus")}</b>
+                  <span className={`inline-flex items-center gap-1.5 text-[13px] font-semibold ${online ? "text-primary" : "text-warning"}`}>
+                    <span className={`h-2 w-2 rounded-full ${online ? "bg-primary" : "bg-warning"}`} />{online ? g("home.statusOnline") : g("home.statusIssues")}
+                  </span>
+                </Link>
+              </nav>
+            </aside>
+          </div>
+        )}
+
+        {show("quickActions") && (
+          <div className="grid grid-cols-4 divide-x divide-border overflow-hidden rounded-2xl border border-border bg-surface">
+            {[
+              { href: gate("/account/wallet/deposit"), b: g("home.addFunds"), s: methods || g("home.addFundsSub") },
+              { href: "/store", b: g("home.placeOrder"), s: g("home.placeOrderSub") },
+              { href: gate("/account/orders"), b: g("home.myOrders"), s: g("home.myOrdersSub") },
+              { href: "/track", b: g("home.track"), s: g("home.trackSub") },
+            ].map((q) => (
+              <Link key={q.b} href={q.href} className="px-5 py-4 hover:bg-surface-2">
+                <b className="block">{q.b}</b><span className="line-clamp-1 text-[13px] text-muted">{q.s}</span>
+              </Link>
             ))}
           </div>
-        </div>
+        )}
+
+        {show("deals") && data.deals.length > 0 && (
+          <section aria-label={g("home.dealOfDay")} className="overflow-hidden rounded-2xl border border-border bg-surface">
+            <SectionHead title={g("home.dealOfDay")} sub={g("home.dealOfDaySub")} href="/deals" linkLabel={g("home.allDeals")} />
+            <div className="grid grid-cols-5 gap-4 p-5">
+              {data.deals.slice(0, 5).map((c) => <ServiceCard key={c.id} card={c} orderLabel={g("home.addToCart")} />)}
+            </div>
+          </section>
+        )}
+
+        {show("promos") && (
+          <div className="grid grid-cols-2 gap-5">
+            <Link href={credits ? `/categories/${credits.slug}` : "/store?type=SERVER"} className="flex items-center justify-between gap-4 rounded-2xl bg-[#111418] p-6 text-white">
+              <span>
+                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7ce0a8]">{g("home.creditsTag")}</span>
+                <b className="mt-1 block text-xl">{g("home.creditsTitle")}</b>
+                <span className="text-sm text-[#b9c0b6]">{g("home.creditsSub")}</span>
+              </span>
+              <span className="inline-flex min-h-11 shrink-0 items-center rounded-xl bg-[#7ce0a8] px-4 font-semibold text-[#0b2a1a]">{g("home.creditsBtn")} →</span>
+            </Link>
+            <Link href="/check" className="flex items-center justify-between gap-4 rounded-2xl border border-[#cfe7d8] bg-[#e4f3ea] p-6 text-[#111418]">
+              <span>
+                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[#145c39]">{g("home.checkTag")}</span>
+                <b className="mt-1 block text-xl">{g("home.checkTitle")}</b>
+                <span className="text-sm text-[#4a5048]">{g("home.checkSub")}</span>
+              </span>
+              <span className="inline-flex min-h-11 shrink-0 items-center rounded-xl bg-[#111418] px-4 font-semibold text-white">{g("home.checkBtn")} →</span>
+            </Link>
+          </div>
+        )}
+
+        {show("topTools") && data.tools.some((x) => x.options.length) && (
+          <section aria-label={g("home.topTools")} className="overflow-hidden rounded-2xl border border-border bg-surface">
+            <SectionHead title={g("home.topTools")} sub={g("home.topToolsSub")} href="/store?tool=1" linkLabel={g("home.viewAll")} />
+            <ToolTabs tools={data.tools.filter((x) => x.options.length)} />
+          </section>
+        )}
+
+        {show("shopByTool") && data.tools.length > 0 && (
+          <section aria-label={g("home.shopByTool")} className="overflow-hidden rounded-2xl border border-border bg-surface">
+            <SectionHead title={g("home.shopByTool")} sub={g("home.shopByToolSub")} />
+            <div className="grid grid-cols-5 gap-3 p-5">
+              {data.tools.map((x) => (
+                <Link key={x.slug} href={`/categories/${x.slug}`} className="flex items-center gap-3 rounded-xl border border-border p-3 font-semibold hover:border-primary">
+                  {x.image
+                    // eslint-disable-next-line @next/next/no-img-element
+                    ? <img src={x.image} alt="" className="h-10 w-10 rounded-lg object-cover" />
+                    : <span className="grid h-10 w-10 place-items-center rounded-lg bg-[#111418] text-xs font-bold text-[#7ce0a8]">{x.code}</span>}
+                  {x.name}
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {show("toolUpdates") && data.updates.length > 0 && (
+          <section aria-label={g("home.toolUpdates")} className="overflow-hidden rounded-2xl border border-border bg-surface">
+            <SectionHead title={g("home.toolUpdates")} sub={g("home.toolUpdatesSub")} href="/news?kind=tool" linkLabel={g("home.viewAll")} />
+            <div className="grid grid-cols-3 divide-x divide-border">
+              {data.updates.map((u) => (
+                <article key={u.slug} className="flex items-center gap-3 p-4">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#111418] text-xs font-bold text-[#7ce0a8]">{u.code}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="text-xs"><b className="text-primary">{g("home.newBadge")}</b>{u.version && <> · v{u.version}</>}</span>
+                    <b className="block">{u.tool}</b>
+                    <span className="line-clamp-1 text-[13px] text-muted">{u.text}</span>
+                  </span>
+                  <Link href={`/news/${u.slug}`} className="btn-primary min-h-10 px-3 text-sm">{g("home.view")}</Link>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {show("howItWorks") && (
+          <section className="rounded-[20px] bg-[#111418] p-9 text-white">
+            <div className="grid grid-cols-2 items-center gap-8">
+              <div>
+                <span className="text-[13px] font-semibold uppercase tracking-[0.12em] text-[#7ce0a8]">{g("home.howEyebrow")}</span>
+                <h2 className="display mt-2 text-[40px] leading-[1.05]">{g("home.howHeadline1")} <span className="text-[#7ce0a8]">{g("home.howHeadline2")}</span></h2>
+                <p className="mt-3 text-[#dfe4dc]">{g("home.howText")}</p>
+                <div className="mt-5 flex items-center gap-3">
+                  <Link href="/store" className="inline-flex min-h-12 items-center rounded-xl bg-[#7ce0a8] px-5 font-semibold text-[#0b2a1a]">{g("home.browse")} →</Link>
+                  <span className="rounded-full bg-white/[0.06] px-3 py-1.5">{status}</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 rounded-2xl border border-white/10 p-6 text-center text-sm text-[#dfe4dc]">
+                {[["1", g("home.step1"), false], ["2", g("home.step2"), true], ["✓", g("home.step3"), false]].map(([n, l, hi]) => (
+                  <span key={String(l)} className="flex flex-col items-center gap-2.5">
+                    <span className={`grid h-14 w-14 place-items-center rounded-xl text-sm font-bold ${hi ? "bg-[#7ce0a8] text-[#0b2a1a]" : "border border-white/20"}`}>{n}</span>
+                    {l}
+                  </span>
+                ))}
+              </div>
+            </div>
+            {stats.length > 0 && (
+              <div className="mt-8 grid gap-3" style={{ gridTemplateColumns: `repeat(${stats.length}, minmax(0, 1fr))` }}>
+                {stats.map((s) => (
+                  <div key={s.l} className="rounded-2xl border border-white/10 p-5 text-center">
+                    <b className="display block text-3xl text-[#7ce0a8]">{s.v}</b>
+                    <span className="text-[13px] text-[#c9cfc6]">{s.l}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+      </div>
+
+      {show("reviews") && <ReviewsSection locale={locale} />}
+
+      {show("aboutFaq") && (
+        <section className="container-page mt-6 grid gap-5 lg:grid-cols-2">
+          <div className="rounded-2xl border border-border bg-surface p-6">
+            <span className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">{g("home.aboutEyebrow")}</span>
+            <h2 className="display mt-1.5 text-2xl">{g("home.aboutTitle")}</h2>
+            <p className="mt-3 text-[15px] leading-relaxed text-muted">{g("home.aboutText")}{methods ? ` ${g("home.aboutPay", { methods })}` : ""}</p>
+            <ul className="mt-3 list-disc space-y-1 pl-5 text-[15px]">
+              {[1, 2, 3, 4].map((i) => <li key={i}>{g(`home.about${i}`)}</li>)}
+            </ul>
+          </div>
+          <div className="rounded-2xl border border-border bg-surface p-6">
+            <span className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">{g("home.faqEyebrow")}</span>
+            <h2 className="display mt-1.5 text-2xl">{g("home.faqTitle")}</h2>
+            <div className="mt-3 space-y-2.5">
+              {faq.map((f, i) => (
+                <details key={i} open={i === 0} className="group rounded-xl border border-border px-4 py-3 open:border-[#cfe7d8] open:bg-primary-soft/50">
+                  <summary className="cursor-pointer font-semibold">{f.q}</summary>
+                  <p className="mt-2 text-[15px] text-muted">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
       )}
 
-      {home.sections.filter((x) => x.visible).map((x) => <Fragment key={x.id}>{blocks[x.id]}</Fragment>)}
+      {show("support") && (
+        <section className="container-page mt-6">
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[#111418] px-6 py-5 text-white">
+            <span>
+              <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7ce0a8]">● {g("home.supportOnline")}</span>
+              <b className="block text-xl">{g("home.needHelp")}</b>
+              <span className="text-sm text-[#b9c0b6]">{g("home.needHelpSub")}</span>
+            </span>
+            <span className="flex gap-2.5">
+              <a href={`https://wa.me/${settings.whatsappNumber}`} target="_blank" rel="noopener" className="inline-flex min-h-12 items-center rounded-xl bg-[#7ce0a8] px-5 font-semibold text-[#0b2a1a]">{g("home.whatsapp")}</a>
+              {settings.telegramUrl && <a href={settings.telegramUrl} target="_blank" rel="noopener" className="inline-flex min-h-12 items-center rounded-xl border border-white/20 px-5 font-semibold">{g("home.telegram")}</a>}
+            </span>
+          </div>
+        </section>
+      )}
     </>
   );
 }

@@ -19,3 +19,19 @@ export async function getDisplayCurrency(): Promise<Currency> {
   if (c === "HTG" || c === "USD") return c;
   return (await visitorCountry()) === "HT" ? "HTG" : "USD";
 }
+
+/**
+ * Country that decides which services and payment methods a shopper sees: the account's country,
+ * else the visitor's location, else the store's default country.
+ */
+export async function shopperCountry(user?: { id: string } | null): Promise<string> {
+  if (user) {
+    const { prisma } = await import("./db");
+    const row = await prisma.user.findUnique({ where: { id: user.id }, select: { country: true } });
+    if (row?.country) return row.country;
+  }
+  const visitor = await visitorCountry();
+  if (visitor && visitor !== "XX" && visitor !== "T1") return visitor;
+  const { getDisplaySettings } = await import("./settings");
+  return (await getDisplaySettings()).defaultCountry || "HT";
+}

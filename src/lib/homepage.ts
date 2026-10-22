@@ -1,15 +1,18 @@
-export const HOME_SECTIONS = ["categories", "featured", "howItWorks", "wallet", "news", "reviews", "trust", "faq"] as const;
+export const HOME_SECTIONS = ["slider", "quickActions", "deals", "promos", "topTools", "shopByTool", "toolUpdates", "howItWorks", "reviews", "aboutFaq", "support"] as const;
 export type HomeSectionId = (typeof HOME_SECTIONS)[number];
 
 export const HOME_SECTION_LABELS: Record<HomeSectionId, string> = {
-  categories: "Shop by category",
-  featured: "Popular products",
-  howItWorks: "How it works (3 steps)",
-  wallet: "Wallet promotion",
-  news: "Latest news (3 newest articles)",
+  slider: "Offer slider with top categories and quick links (phones: search, service tiles)",
+  quickActions: "Quick actions: Add funds, Place order, My orders, Track order",
+  deals: "Deal of the day (services marked Featured; phones: Popular list)",
+  promos: "Two banners: server credits and free IMEI check",
+  topTools: "Top tools (categories marked Tool, with their licenses)",
+  shopByTool: "Shop by tool",
+  toolUpdates: "Latest tool updates (News posts of type Tool update)",
+  howItWorks: "How it works, with real numbers",
   reviews: "Customer reviews (Admin → Trust; hidden until one is approved)",
-  trust: "Why players choose us",
-  faq: "Frequently asked questions",
+  aboutFaq: "About us and FAQ",
+  support: "Support band (WhatsApp, Telegram)",
 };
 
 export type HomepageConfig = {

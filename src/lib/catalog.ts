@@ -1,5 +1,22 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "./db";
+import { countryWhere } from "./countries";
+
+/** Who is looking: services not sold in their country are hidden, and "Hide from Google" services need a signed-in customer. */
+export type Shopper = { country: string | null; signedIn: boolean };
+
+export function shopperWhere(s: Shopper | null): Prisma.ProductWhereInput {
+  if (!s) return {};
+  return { AND: [countryWhere(s.country) as Prisma.ProductWhereInput, ...(s.signedIn ? [] : [{ hideFromGoogle: false }])] };
+}
+
+/** The current visitor (server components and actions only). */
+export async function currentShopper(): Promise<Shopper> {
+  const { getUser } = await import("./session");
+  const { shopperCountry } = await import("./prefs");
+  const user = await getUser();
+  return { country: await shopperCountry(user), signedIn: !!user };
+}
 
 export const productCardInclude = {
   variants: { where: { isActive: true }, orderBy: { sortOrder: "asc" } },
@@ -13,13 +30,15 @@ export function minPrice(p: ProductWithVariants) {
   return prices.length ? Math.min(...prices) : 0;
 }
 
-export async function getCategories() {
+export async function getCategories(shopper?: Shopper | null) {
+  const s = shopper === undefined ? await currentShopper() : shopper;
+  const visible = { isPublished: true, ...shopperWhere(s) };
   return prisma.category.findMany({
     where: { isVisible: true, parentId: null },
     orderBy: { sortOrder: "asc" },
     include: {
-      _count: { select: { products: { where: { isPublished: true } } } },
-      children: { where: { isVisible: true }, orderBy: { sortOrder: "asc" }, include: { _count: { select: { products: { where: { isPublished: true } } } } } },
+      _count: { select: { products: { where: visible } } },
+      children: { where: { isVisible: true }, orderBy: { sortOrder: "asc" }, include: { _count: { select: { products: { where: visible } } } } },
     },
   });
 }
@@ -30,8 +49,16 @@ export async function getTags(): Promise<string[]> {
   return [...new Set(rows.flatMap((r) => r.tags))].sort((a, b) => a.localeCompare(b));
 }
 
-export async function searchProducts(opts: { q?: string; category?: string; sort?: string; featured?: boolean; take?: number; tag?: string; minUsd?: number; maxUsd?: number }) {
-  const where: Prisma.ProductWhereInput = { isPublished: true, variants: { some: { isActive: true } } };
+export async function searchProducts(opts: {
+  q?: string; category?: string; sort?: string; featured?: boolean; take?: number; tag?: string; minUsd?: number; maxUsd?: number;
+  serviceType?: "IMEI" | "SERVER" | "REMOTE"; tool?: boolean;
+  /** Defaults to the current visitor; null = no country/sign-in filter (staff tools) */
+  shopper?: Shopper | null;
+}) {
+  const s = opts.shopper === undefined ? await currentShopper() : opts.shopper;
+  const where: Prisma.ProductWhereInput = { isPublished: true, variants: { some: { isActive: true } }, ...shopperWhere(s) };
+  if (opts.serviceType) where.serviceType = opts.serviceType;
+  if (opts.tool) where.category = { isTool: true };
   // A parent category also shows the products of its subcategories.
   if (opts.category) where.category = { OR: [{ slug: opts.category }, { parent: { slug: opts.category } }] };
   if (opts.tag) where.tags = { has: opts.tag };

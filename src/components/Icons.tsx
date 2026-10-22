@@ -41,3 +41,13 @@ export const LogoutIcon = (p: P) => (<svg {...base} {...p}><path d="M9 21H5a2 2 
 export const ShareIcon = (p: P) => (<svg {...base} {...p}><path d="M12 15V3M8 7l4-4 4 4" /><path d="M7 11H6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1" /></svg>);
 export const PlusSquareIcon = (p: P) => (<svg {...base} {...p}><rect x="4" y="4" width="16" height="16" rx="3" /><path d="M12 8v8M8 12h8" /></svg>);
 export const PhoneDownIcon = (p: P) => (<svg {...base} {...p}><rect x="6" y="2.5" width="12" height="19" rx="2.5" /><path d="M12 7v7M9 11l3 3 3-3M10.5 18.5h3" /></svg>);
+export const ReceiptIcon = (p: P) => (<svg {...base} {...p}><path d="M6 3h12v18l-3-2-3 2-3-2-3 2Z" /><path d="M9 8h6M9 12h6" /></svg>);
+export const UnlockPhoneIcon = (p: P) => (<svg {...base} {...p}><rect x="6" y="2" width="12" height="20" rx="2.5" /><path d="M10 11V9a2 2 0 0 1 3.7-1" /><rect x="9" y="11" width="6" height="5" rx="1" /></svg>);
+export const CheckListIcon = (p: P) => (<svg {...base} {...p}><path d="M4 5h16M4 10h10M4 15h7" /><circle cx="17" cy="16" r="3" /><path d="m19.5 18.5 2 2" /></svg>);
+export const KeyIcon = (p: P) => (<svg {...base} {...p}><circle cx="8" cy="15" r="4" /><path d="m11 12 9-9M17 6l3 3M15 8l2 2" /></svg>);
+export const ChipIcon = (p: P) => (<svg {...base} {...p}><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M9 4v4M15 4v4M9 16v4M15 16v4M4 9h4M4 15h4M16 9h4M16 15h4" /></svg>);
+export const BackIcon = (p: P) => (<svg {...base} {...p}><path d="m15 18-6-6 6-6" /></svg>);
+export const CheckIcon = (p: P) => (<svg {...base} {...p}><path d="m5 12 5 5L20 7" /></svg>);
+export const XIcon = (p: P) => (<svg {...base} {...p}><path d="M6 6l12 12M18 6 6 18" /></svg>);
+export const GiftIcon = (p: P) => (<svg {...base} {...p}><rect x="3" y="8" width="18" height="13" rx="2" /><path d="M12 8v13M3 12h18M12 8S10 3 7.5 4.5 9 8 12 8s4.5-2 4.5-3.5S14 3 12 8Z" /></svg>);
+export const TelegramIcon = (p: P) => (<svg {...base} {...p}><path d="m21 4-18 7 6 2 2 6 3-4 5 4Z" /><path d="m9 13 8-6" /></svg>);
