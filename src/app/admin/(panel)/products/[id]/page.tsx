@@ -56,7 +56,7 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
           id: product.id, slug: product.slug, categoryId: product.categoryId, accent: product.accent ?? "#1F7A4D",
           fulfillmentType: product.fulfillmentType, isPublished: product.isPublished, isFeatured: product.isFeatured, sortOrder: product.sortOrder,
           name: product.name as Record<string, string>, description: product.description as Record<string, string>,
-          delivery: (product.deliveryEstimate ?? {}) as Record<string, string>, seoTitle: (product.seoTitle ?? {}) as Record<string, string>,
+          delivery: (product.deliveryEstimate ?? {}) as Record<string, string>, instructions: (product.instructions ?? {}) as Record<string, string>, seoTitle: (product.seoTitle ?? {}) as Record<string, string>,
           seoDescription: (product.seoDescription ?? {}) as Record<string, string>, fields: JSON.stringify(product.fields, null, 2),
           image: product.image, gallery: (product.gallery ?? []) as string[], tags: product.tags,
           serviceType: product.serviceType, identifierLabel: (product.identifierLabel ?? {}) as Record<string, string>,
@@ -121,7 +121,8 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
               <label><span className="mb-1 block text-xs text-muted">Order</span><input name="sortOrder" type="number" defaultValue={v.sortOrder} className="input" /></label>
             </div>
             {qtyFields ? (
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-3 gap-2">
+                <label><span className="mb-1 block text-xs text-muted">Credits per unit sold</span><input name="packSize" type="number" min={1} defaultValue={v.packSize} className="input" title="1 = sold one by one. 1000 = the price is for 1000 credits (sub-cent supplier prices)." /></label>
                 <label><span className="mb-1 block text-xs text-muted">Min quantity</span><input name="minQty" type="number" min={1} defaultValue={v.minQty} className="input" /></label>
                 <label><span className="mb-1 block text-xs text-muted">Max quantity</span><input name="maxQty" type="number" min={1} defaultValue={v.maxQty} className="input" /></label>
               </div>

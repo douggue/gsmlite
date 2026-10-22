@@ -46,3 +46,14 @@ describe("order form fields", () => {
     expect(parseChoiceList({ SUCCESS: [{ LIST: { "11": "AT&T", "12": "T-Mobile" } }] })).toEqual([{ value: "11", label: "AT&T" }, { value: "12", label: "T-Mobile" }]);
   });
 });
+
+import { packCostCents, packSizeFor, toMicros } from "@/lib/packs";
+describe("sub-cent credits", () => {
+  it("sells sub-cent credits in packs that cost at least $1", () => {
+    expect(toMicros("0.0045")).toBe(4500);
+    expect(packSizeFor(4500)).toBe(1000);
+    expect(packCostCents(4500, 1000)).toBe(450);
+    expect(packSizeFor(150_000)).toBe(1);
+    expect(packSizeFor(20_000)).toBe(100);
+  });
+});

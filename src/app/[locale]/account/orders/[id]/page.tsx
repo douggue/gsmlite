@@ -52,7 +52,7 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
         include: {
           codes: true,
           supplierOrders: { orderBy: { createdAt: "desc" }, take: 1, select: { createdAt: true, status: true } },
-          variant: { include: { product: { select: { id: true, slug: true, serviceType: true, deliveryEstimate: true, name: true, fields: true } } } },
+          variant: { include: { product: { select: { id: true, slug: true, serviceType: true, deliveryEstimate: true, name: true, fields: true, instructions: true } } } },
         },
       },
       events: { orderBy: { createdAt: "asc" } },
@@ -209,7 +209,7 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
                       </li>
                     ))}
                   </ol>
-                  <p className="text-xs text-muted">{product.serviceType === "REMOTE" ? g("remoteKeepOpen") : g("checkNote")}</p>
+                  <p className="whitespace-pre-line text-xs text-muted">{t(product.instructions, locale) || (product.serviceType === "REMOTE" ? g("remoteKeepOpen") : g("checkNote"))}</p>
                 </>
               )}
 

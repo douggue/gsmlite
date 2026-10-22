@@ -5,6 +5,7 @@ import { callSupplier } from "../dhru/client";
 import { parseAccountInfo, parseChoiceList, parseServiceList, replyError, resultText, type SupplierField } from "../dhru/protocol";
 import type { FieldDef } from "../orders";
 import { importPrice, type PriceRounding } from "../import-price";
+import { packCostCents, packSizeFor } from "../packs";
 import { recordChange } from "../service-changes";
 
 const L = (v: string) => ({ ht: v, fr: v, en: v, es: v });
@@ -52,6 +53,7 @@ export async function syncCatalog(supplierId: string): Promise<{ ok: true; servi
       name: s.name.slice(0, 300),
       type: s.type,
       credit: s.credit,
+      creditMicros: s.creditMicros,
       time: s.time?.slice(0, 100) ?? null,
       info: s.info ? resultText(s.info).slice(0, 4000) : null,
       fields: { identifierLabel: s.identifierLabel, bulk: s.bulk, qty: s.qty, inputs: s.fields } as Prisma.InputJsonValue,
@@ -65,7 +67,11 @@ export async function syncCatalog(supplierId: string): Promise<{ ok: true; servi
     });
     // Costs are tracked in USD; a supplier billing in another currency keeps its last manual cost.
     if (!supplier.currency || supplier.currency.toUpperCase() === "USD") {
-      await prisma.productVariant.updateMany({ where: { supplierId, supplierServiceId: s.remoteId }, data: { costUsd: s.credit } });
+      // Pack-sold options cost packSize × the unit price.
+      await prisma.productVariant.updateMany({ where: { supplierId, supplierServiceId: s.remoteId, packSize: 1 }, data: { costUsd: s.credit } });
+      for (const v of await prisma.productVariant.findMany({ where: { supplierId, supplierServiceId: s.remoteId, packSize: { gt: 1 } }, select: { id: true, packSize: true } })) {
+        await prisma.productVariant.update({ where: { id: v.id }, data: { costUsd: packCostCents(s.creditMicros, v.packSize) } });
+      }
     }
   }
   const gone = await prisma.supplierService.updateMany({ where: { supplierId, remoteId: { notIn: [...seen] }, active: true }, data: { active: false } });
@@ -153,7 +159,10 @@ export async function importService(supplierServiceId: string, opts: { categoryI
   const s = await prisma.supplierService.findUniqueOrThrow({ where: { id: supplierServiceId } });
   if (await prisma.productVariant.findFirst({ where: { supplierId: s.supplierId, supplierServiceId: s.remoteId } })) return null;
   const meta = s.fields as unknown as ServiceMeta;
-  const price = importPrice(s.credit, opts.markupBps, opts.minProfitUsd, opts.round);
+  // Sub-cent credits (server services) are sold in packs: 1 pack = packSize credits.
+  const pack = s.type === "SERVER" ? packSizeFor(s.creditMicros || s.credit * 10_000) : 1;
+  const cost = pack > 1 ? packCostCents(s.creditMicros, pack) : s.credit;
+  const price = importPrice(cost, opts.markupBps, opts.minProfitUsd, opts.round);
   const categoryId = opts.categoryId === "group" ? await categoryForGroup(s.groupName) : opts.categoryId;
   // A free address: the name, then name + supplier ID, then a counter.
   const base = slugify(s.name);
@@ -175,13 +184,14 @@ export async function importService(supplierServiceId: string, opts: { categoryI
       isPublished: !!opts.publish,
       variants: {
         create: {
-          name: L(s.name),
+          name: L(pack > 1 ? `${pack.toLocaleString("en-US")} credits` : s.name),
           priceUsd: price,
-          costUsd: s.credit,
+          costUsd: cost,
+          packSize: pack,
           supplierId: s.supplierId,
           supplierServiceId: s.remoteId,
-          minQty: meta.qty?.min ?? 1,
-          maxQty: meta.qty?.max ?? 1,
+          minQty: Math.max(1, Math.ceil((meta.qty?.min ?? 1) / pack)),
+          maxQty: Math.max(1, Math.floor((meta.qty?.max ?? 1) / pack)),
         },
       },
     },

@@ -15,6 +15,8 @@ export type ImportRow = {
   info: string | null;
   asks: string[];
   cost: number;
+  /** Sold in packs of this many credits (sub-cent services); cost is per pack */
+  pack?: number;
   was: number | null;
   isNew: boolean;
   active: boolean;
@@ -111,7 +113,7 @@ export function ImportTable({ rows, categories }: { rows: ImportRow[]; categorie
                       <td className="px-3 py-2.5">{r.time || "—"}</td>
                       <td className="px-3 py-2.5">{r.asks.join(" · ") || "—"}</td>
                       <td className="px-3 py-2.5 tabular-nums">
-                        {r.active ? usd(r.cost) : "—"}
+                        {r.active ? usd(r.cost) : "—"}{r.pack && r.pack > 1 ? <span className="block text-xs text-muted">per {r.pack.toLocaleString("en-US")} credits</span> : null}
                         {r.was != null && r.active && (
                           <span className={`block text-xs font-semibold ${r.cost > r.was ? "text-warning" : "text-success"}`}>{r.cost > r.was ? "↑" : "↓"} was {usd(r.was)}</span>
                         )}

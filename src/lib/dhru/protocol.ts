@@ -1,3 +1,5 @@
+import { toMicros } from "../packs";
+
 /**
  * Dhru Fusion API v6.1 wire format, shared by the supplier client (we call other sites) and the reseller
  * API (other sites and tools call us). Pure functions only, so both sides are unit-tested against the same rules.
@@ -220,6 +222,8 @@ export type ParsedService = {
   name: string;
   type: "IMEI" | "SERVER" | "REMOTE" | "FILE";
   credit: number;
+  /** Exact unit cost in millionths of a dollar */
+  creditMicros: number;
   time: string | null;
   info: string | null;
   identifierLabel: string | null;
@@ -296,6 +300,7 @@ export function parseServiceList(reply: DhruReply, forceType?: "FILE"): ParsedSe
         name: String(pick(sv, "SERVICENAME") ?? `Service ${id}`).trim(),
         type,
         credit: toCents(pick(sv, "CREDIT")) ?? 0,
+        creditMicros: toMicros(pick(sv, "CREDIT")) ?? 0,
         time: (pick(sv, "TIME") as string | undefined) ?? null,
         info: (pick(sv, "INFO") as string | undefined) || null,
         identifierLabel: type === "IMEI" ? (String(pick(idBox, "customname") ?? "") || "IMEI") : null,

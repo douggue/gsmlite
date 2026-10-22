@@ -1,3 +1,4 @@
+import { packCostCents, packSizeFor } from "@/lib/packs";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Prisma, ServiceType } from "@prisma/client";
@@ -84,7 +85,9 @@ export default async function SupplierServices({ params, searchParams }: { param
       time: s.time,
       info: s.info,
       asks,
-      cost: s.credit,
+      // Sub-cent credits are priced per pack (see lib/packs)
+      pack: s.type === "SERVER" ? packSizeFor(s.creditMicros) : 1,
+      cost: s.type === "SERVER" && packSizeFor(s.creditMicros) > 1 ? packCostCents(s.creditMicros, packSizeFor(s.creditMicros)) : s.credit,
       was: s.priceChangedAt && s.priceChangedAt >= changedSince ? s.previousCredit : null,
       isNew: s.firstSeenAt >= newSince,
       active: s.active,

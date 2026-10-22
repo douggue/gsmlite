@@ -261,6 +261,8 @@ model Product {
   reviews          Review[]
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
+  /// What happens after paying (remote jobs: "keep the PC on, we connect within 15 min"), per language
+  instructions     Json             @default("{}")
 
   @@index([categoryId, isPublished])
 }
@@ -282,6 +284,8 @@ model ProductVariant {
   lowStockUntil     DateTime?
   sku               String?      @unique
   /// SERVER services: allowed quantity (credits); IMEI services keep 1–1
+  /// Sold in packs of this many supplier units (sub-cent credits: 1 pack = 1000 credits). QNT sent = quantity × packSize.
+  packSize          Int          @default(1)
   minQty            Int          @default(1)
   maxQty            Int          @default(1)
   /// Supplier this option is sent to when the product is SUPPLIER_API
@@ -952,6 +956,8 @@ model SupplierService {
   name           String
   type           ServiceType
   /// Supplier price per unit in cents of the supplier currency
+  /// Exact cost per unit in millionths of a dollar (sub-cent credits keep their precision)
+  creditMicros   Int         @default(0)
   credit         Int
   time           String?
   info           String?

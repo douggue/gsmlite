@@ -10,7 +10,7 @@ import { CountryRuleField } from "./CountryRuleField";
 
 type P = {
   id: string; slug: string; categoryId: string; accent: string; fulfillmentType: string; isPublished: boolean; isFeatured: boolean; sortOrder: number;
-  name: Record<string, string>; description: Record<string, string>; delivery: Record<string, string>;
+  name: Record<string, string>; description: Record<string, string>; delivery: Record<string, string>; instructions?: Record<string, string>;
   seoTitle: Record<string, string>; seoDescription: Record<string, string>; fields: string; tags: string[];
   image: string | null; gallery: string[];
   serviceType: string; identifierLabel: Record<string, string>; identifierFormat: string; allowBulk: boolean;
@@ -88,6 +88,7 @@ export function ProductForm({ product, categories, kycLevels = [], fieldsSummary
           <LocalizedInputs prefix="name" label="Name" value={product?.name} required />
           <LocalizedInputs prefix="description" label="Description" value={product?.description} textarea />
           <LocalizedInputs prefix="delivery" label="Delivery time shown before there is real data (e.g. 1–3 days)" value={product?.delivery} />
+          <LocalizedInputs prefix="instructions" label="After paying: what the customer should do (shown on the order page; remote jobs: “keep the PC on…”)" value={product?.instructions} textarea />
 
           {type === "IMEI" && (
             <fieldset className="grid gap-3 rounded-xl bg-surface-2 p-4 sm:grid-cols-2">

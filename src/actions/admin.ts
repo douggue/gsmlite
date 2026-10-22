@@ -10,6 +10,7 @@ import { recordChange, recordVariantChange } from "@/lib/service-changes";
 import { parseCountryRule } from "@/lib/countries";
 import { decrypt, encrypt, hmac, randomToken } from "@/lib/crypto";
 import { sanitizeFields } from "@/lib/order-form";
+import { packCostCents } from "@/lib/packs";
 import { COUNTRY_CODES } from "@/lib/countries";
 import { completePayment, rejectPayment } from "@/lib/payments/complete";
 import { deliverItemManually, fulfillOrder, refundOrCancel, revealCode } from "@/lib/orders";
@@ -165,6 +166,7 @@ export async function saveProduct(form: FormData): Promise<R & { id?: string }> 
       name,
       description: localized(form, "description"),
       deliveryEstimate: localized(form, "delivery"),
+      instructions: localized(form, "instructions"),
       seoTitle: localized(form, "seoTitle"),
       seoDescription: localized(form, "seoDescription"),
       accent: /^#[0-9a-fA-F]{6}$/.test(String(form.get("accent"))) ? String(form.get("accent")) : null,
@@ -227,6 +229,7 @@ export async function saveVariant(form: FormData): Promise<R> {
     if (!price) return { ok: false, error: "Price is required (USD)" };
     const minQty = Math.max(1, Math.round(Number(form.get("minQty") ?? 1)) || 1);
     const maxQty = Math.max(minQty, Math.round(Number(form.get("maxQty") ?? 1)) || 1);
+    const packSize = Math.max(1, Math.min(100_000, Math.round(Number(form.get("packSize") ?? 1)) || 1));
     const supplierId = String(form.get("supplierId") ?? "") || null;
     const supplierServiceId = String(form.get("supplierServiceId") ?? "").trim().slice(0, 64) || null;
     if (supplierId && !supplierServiceId) return { ok: false, error: "Pick the supplier's service, or no supplier" };
@@ -242,7 +245,8 @@ export async function saveVariant(form: FormData): Promise<R> {
       maxQty,
       supplierId,
       supplierServiceId: supplierId ? supplierServiceId : null,
-      costUsd: linked?.credit ?? (costRaw ? parseAmount(costRaw) : null),
+      packSize,
+      costUsd: linked ? (packSize > 1 ? packCostCents(linked.creditMicros, packSize) : linked.credit) : costRaw ? parseAmount(costRaw) : null,
       sortOrder: Number(form.get("sortOrder") ?? 0) || 0,
       isActive: form.get("isActive") === "on",
       soldOut: form.get("soldOut") === "on",

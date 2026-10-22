@@ -39,11 +39,12 @@ export function buildOrderParams(
   item: { identifier: string | null; quantity: number; fieldValues: unknown },
   product: { serviceType: string; fields: unknown },
   serviceId: string,
+  packSize = 1,
 ): DhruParams {
   const values = (item.fieldValues ?? {}) as Record<string, string>;
   const params: DhruParams = { ID: serviceId };
   if (product.serviceType === "IMEI") params.IMEI = item.identifier ?? "";
-  if (product.serviceType === "SERVER") params.QNT = item.quantity;
+  if (product.serviceType === "SERVER") params.QNT = item.quantity * Math.max(1, packSize);
   const custom: Record<string, string> = {};
   for (const f of (product.fields ?? []) as FieldDef[]) {
     const raw = values[f.key];
@@ -81,7 +82,7 @@ export async function submitItem(itemId: string): Promise<SupplierOrder | null> 
   }
 
   const isFile = serviceId.startsWith(FILE_ID_PREFIX);
-  const params = buildOrderParams(item, item.variant.product, isFile ? serviceId.slice(FILE_ID_PREFIX.length) : serviceId);
+  const params = buildOrderParams(item, item.variant.product, isFile ? serviceId.slice(FILE_ID_PREFIX.length) : serviceId, item.variant.packSize);
   if (isFile) {
     // File services: the customer's upload goes as FILENAME + FILEDATA (base64).
     const fileDef = ((item.variant.product.fields ?? []) as FieldDef[]).find((f) => f.type === "file");
