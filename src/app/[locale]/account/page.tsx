@@ -10,6 +10,7 @@ import { WalletCard } from "@/components/WalletCard";
 import { VerifyEmailBanner } from "@/components/VerifyEmailBanner";
 import { emailEnabled } from "@/lib/email";
 import { StatusBadge } from "@/components/StatusBadge";
+import { TechnicianCta } from "@/components/shop/TechnicianCta";
 
 export default async function Dashboard({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -42,6 +43,7 @@ export default async function Dashboard({ params }: { params: Promise<{ locale: 
     <div className="space-y-6">
       <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{ta("welcome", { name: user.name.split(" ")[0] })}</h1>
       {!user.emailVerified && emailEnabled() && <VerifyEmailBanner email={user.email} />}
+      <TechnicianCta userId={user.id} />
       <div className="grid gap-4 xl:grid-cols-[1.3fr_1fr]">
         <WalletCard balances={balances} initial={currency} />
         <div className="grid grid-cols-3 gap-3 xl:grid-cols-1">

@@ -1136,6 +1136,12 @@
         "busy": "Too many tries. Wait an hour.",
         "level": "This level is not available."
       }
+    },
+    "tech": {
+      "title": "Repair shop? Get technician prices (−{pct}%)",
+      "sub": "A quick shop check with a photo of your shop. Usually approved the same day.",
+      "cta": "Request technician prices",
+      "waiting": "Your request is being checked. We'll tell you as soon as it's done."
     }
   }
 }

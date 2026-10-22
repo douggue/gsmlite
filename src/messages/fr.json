@@ -1136,6 +1136,12 @@
         "busy": "Trop d'essais. Patientez une heure.",
         "level": "Ce niveau n'est pas disponible."
       }
+    },
+    "tech": {
+      "title": "Atelier de réparation ? Obtenez les prix technicien (−{pct} %)",
+      "sub": "Une vérification rapide avec une photo de votre atelier. Souvent validée le jour même.",
+      "cta": "Demander les prix technicien",
+      "waiting": "Votre demande est en cours de vérification. Nous vous prévenons dès que c'est fait."
     }
   }
 }

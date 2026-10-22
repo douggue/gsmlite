@@ -1136,6 +1136,12 @@
         "busy": "Twòp eseye. Tann inèdtan.",
         "level": "Nivo sa a pa disponib."
       }
+    },
+    "tech": {
+      "title": "Ou gen yon boutik reparasyon? Jwenn pri teknisyen (−{pct}%)",
+      "sub": "Yon ti verifikasyon ak yon foto boutik ou. Souvan apwouve menm jou a.",
+      "cta": "Mande pri teknisyen",
+      "waiting": "N ap verifye demann ou an. N ap di w lè l fini."
     }
   }
 }

@@ -1136,6 +1136,12 @@
         "busy": "Demasiados intentos. Espera una hora.",
         "level": "Este nivel no está disponible."
       }
+    },
+    "tech": {
+      "title": "¿Taller de reparación? Obtén precios de técnico (−{pct} %)",
+      "sub": "Una verificación rápida con una foto de tu taller. Normalmente aprobada el mismo día.",
+      "cta": "Pedir precios de técnico",
+      "waiting": "Estamos revisando tu solicitud. Te avisamos en cuanto termine."
     }
   }
 }

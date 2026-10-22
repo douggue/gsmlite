@@ -1,3 +1,4 @@
+import { TechnicianCta } from "@/components/shop/TechnicianCta";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { pageSeo } from "@/lib/seo";
@@ -61,6 +62,7 @@ export default async function PricesPage({ params }: { params: Promise<{ locale:
     <div className="container-page max-w-[1040px] pb-10 pt-4 lg:pt-8">
       <h1 className="display text-[32px] tracking-tight sm:text-[40px]">{g("title")}</h1>
       <p className="mt-1.5 text-muted">{g("sub")}</p>
+      <div className="mt-4"><TechnicianCta userId={user?.id ?? null} /></div>
       <PriceList
         groups={groups}
         deal={deal ? { slug: deal.product.slug, name: t(deal.product.name, locale), price: deal.deal.priceUsd, endsAt: deal.deal.endsAt.toISOString() } : null}
