@@ -254,7 +254,8 @@ Every change logged; sensitive sections ask for the 2FA code again.
 
 Secrets: supplier API keys are entered in Admin and stored encrypted; platform keys go in Vercel env vars only. Never in code or chat.
 
-## Sign-in / accounts (auth) — discussed 2026-10-21, owner to choose the sign-in methods
+## Sign-in / accounts (auth) — DECIDED 2026-10-22: email/password + Google only
+(Google needs an OAuth client ID/secret from Google Cloud, set only in hosting env vars.) Passkeys/Apple/phone sign-in: not now.
 Already in the code (Better Auth): email + password (Argon2id, breached-password check), email verification, forgot/reset
 (email, or WhatsApp + one-time staff link), optional 2FA for customers (authenticator app + backup codes), mandatory 2FA for
 staff on a separate /admin login, session list with sign-out, rate limits, bot check, suspended accounts refused.
@@ -266,6 +267,12 @@ Proposed additions:
 - Sensitive actions (change email/password, big top-up, add payout info) ask for 2FA or passkey again.
 - Staff: 2FA required, short sessions, optional admin IP allowlist; owner can force 2FA for technicians/high spenders.
 - Sign-up asks only email (or phone) + password; country and language detected; KYC only when a rule needs it.
+
+## USDT payments: keep Haiti Gaming's style (owner, 2026-10-22)
+Already in the code (ManualMethod kind "crypto", DepositForm, admin Payment methods): staff add a USDT address + network
+(BEP-20, TRC-20, Polygon, ERC-20), optional QR image (otherwise generated from the address), customer copies the address or scans
+the QR, sends USDT, pastes the transaction hash, staff check it on the explorer and approve in Payments → USD wallet credited
+1 USDT = $1; hash usable once; address changes logged. Keep it as is in GSMLite (worldwide by default, per-country rules apply).
 
 ## Next project after GSMLite (owner, 2026-10-21)
 An SMM panel. Reuse from GSMLite: wallet/ledger, supplier engine (SMM providers use the common "API v2": action=services/add/status/balance, form posts with a key), auto refunds incl. partial ("Partial" status), price groups, content machine, admin, security.
