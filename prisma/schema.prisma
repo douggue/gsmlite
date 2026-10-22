@@ -1096,3 +1096,26 @@ model Deal {
 
   @@index([endedAt, endsAt])
 }
+
+enum ServiceChangeKind {
+  NEW
+  PRICE_DOWN
+  PRICE_UP
+  REMOVED
+  BACK
+}
+
+/// Automatic "Service changes" feed on the News page (from supplier syncs, deals and admin edits).
+model ServiceChange {
+  id        String            @id @default(cuid())
+  kind      ServiceChangeKind
+  productId String
+  variantId String?
+  /// USD cents, for price changes
+  oldPrice  Int?
+  newPrice  Int?
+  createdAt DateTime          @default(now())
+
+  @@index([createdAt])
+  @@index([productId, createdAt])
+}

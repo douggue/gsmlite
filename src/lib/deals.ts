@@ -1,10 +1,12 @@
 import "server-only";
 import { revalidateTag } from "next/cache";
 import { prisma } from "./db";
+import { recordChange } from "./service-changes";
 
 /** Start a deal: the option's sale price becomes the deal price until `endsAt` (only one running deal per option). */
 export async function startDeal(variantId: string, priceUsd: number, endsAt: Date, actorId: string | null) {
-  return prisma.$transaction(async (tx) => {
+  const before = await prisma.productVariant.findUniqueOrThrow({ where: { id: variantId } });
+  const deal = await prisma.$transaction(async (tx) => {
     const v = await tx.productVariant.findUniqueOrThrow({ where: { id: variantId } });
     if (priceUsd <= 0 || priceUsd >= v.priceUsd) throw new Error("The deal price must be lower than the normal price");
     const running = await tx.deal.findFirst({ where: { variantId, endedAt: null } });
@@ -13,6 +15,8 @@ export async function startDeal(variantId: string, priceUsd: number, endsAt: Dat
     await tx.productVariant.update({ where: { id: variantId }, data: { salePriceUsd: priceUsd } });
     return deal;
   });
+  await recordChange("PRICE_DOWN", before.productId, { variantId, oldPrice: before.salePriceUsd ?? before.priceUsd, newPrice: priceUsd });
+  return deal;
 }
 
 /** End a deal now (or when its time is up): the option gets back the sale price it had before. */

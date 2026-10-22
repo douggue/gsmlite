@@ -1054,6 +1054,28 @@
       "sub": "En vivo según pedidos reales: cuánto tarda cada servicio ahora y cuáles van lentos o en pausa.",
       "allOnline": "Todos los sistemas funcionan",
       "someIssues": "{slow} lentos · {down} en pausa"
+    },
+    "news": {
+      "posts": "Noticias",
+      "changes": "Cambios de servicios",
+      "status": "Estado de los servicios",
+      "all": "Todo",
+      "kind": {
+        "post": "Noticias",
+        "tool": "Actualizaciones de herramientas",
+        "feature": "Nuevo en GSMLite",
+        "security": "Seguridad",
+        "howto": "Guías"
+      },
+      "change": {
+        "NEW": "Nuevo",
+        "PRICE_DOWN": "Baja de precio",
+        "BACK": "De vuelta",
+        "PRICE_UP": "Sube de precio",
+        "REMOVED": "Retirado"
+      },
+      "signInForAll": "Inicia sesión para ver también subidas de precio y servicios retirados.",
+      "noChanges": "No hay cambios en los últimos 60 días."
     }
   }
 }

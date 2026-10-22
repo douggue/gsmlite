@@ -5,6 +5,7 @@ import { callSupplier } from "../dhru/client";
 import { parseAccountInfo, parseServiceList, replyError, resultText, type SupplierField } from "../dhru/protocol";
 import type { FieldDef } from "../orders";
 import { importPrice, type PriceRounding } from "../import-price";
+import { recordChange } from "../service-changes";
 
 const L = (v: string) => ({ ht: v, fr: v, en: v, es: v });
 
@@ -66,6 +67,8 @@ export async function syncCatalog(supplierId: string): Promise<{ ok: true; servi
   }
   const gone = await prisma.supplierService.updateMany({ where: { supplierId, remoteId: { notIn: [...seen] }, active: true }, data: { active: false } });
   // Nobody can order a service the supplier dropped; it comes back by itself if the supplier lists it again.
+  const pausing = await prisma.productVariant.findMany({ where: { supplierId, supplierServiceId: { notIn: [...seen] }, soldOut: false }, select: { id: true, productId: true } });
+  const returning = await prisma.productVariant.findMany({ where: { supplierId, supplierServiceId: { in: [...seen] }, pausedBySupplier: true }, select: { id: true, productId: true } });
   await prisma.productVariant.updateMany({
     where: { supplierId, supplierServiceId: { notIn: [...seen] }, soldOut: false },
     data: { soldOut: true, pausedBySupplier: true },
@@ -74,6 +77,8 @@ export async function syncCatalog(supplierId: string): Promise<{ ok: true; servi
     where: { supplierId, supplierServiceId: { in: [...seen] }, pausedBySupplier: true },
     data: { soldOut: false, pausedBySupplier: false },
   });
+  for (const v of pausing) await recordChange("REMOVED", v.productId, { variantId: v.id });
+  for (const v of returning) await recordChange("BACK", v.productId, { variantId: v.id });
   await prisma.supplier.update({ where: { id: supplierId }, data: { lastSyncAt: new Date(), lastError: null } });
   return { ok: true, services: services.length, gone: gone.count };
 }
@@ -157,5 +162,6 @@ export async function importService(supplierServiceId: string, opts: { categoryI
       },
     },
   });
+  if (opts.publish) await recordChange("NEW", product.id);
   return product.id;
 }

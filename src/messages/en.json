@@ -1054,6 +1054,28 @@
       "sub": "Live from real orders: how long each service takes now, and which ones are slow or paused.",
       "allOnline": "All systems online",
       "someIssues": "{slow} slow · {down} paused"
+    },
+    "news": {
+      "posts": "News",
+      "changes": "Service changes",
+      "status": "Service status",
+      "all": "All",
+      "kind": {
+        "post": "News",
+        "tool": "Tool updates",
+        "feature": "New on GSMLite",
+        "security": "Security",
+        "howto": "How-to"
+      },
+      "change": {
+        "NEW": "New",
+        "PRICE_DOWN": "Price down",
+        "BACK": "Back online",
+        "PRICE_UP": "Price up",
+        "REMOVED": "Removed"
+      },
+      "signInForAll": "Sign in to also see price rises and removed services.",
+      "noChanges": "No changes in the last 60 days."
     }
   }
 }

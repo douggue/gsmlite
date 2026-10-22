@@ -6,6 +6,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { assertStaff, assertStepUp } from "@/lib/session";
 import { audit } from "@/lib/audit";
+import { recordChange, recordVariantChange } from "@/lib/service-changes";
 import { encrypt, hmac, randomToken } from "@/lib/crypto";
 import { completePayment, rejectPayment } from "@/lib/payments/complete";
 import { deliverItemManually, fulfillOrder, refundOrCancel, revealCode } from "@/lib/orders";
@@ -185,7 +186,9 @@ export async function saveProduct(form: FormData): Promise<R & { id?: string }> 
       identifierFormat: ["imei", "serial", "any"].includes(String(form.get("identifierFormat"))) ? String(form.get("identifierFormat")) : "imei",
       allowBulk: form.get("allowBulk") === "on",
     };
+    const wasPublished = id ? (await prisma.product.findUnique({ where: { id }, select: { isPublished: true } }))?.isPublished : false;
     const product = id ? await prisma.product.update({ where: { id }, data }) : await prisma.product.create({ data });
+    if (product.isPublished && !wasPublished) await recordChange("NEW", product.id);
     await audit(staff.id, id ? "product.update" : "product.create", "Product", product.id, { slug });
     revalidatePath("/admin/products");
     revalidatePath("/", "layout");
@@ -203,6 +206,7 @@ export async function setProductSoldOut(form: FormData): Promise<R> {
     const productId = String(form.get("productId"));
     const soldOut = form.get("soldOut") === "1";
     const r = await prisma.productVariant.updateMany({ where: { productId }, data: { soldOut } });
+    await recordChange(soldOut ? "REMOVED" : "BACK", productId);
     await audit(staff.id, soldOut ? "product.soldOut" : "product.backInStock", "Product", productId, { variants: r.count });
     revalidatePath(`/admin/products/${productId}`);
     revalidatePath("/", "layout");
@@ -243,7 +247,9 @@ export async function saveVariant(form: FormData): Promise<R> {
       isActive: form.get("isActive") === "on",
       soldOut: form.get("soldOut") === "on",
     };
+    const before = id ? await prisma.productVariant.findUnique({ where: { id }, select: { priceUsd: true, salePriceUsd: true, soldOut: true } }) : null;
     const v = id ? await prisma.productVariant.update({ where: { id }, data }) : await prisma.productVariant.create({ data: { ...data, productId } });
+    await recordVariantChange(productId, v.id, before, v);
     await audit(staff.id, id ? "variant.update" : "variant.create", "ProductVariant", v.id, { productId, price, sale });
     revalidatePath(`/admin/products/${productId}`);
     revalidatePath("/", "layout");

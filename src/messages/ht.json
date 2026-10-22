@@ -1054,6 +1054,28 @@
       "sub": "An dirèk apati kòmand reyèl: konbyen tan chak sèvis ap pran kounye a, ak sa ki an reta oswa ki kanpe.",
       "allOnline": "Tout sistèm yo ap mache",
       "someIssues": "{slow} an reta · {down} kanpe"
+    },
+    "news": {
+      "posts": "Nouvèl",
+      "changes": "Chanjman sèvis",
+      "status": "Eta sèvis yo",
+      "all": "Tout",
+      "kind": {
+        "post": "Nouvèl",
+        "tool": "Nouvote zouti",
+        "feature": "Nouvo sou GSMLite",
+        "security": "Sekirite",
+        "howto": "Gid"
+      },
+      "change": {
+        "NEW": "Nouvo",
+        "PRICE_DOWN": "Pri bese",
+        "BACK": "Tounen",
+        "PRICE_UP": "Pri monte",
+        "REMOVED": "Retire"
+      },
+      "signInForAll": "Konekte pou w wè tou pri ki monte ak sèvis ki retire.",
+      "noChanges": "Pa gen chanjman nan 60 dènye jou yo."
     }
   }
 }

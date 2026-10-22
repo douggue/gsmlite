@@ -1054,6 +1054,28 @@
       "sub": "En direct d'après les vraies commandes : délai actuel de chaque service, et ceux qui sont lents ou en pause.",
       "allOnline": "Tous les systèmes fonctionnent",
       "someIssues": "{slow} lents · {down} en pause"
+    },
+    "news": {
+      "posts": "Actualités",
+      "changes": "Changements de services",
+      "status": "État des services",
+      "all": "Tout",
+      "kind": {
+        "post": "Actualités",
+        "tool": "Mises à jour d'outils",
+        "feature": "Nouveau sur GSMLite",
+        "security": "Sécurité",
+        "howto": "Tutoriels"
+      },
+      "change": {
+        "NEW": "Nouveau",
+        "PRICE_DOWN": "Prix en baisse",
+        "BACK": "De retour",
+        "PRICE_UP": "Prix en hausse",
+        "REMOVED": "Retiré"
+      },
+      "signInForAll": "Connectez-vous pour voir aussi les hausses de prix et les services retirés.",
+      "noChanges": "Aucun changement ces 60 derniers jours."
     }
   }
 }
