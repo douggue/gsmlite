@@ -48,15 +48,15 @@ export async function notify(
     if (!user || user.status === "CLOSED") return;
     const text = render(type, params, user.locale);
     const path = `/${user.locale}${link ?? "/account/notifications"}`;
-    await sendPush(userId, { title: "Haiti Gaming", body: text, url: path, tag: type });
+    await sendPush(userId, { title: "GSMLite", body: text, url: path, tag: type });
     const prefs = (user.notifyPrefs ?? {}) as { email?: boolean };
     if (!emailEnabled() || prefs.email === false) return;
     const url = `${siteUrl()}${path}`;
     await sendEmail({
       to: user.email,
-      subject: `Haiti Gaming: ${text.slice(0, 80)}`,
+      subject: `GSMLite: ${text.slice(0, 80)}`,
       text: `${text}\n\n${url}`,
-      html: `<p style="font-family:Arial,sans-serif;font-size:15px">${text.replace(/[<>&]/g, "")}</p><p><a href="${url}" style="font-family:Arial,sans-serif;color:#1467F5">${url}</a></p>`,
+      html: `<p style="font-family:Arial,sans-serif;font-size:15px">${text.replace(/[<>&]/g, "")}</p><p><a href="${url}" style="font-family:Arial,sans-serif;color:#1F7A4D">${url}</a></p>`,
     });
   } catch (e) {
     console.error("notification delivery failed", e);

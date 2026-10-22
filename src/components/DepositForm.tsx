@@ -54,7 +54,7 @@ export function DepositForm(p: Props) {
 
   const methods: Method[] = [
     ...(p.moncash ? [{ key: "MONCASH", kind: "moncash" as const, name: "MonCash", brand: "moncash" as const, mark: "MC", markBg: "#e30613", markFg: "#fff", recipientName: "", recipientNumber: "" }] : []),
-    ...(p.natcash ? [{ key: "NATCASH", kind: "mobile" as const, name: "NatCash", brand: "natcash" as const, mark: "NC", markBg: "#f7a400", markFg: "#060b1a", recipientName: p.natcashName, recipientNumber: p.natcashPhone, qr: p.natcashQr || null }] : []),
+    ...(p.natcash ? [{ key: "NATCASH", kind: "mobile" as const, name: "NatCash", brand: "natcash" as const, mark: "NC", markBg: "#f7a400", markFg: "#0b0e10", recipientName: p.natcashName, recipientNumber: p.natcashPhone, qr: p.natcashQr || null }] : []),
     ...p.manual.map((m) => ({
       key: `MANUAL:${m.id}`,
       kind: m.kind,
@@ -383,7 +383,7 @@ export function DepositForm(p: Props) {
               {tw("refHelpExample", { recipient: m.recipientName.toUpperCase(), ref: "§" }).split("§").map((part, i) =>
                 i === 0 ? part : (
                   <span key={i}>
-                    <mark className="rounded bg-[#f7a400] px-1 font-mono font-bold text-[#060b1a]">20261014094821</mark>
+                    <mark className="rounded bg-[#f7a400] px-1 font-mono font-bold text-[#0b0e10]">20261014094821</mark>
                     {part}
                   </span>
                 ),

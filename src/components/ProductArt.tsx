@@ -17,11 +17,11 @@ export function ProductArt({ name, accent, image, size = "md", priority = false 
     );
   }
   const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
-  const color = accent ?? "#1467F5";
+  const color = accent ?? "#1F7A4D";
   return (
     <div
       className={`relative grid place-items-center overflow-hidden ${size === "lg" ? "aspect-[4/3] rounded-3xl" : "aspect-[4/3] rounded-xl"}`}
-      style={{ background: `radial-gradient(circle at 50% 42%, ${color} 0%, color-mix(in srgb, ${color} 45%, #060b1a) 55%, #060b1a 100%)` }}
+      style={{ background: `radial-gradient(circle at 50% 42%, ${color} 0%, color-mix(in srgb, ${color} 45%, #0b0e10) 55%, #0b0e10 100%)` }}
       aria-hidden
     >
       <div className="absolute inset-x-6 bottom-0 h-1/3 rounded-full bg-black/25 blur-2xl" />

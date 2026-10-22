@@ -44,13 +44,6 @@ export function ProfileForm({ user }: { user: { name: string; email: string; pho
           {CITIES.map((c) => <option key={c.name} value={c.name}>{c.flag} {c.name}</option>)}
         </select>
       </div>
-      <label className="flex items-start gap-3 rounded-xl bg-surface-2 p-3 text-sm">
-        <input type="checkbox" name="showInFeed" defaultChecked={user.showInFeed} className="mt-0.5 h-5 w-5 accent-[var(--primary)]" />
-        <span>
-          <b className="block">{tp("showInFeed")}</b>
-          <span className="text-muted">{tp("showInFeedHint")}</span>
-        </span>
-      </label>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="label" htmlFor="locale">{tp("language")}</label>

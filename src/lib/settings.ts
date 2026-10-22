@@ -86,7 +86,7 @@ export type ThemeConfig = {
   motion: MotionStyle;
   /** Strength of the blue glow behind the hero, cards and buttons (0 = off, 100 = strong) */
   glow: number;
-  /** "gaming" = angular display face for headings, "plain" = the body face everywhere */
+  /** "gaming" = the display face (Bricolage Grotesque) for headings, "plain" = the body face everywhere (value name kept for saved themes) */
   displayFont: "gaming" | "plain";
   heroGrid: boolean;
   /** Words in the scrolling band under the hero, per language, separated by commas. Empty = no band. */
@@ -94,23 +94,23 @@ export type ThemeConfig = {
 };
 
 export const DEFAULT_THEME: ThemeConfig = {
-  primary: "#1467F5",
-  primaryDark: "#2F74FF",
-  navy: "#0E1830",
-  midnight: "#060B1A",
-  lightBg: "#F3F6FD",
+  primary: "#1F7A4D",
+  primaryDark: "#1F7A4D",
+  navy: "#15191C",
+  midnight: "#0B0E10",
+  lightBg: "#F4F5F2",
   radius: 16,
   animations: true,
-  defaultMode: "dark",
-  motion: "lively",
-  glow: 60,
+  defaultMode: "light",
+  motion: "calm",
+  glow: 20,
   displayFont: "gaming",
-  heroGrid: true,
+  heroGrid: false,
   marquee: {
-    ht: "Rechaj jwèt, Kat kado, Abònman, Livrezon touswit, MonCash, NatCash",
-    fr: "Recharges de jeux, Cartes cadeaux, Abonnements, Livraison immédiate, MonCash, NatCash",
-    en: "Game top-ups, Gift cards, Subscriptions, Instant delivery, MonCash, NatCash",
-    es: "Recargas de juegos, Tarjetas de regalo, Suscripciones, Entrega inmediata, MonCash, NatCash",
+    ht: "Debloke operatè, Tchèk IMEI, Kredi zouti, FRP, Firmware, Ranbousman otomatik",
+    fr: "Déblocage opérateur, Vérification IMEI, Crédits d'outils, FRP, Firmware, Remboursement automatique",
+    en: "Carrier unlock, IMEI checks, Tool credits, FRP, Firmware, Automatic refunds",
+    es: "Liberación de operador, Verificación IMEI, Créditos de herramientas, FRP, Firmware, Reembolso automático",
   },
 };
 
@@ -133,7 +133,7 @@ export const DEFAULT_SETTINGS: Settings = {
   newAccountDays: 3,
   newAccountDailyLimitHtg: 1_500_000,
   reviewOrderThresholdHtg: 2_000_000,
-  natcashRecipientName: "Haiti Gaming",
+  natcashRecipientName: "GSMLite",
   natcashRecipientPhone: "+509 0000 0000",
   natcashInstructions: {},
   natcashQrUrl: "",
@@ -142,7 +142,7 @@ export const DEFAULT_SETTINGS: Settings = {
   whatsappNumber: "50900000000",
   supportHours: "Lun–Sam 8:00–20:00",
   businessAddress: "Port-au-Prince, Haïti",
-  businessName: "Haiti Gaming",
+  businessName: "GSMLite",
   socialFacebook: "",
   socialInstagram: "",
   socialTiktok: "",

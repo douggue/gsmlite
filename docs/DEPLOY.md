@@ -1,4 +1,4 @@
-# Deploying Haiti Gaming to Vercel
+# Deploying GSMLite to Vercel
 
 About 20 minutes. You need a free [Vercel](https://vercel.com) account. Vercel cannot take a zip upload directly: the code goes through **GitHub** (path A, recommended) or the **Vercel command line** on a computer (path B).
 
@@ -14,7 +14,7 @@ About 20 minutes. You need a free [Vercel](https://vercel.com) account. Vercel c
    - **Yourself, on a computer with Git:**
      ```bash
      unzip haiti-gaming.zip -d haiti-gaming && cd haiti-gaming
-     git init && git add . && git commit -m "Haiti Gaming"
+     git init && git add . && git commit -m "GSMLite"
      git branch -M main
      git remote add origin https://github.com/YOUR-NAME/haiti-gaming.git
      git push -u origin main

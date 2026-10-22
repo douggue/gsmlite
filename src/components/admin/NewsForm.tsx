@@ -28,7 +28,7 @@ export function NewsForm({ article }: { article?: A }) {
     >
       {article && <input type="hidden" name="id" value={article.id} />}
       <div className="grid gap-4 lg:grid-cols-2">
-        <label><span className="label">Slug (URL)</span><input name="slug" defaultValue={article?.slug} required className="input" placeholder="free-fire-promo-october" /></label>
+        <label><span className="label">Slug (URL)</span><input name="slug" defaultValue={article?.slug} required className="input" placeholder="new-iphone-unlocks-october" /></label>
         <label><span className="label">Publish date (empty = now when published)</span><input name="publishedAt" type="datetime-local" defaultValue={article?.publishedAt} className="input" /></label>
       </div>
       <ImageField name="image" label="Cover image" value={article?.image} folder="products" aspect="aspect-[16/9]" />

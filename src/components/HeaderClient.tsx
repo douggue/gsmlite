@@ -21,7 +21,7 @@ export function ThemeKeeper({ defaultMode }: { defaultMode: "dark" | "light" }) 
   useLayoutEffect(() => {
     let saved: string | null = null;
     try {
-      saved = localStorage.getItem("hg_theme");
+      saved = localStorage.getItem("gl_theme");
     } catch {}
     const dark = saved ? saved === "dark" : defaultMode === "dark";
     const html = document.documentElement;
@@ -31,8 +31,8 @@ export function ThemeKeeper({ defaultMode }: { defaultMode: "dark" | "light" }) 
       delete html.dataset.switching;
       html.dataset.switched = "1";
       try {
-        const y = Number(sessionStorage.getItem("hg_scroll"));
-        sessionStorage.removeItem("hg_scroll");
+        const y = Number(sessionStorage.getItem("gl_scroll"));
+        sessionStorage.removeItem("gl_scroll");
         if (y > 0) window.scrollTo(0, y);
       } catch {}
       const id = setTimeout(() => delete html.dataset.switched, 700);
@@ -51,9 +51,9 @@ export function ThemeToggle({ withLabel = false }: { withLabel?: boolean }) {
     setDark(next);
     document.documentElement.classList.toggle("dark", next);
     try {
-      localStorage.setItem("hg_theme", next ? "dark" : "light");
+      localStorage.setItem("gl_theme", next ? "dark" : "light");
       // Also a cookie, so the server sends the page already in the right theme (no flash on any navigation).
-      document.cookie = `hg_theme=${next ? "dark" : "light"}; path=/; max-age=31536000; samesite=lax`;
+      document.cookie = `gl_theme=${next ? "dark" : "light"}; path=/; max-age=31536000; samesite=lax`;
     } catch {}
   }
   return (
@@ -124,7 +124,7 @@ function useChangeLocale() {
     document.documentElement.dataset.switching = "1";
     setTimeout(() => delete document.documentElement.dataset.switching, 8000); // never stay dimmed if the network fails
     try {
-      sessionStorage.setItem("hg_scroll", String(window.scrollY));
+      sessionStorage.setItem("gl_scroll", String(window.scrollY));
     } catch {}
     start(() => {
       saveLocalePreference(next);

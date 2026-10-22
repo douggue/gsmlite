@@ -51,7 +51,7 @@ export function HomepageEditor({ initial, unpublishedChanges, history }: { initi
         <label className="mt-4 block">
           <span className="label">Main button link</span>
           <input className="input" value={cfg.ctaHref} onChange={(e) => setCfg({ ...cfg, ctaHref: e.target.value })} placeholder="/store" />
-          <span className="mt-1 block text-xs text-muted">A path on this site, e.g. /store or /categories/game-top-ups</span>
+          <span className="mt-1 block text-xs text-muted">A path on this site, e.g. /store or /categories/carrier-unlock</span>
         </label>
       </section>
 

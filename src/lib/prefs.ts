@@ -1,15 +1,21 @@
 import "server-only";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import type { Currency } from "@prisma/client";
-import { getUser } from "./session";
 
-export const CURRENCY_COOKIE = "hg_currency";
+export const CURRENCY_COOKIE = "gl_currency";
 
-/** Display currency: the visitor's own choice (cookie, then profile), otherwise HTG for everyone. */
+/** Visitor's country from the host's location header (Vercel, or Cloudflare in front of the VPS). */
+export async function visitorCountry(): Promise<string | null> {
+  const h = await headers();
+  return (h.get("x-vercel-ip-country") || h.get("cf-ipcountry") || "").toUpperCase() || null;
+}
+
+/**
+ * Display currency: the visitor's own choice (the currency switch and the profile both set this cookie), then gourdes
+ * for visitors in Haiti, otherwise USD (service prices are set in USD).
+ */
 export async function getDisplayCurrency(): Promise<Currency> {
   const c = (await cookies()).get(CURRENCY_COOKIE)?.value;
   if (c === "HTG" || c === "USD") return c;
-  const user = await getUser();
-  if (user?.displayCurrency) return user.displayCurrency;
-  return "HTG";
+  return (await visitorCountry()) === "HT" ? "HTG" : "USD";
 }

@@ -40,7 +40,7 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
       <ProductForm
         categories={cats}
         product={{
-          id: product.id, slug: product.slug, categoryId: product.categoryId, accent: product.accent ?? "#1467F5",
+          id: product.id, slug: product.slug, categoryId: product.categoryId, accent: product.accent ?? "#1F7A4D",
           fulfillmentType: product.fulfillmentType, isPublished: product.isPublished, isFeatured: product.isFeatured, sortOrder: product.sortOrder,
           name: product.name as Record<string, string>, description: product.description as Record<string, string>,
           delivery: (product.deliveryEstimate ?? {}) as Record<string, string>, seoTitle: (product.seoTitle ?? {}) as Record<string, string>,

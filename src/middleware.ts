@@ -9,18 +9,18 @@ const intl = createMiddleware(routing);
 // Phones in Haiti are usually set to French or English, so the phone language alone would rarely pick Kreyòl.
 // Referral links (?ref=CODE) are remembered for 30 days so the invite counts when the friend signs up later.
 export default function middleware(req: NextRequest) {
-  // The live site has one address: send visitors of the .vercel.app address to haitigaming.net (same page).
+  // The live site has one address: send visitors of the .vercel.app address to gsmlite.com (same page).
   if (process.env.VERCEL_ENV === "production" && req.nextUrl.hostname.endsWith(".vercel.app")) {
     return NextResponse.redirect(new URL(req.nextUrl.pathname + req.nextUrl.search, CANONICAL_SITE), 308);
   }
   const res = intl(inHaitiWithoutChoice(req) ? withLanguage(req, "ht") : req);
   const ref = req.nextUrl.searchParams.get("ref");
   if (ref && /^[A-Z0-9]{6,12}$/i.test(ref)) {
-    res.cookies.set("hg_ref", ref.toUpperCase(), { path: "/", maxAge: 60 * 60 * 24 * 30, sameSite: "lax", httpOnly: true });
+    res.cookies.set("gl_ref", ref.toUpperCase(), { path: "/", maxAge: 60 * 60 * 24 * 30, sameSite: "lax", httpOnly: true });
   }
   // Anonymous browser id, used only to spot several accounts created from one device.
-  if (!req.cookies.get("hg_dev")) {
-    res.cookies.set("hg_dev", crypto.randomUUID().replace(/-/g, ""), { path: "/", maxAge: 60 * 60 * 24 * 400, sameSite: "lax", httpOnly: true, secure: req.nextUrl.protocol === "https:" });
+  if (!req.cookies.get("gl_dev")) {
+    res.cookies.set("gl_dev", crypto.randomUUID().replace(/-/g, ""), { path: "/", maxAge: 60 * 60 * 24 * 400, sameSite: "lax", httpOnly: true, secure: req.nextUrl.protocol === "https:" });
   }
   // The saved language (NEXT_LOCALE) is written only when the visitor picks one (saveLocalePreference).
   // next-intl would also write it on every page response, including the background prefetch of each

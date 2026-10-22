@@ -57,7 +57,7 @@ export function ProductForm({ product, categories }: { product?: P; categories: 
             <option value="REMOTE">Remote (done on the customer&apos;s computer)</option>
           </select>
         </label>
-        <label><span className="label">Tile color</span><input name="accent" type="color" defaultValue={product?.accent ?? "#1467F5"} className="input h-11 p-1" /></label>
+        <label><span className="label">Tile color</span><input name="accent" type="color" defaultValue={product?.accent ?? "#1F7A4D"} className="input h-11 p-1" /></label>
       </div>
       <div className="grid gap-5 lg:grid-cols-2">
         <ImageField name="image" label="Main image" value={product?.image} folder="products" hint="JPG, PNG or WebP, up to 5 MB. Square or 4:3 works best. Without an image, a colored tile with the initials is shown." />

@@ -4,10 +4,10 @@ import { onSiteDomain, siteUrl } from "@/lib/site-url";
 afterEach(() => vi.unstubAllEnvs());
 
 describe("site address", () => {
-  it("live site always uses haitigaming.net, even if the env points to vercel.app", () => {
+  it("live site always uses gsmlite.com, even if the env points to vercel.app", () => {
     vi.stubEnv("VERCEL_ENV", "production");
-    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://haiti-gaming.vercel.app");
-    expect(siteUrl()).toBe("https://www.haitigaming.net");
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://gsmlite.vercel.app");
+    expect(siteUrl()).toBe("https://gsmlite.com");
   });
   it("an explicit own domain wins", () => {
     vi.stubEnv("VERCEL_ENV", "production");
@@ -17,10 +17,10 @@ describe("site address", () => {
   it("email links are moved to the site's domain, callback included", () => {
     vi.stubEnv("VERCEL_ENV", "production");
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
-    const link = onSiteDomain("https://haiti-gaming.vercel.app/api/auth/verify-email?token=abc&callbackURL=https%3A%2F%2Fhaiti-gaming.vercel.app%2Fht%2Fcheckout");
-    expect(link).toBe("https://www.haitigaming.net/api/auth/verify-email?token=abc&callbackURL=https%3A%2F%2Fwww.haitigaming.net%2Fht%2Fcheckout");
-    expect(onSiteDomain("https://haiti-gaming.vercel.app/api/auth/verify-email?token=abc&callbackURL=%2Fht%2Fcheckout")).toBe(
-      "https://www.haitigaming.net/api/auth/verify-email?token=abc&callbackURL=%2Fht%2Fcheckout",
+    const link = onSiteDomain("https://gsmlite.vercel.app/api/auth/verify-email?token=abc&callbackURL=https%3A%2F%2Fgsmlite.vercel.app%2Fht%2Fcheckout");
+    expect(link).toBe("https://gsmlite.com/api/auth/verify-email?token=abc&callbackURL=https%3A%2F%2Fgsmlite.com%2Fht%2Fcheckout");
+    expect(onSiteDomain("https://gsmlite.vercel.app/api/auth/verify-email?token=abc&callbackURL=%2Fht%2Fcheckout")).toBe(
+      "https://gsmlite.com/api/auth/verify-email?token=abc&callbackURL=%2Fht%2Fcheckout",
     );
   });
 });

@@ -71,7 +71,7 @@ test("admin: manual method, subcategory, page, menu, announcement, media, securi
   await a.waitForLoadState("networkidle");
   const form = a.locator("form", { hasText: "New manual method" });
   await form.locator('input[name="code"]').fill(methodCode);
-  await form.locator('input[name="recipientName"]').fill("Haiti Gaming SA");
+  await form.locator('input[name="recipientName"]').fill("GSMLite SA");
   await form.locator('input[name="recipientNumber"]').fill("001-234-567");
   await form.locator('input[name="name_ht"]').fill(methodName);
   await form.locator('textarea[name="instructions_ht"]').fill("Fè yon virman labank.");

@@ -1,6 +1,6 @@
-// Haiti Gaming service worker: offline fallback page + push notifications. Pages and data are never cached,
+// GSMLite service worker: offline fallback page + push notifications. Pages and data are never cached,
 // so customers always see current prices, balances and order status.
-const CACHE = "hg-offline-v3";
+const CACHE = "gl-offline-v1";
 const OFFLINE = "/offline.html";
 
 self.addEventListener("install", (event) => {
@@ -28,7 +28,7 @@ self.addEventListener("push", (event) => {
     data = { body: event.data ? event.data.text() : "" };
   }
   event.waitUntil(
-    self.registration.showNotification(data.title || "Haiti Gaming", {
+    self.registration.showNotification(data.title || "GSMLite", {
       body: data.body || "",
       icon: "/icon-192.png",
       badge: "/badge-96.png",

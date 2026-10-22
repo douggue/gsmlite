@@ -1,5 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { CURRENCY_COOKIE } from "@/lib/prefs";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { assertUser } from "@/lib/session";
@@ -20,8 +22,10 @@ export async function updateProfile(form: FormData) {
   const city = form.get("city");
   await prisma.user.update({
     where: { id: user.id },
-    data: { ...data.data, phone: normalizePhone(data.data.phone) ?? (data.data.phone || null), city: isCity(city) ? city : null, showInFeed: form.get("showInFeed") === "on" },
+    data: { ...data.data, phone: normalizePhone(data.data.phone) ?? (data.data.phone || null), city: isCity(city) ? city : null },
   });
+  // The display currency follows this browser's cookie (see getDisplayCurrency), so saving the profile updates it too.
+  (await cookies()).set(CURRENCY_COOKIE, data.data.displayCurrency, { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" });
   revalidatePath("/", "layout");
   return { ok: true as const };
 }

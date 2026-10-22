@@ -25,18 +25,18 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 
-/** Gaming icons between the words of the scrolling band (drawn, so they look the same on every phone). */
+/** Phone-service icons between the words of the scrolling band (drawn, so they look the same on every phone). */
 const MARQUEE_ICONS = [
-  // gamepad
-  "M6 9h4M8 7v4M15 10h.01M18 12h.01M7.5 5h9A5.5 5.5 0 0 1 22 10.5v3a3.5 3.5 0 0 1-6.3 2.1L14.5 14h-5l-1.2 1.6A3.5 3.5 0 0 1 2 13.5v-3A5.5 5.5 0 0 1 7.5 5Z",
-  // diamond
-  "M6 3h12l4 6-10 12L2 9Z M2 9h20 M12 21 8 9l4-6 4 6Z",
-  // trophy
-  "M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0Z M17 6h3a3 3 0 0 1-3 4 M7 6H4a3 3 0 0 0 3 4",
+  // open lock
+  "M7 11V7a5 5 0 0 1 9.6-1.9 M5 11h14v10H5Z M12 15v2",
+  // phone
+  "M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z M11 18h2",
+  // magnifier (IMEI check)
+  "M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14Z m9 16-4.3-4.3",
   // lightning
   "M13 2 4 14h7l-1 8 9-12h-7Z",
 ];
-const MARQUEE_COLORS = ["#FFB020", "#2EE6A8", "#FF5DA2", "#46D8FF"];
+const MARQUEE_COLORS = ["#7CE0A8", "#FFFFFF", "#7CE0A8", "#FFFFFF"];
 function MarqueeIcon({ n }: { n: number }) {
   const color = MARQUEE_COLORS[n % MARQUEE_COLORS.length];
   return (
@@ -251,7 +251,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
             <div className="relative hidden h-[400px] lg:block" aria-hidden>
               <div className="animate-rise absolute right-6 top-2 flex h-[340px] w-[280px] rotate-3 flex-col justify-end rounded-3xl border border-white/10 bg-[radial-gradient(circle_at_50%_35%,#ff9a3c,#c2341d_45%,#3a0e18)] p-6 shadow-[0_30px_80px_-30px_rgba(255,120,60,.6)]">
                 <span className="display text-6xl font-bold leading-none">{featured[0] ? t(featured[0].name, locale).slice(0, 2).toUpperCase() : "HG"}</span>
-                <span className="mt-3 font-bold">{featured[0] ? t(featured[0].name, locale) : "Haiti Gaming"}</span>
+                <span className="mt-3 font-bold">{featured[0] ? t(featured[0].name, locale) : "GSMLite"}</span>
                 <span className="text-sm opacity-80">{th("trustDelivery")}</span>
               </div>
               <div className="animate-rise absolute left-0 top-16 flex w-60 flex-col gap-2 rounded-2xl border border-[#46d8ff]/35 bg-[#0e1830]/90 p-4 shadow-[0_0_40px_-12px_rgba(70,216,255,.6)] backdrop-blur">
@@ -259,7 +259,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 <span className="font-mono text-sm tracking-wider text-[#46d8ff]">XXXX-XXXX-XXXX</span>
                 <span className="flex items-center gap-1.5 text-sm font-bold text-[#2fd27f]"><BoltIcon width={16} height={16} /> {th("trustDelivery")}</span>
               </div>
-              <div className="animate-rise absolute bottom-0 left-0 flex w-52 flex-col gap-1 rounded-2xl bg-[linear-gradient(135deg,#2f74ff,#1340a8)] p-4 shadow-[0_24px_50px_-20px_rgba(47,116,255,.9)]">
+              <div className="animate-rise absolute bottom-0 left-0 flex w-52 flex-col gap-1 rounded-2xl bg-[linear-gradient(135deg,#1f7a4d,#1340a8)] p-4 shadow-[0_24px_50px_-20px_rgba(47,116,255,.9)]">
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#cfe0ff]">{tc("wallet")}</span>
                 <span className="text-2xl font-extrabold">HTG · USD</span>
                 <span className="text-sm text-[#cfe0ff]">{th("walletTitle")}</span>

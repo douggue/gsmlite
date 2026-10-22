@@ -29,7 +29,7 @@ test("customer sees the notifications toggle, and a push shows a notification", 
   await cdp.send("ServiceWorker.deliverPushMessage", {
     origin: new URL(page.url()).origin,
     registrationId: reg.registrationId,
-    data: JSON.stringify({ title: "Haiti Gaming", body: "Kòmand #1001 livre.", url: "/ht/account/orders", tag: "order_fulfilled" }),
+    data: JSON.stringify({ title: "GSMLite", body: "Kòmand #1001 livre.", url: "/ht/account/orders", tag: "order_fulfilled" }),
   });
   await expect
     .poll(() => page.evaluate(async () => (await (await navigator.serviceWorker.ready).getNotifications()).map((n) => n.body)))

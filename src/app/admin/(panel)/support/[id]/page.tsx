@@ -11,9 +11,10 @@ export const metadata = { title: "Support request" };
 
 const TEMPLATES = [
   "Mèsi, nou resevwa demann ou. N ap tcheke sa kounye a.",
-  "Kòmand ou livre. Tanpri verifye kont jwèt ou epi fè nou konnen.",
+  "Rezilta a disponib nan kòmand ou. Tanpri eseye telefòn nan epi fè nou konnen.",
+  "Tanpri voye bon IMEI a: tape *#06# sou telefòn nan.",
   "Nou bezwen nimewo referans NatCash la pou n ka verifye peman an.",
-  "Nou ranbouse lajan an nan bous Haiti Gaming ou.",
+  "Nou ranbouse lajan an nan bous GSMLite ou.",
 ];
 
 export default async function TicketAdmin({ params }: { params: Promise<{ id: string }> }) {

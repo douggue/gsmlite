@@ -88,7 +88,7 @@ test("customer pays a manual top-up from the wallet, admin delivers it", async (
   await page.getByLabel(/ID jwè/).fill("123456789");
   await page.getByRole("button", { name: "Achte kounye a" }).click();
   await page.getByRole("link", { name: "Peye" }).click();
-  await page.getByText("Bous Haiti Gaming").click();
+  await page.getByText("Bous GSMLite").click();
   await page.getByRole("button", { name: "Pase kòmand lan" }).click();
   await page.waitForURL("**/ht/account/orders/**");
   await expect(page.getByText("N ap prepare l").first()).toBeVisible();

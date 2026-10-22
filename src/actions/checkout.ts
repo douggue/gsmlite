@@ -51,7 +51,7 @@ export async function placeOrder(raw: unknown): Promise<PlaceOrderResult> {
   }
 }
 
-/** Save entered player IDs / account emails so repeat purchases take one tap. */
+/** Save the details typed for a service (username, model…) so repeat orders take one tap. IMEIs are not saved here. */
 async function rememberPlayerIds(userId: string, items: z.infer<typeof cartSchema>) {
   const variants = await prisma.productVariant.findMany({ where: { id: { in: items.map((i) => i.variantId) } }, include: { product: true } });
   for (const item of items) {

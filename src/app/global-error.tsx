@@ -11,7 +11,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
         <div>
           <h1 style={{ fontSize: 20 }}>Gen yon pwoblèm. · Une erreur est survenue. · Something went wrong.</h1>
           {error.digest && <p style={{ fontFamily: "monospace", fontSize: 12, opacity: 0.7 }}>Ref: {error.digest}</p>}
-          <button type="button" onClick={reset} style={{ marginTop: 16, padding: "12px 20px", borderRadius: 10, border: 0, background: "#1467f5", color: "#fff", fontWeight: 700 }}>↻</button>
+          <button type="button" onClick={reset} style={{ marginTop: 16, padding: "12px 20px", borderRadius: 10, border: 0, background: "#1f7a4d", color: "#fff", fontWeight: 700 }}>↻</button>
         </div>
       </body>
     </html>

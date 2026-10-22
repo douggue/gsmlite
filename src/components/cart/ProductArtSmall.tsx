@@ -11,7 +11,7 @@ export function ProductArtSmall({ name, accent, image }: { name: string; accent?
   return (
     <div
       className="grid h-16 w-16 shrink-0 place-items-center rounded-xl text-lg font-black text-white sm:h-20 sm:w-20"
-      style={{ background: `linear-gradient(135deg, ${accent ?? "#1467F5"} 0%, #0D1B35 100%)` }}
+      style={{ background: `linear-gradient(135deg, ${accent ?? "#1F7A4D"} 0%, #111418 100%)` }}
       aria-hidden
     >
       {initials}

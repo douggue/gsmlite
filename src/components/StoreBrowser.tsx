@@ -37,8 +37,8 @@ export type StoreCategory = { slug: string; name: string; icon: string | null; t
 
 type Init = { q: string; category: string; sort: string; tags: string[]; min: string; max: string };
 
-const VIEW_KEY = "hg_store_view";
-const FAV_KEY = "hg_favorites";
+const VIEW_KEY = "gl_store_view";
+const FAV_KEY = "gl_favorites";
 
 function readList(key: string): string[] {
   try {
@@ -362,7 +362,7 @@ function FavButton({ fav, onFav, small = false }: { fav: boolean; onFav: () => v
       }}
       aria-pressed={fav}
       aria-label={fav ? ts("unfavorite") : ts("favorite")}
-      className={`absolute left-1.5 top-1.5 grid place-items-center rounded-lg bg-[#060b1a]/55 backdrop-blur transition-transform active:scale-90 ${small ? "h-8 w-8 text-base" : "h-9 w-9 text-lg"} ${fav ? "text-[#ffc53d]" : "text-white"}`}
+      className={`absolute left-1.5 top-1.5 grid place-items-center rounded-lg bg-[#0b0e10]/55 backdrop-blur transition-transform active:scale-90 ${small ? "h-8 w-8 text-base" : "h-9 w-9 text-lg"} ${fav ? "text-[#ffc53d]" : "text-white"}`}
     >
       {fav ? "★" : "☆"}
     </button>
@@ -385,7 +385,7 @@ function Tile({ p, fav, onFav }: { p: StoreProduct; fav: boolean; onFav: () => v
     <Link href={`/products/${p.slug}`} className="card lift group flex flex-col bg-[linear-gradient(180deg,var(--surface-2),var(--surface))] p-3">
       <div className="relative">
         <ProductArt name={p.name} accent={p.accent} image={p.image} />
-        {p.tags[0] && <span className="badge absolute right-2 top-2 block max-w-[calc(100%-3.5rem)] truncate bg-[#060b1a]/60 text-[11px] text-white backdrop-blur">{p.tags.slice(0, 2).join(" · ")}</span>}
+        {p.tags[0] && <span className="badge absolute right-2 top-2 block max-w-[calc(100%-3.5rem)] truncate bg-[#0b0e10]/60 text-[11px] text-white backdrop-blur">{p.tags.slice(0, 2).join(" · ")}</span>}
         {p.onSale && <span className="badge absolute bottom-2 left-2 bg-danger text-white">−%</span>}
         <FavButton fav={fav} onFav={onFav} />
       </div>

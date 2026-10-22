@@ -28,7 +28,7 @@ function LinkList({ title, links, onChange }: { title: string; links: NavLink[];
       {links.map((l, i) => (
         <div key={i} className="space-y-2 rounded-xl border border-border p-3">
           <div className="flex gap-2">
-            <input className="input" aria-label="Link address" placeholder="/categories/game-top-ups or https://…" value={l.href} onChange={(e) => set(i, { ...l, href: e.target.value })} />
+            <input className="input" aria-label="Link address" placeholder="/categories/carrier-unlock or https://…" value={l.href} onChange={(e) => set(i, { ...l, href: e.target.value })} />
             <button type="button" className="btn-ghost min-h-11 px-2" onClick={() => move(i, -1)} aria-label="Move up">▲</button>
             <button type="button" className="btn-ghost min-h-11 px-2" onClick={() => move(i, 1)} aria-label="Move down">▼</button>
             <button type="button" className="btn-ghost min-h-11 px-2 text-danger" onClick={() => onChange(links.filter((_, j) => j !== i))} aria-label="Remove">✕</button>

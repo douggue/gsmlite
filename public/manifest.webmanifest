@@ -1,8 +1,8 @@
 {
   "id": "/",
-  "name": "Haiti Gaming",
-  "short_name": "Haiti Gaming",
-  "description": "Game top-ups, gift cards and subscriptions, paid with MonCash or NatCash.",
+  "name": "GSMLite",
+  "short_name": "GSMLite",
+  "description": "Phone unlocking, IMEI checks and repair tool credits. Refunded automatically if it can't be done.",
   "start_url": "/?source=app",
   "scope": "/",
   "display": "standalone",
@@ -11,14 +11,14 @@
     "minimal-ui"
   ],
   "orientation": "portrait",
-  "background_color": "#050B18",
-  "theme_color": "#060B1A",
+  "background_color": "#0B0E10",
+  "theme_color": "#111418",
   "lang": "ht",
   "dir": "ltr",
   "categories": [
     "shopping",
-    "games",
-    "entertainment"
+    "utilities",
+    "business"
   ],
   "icons": [
     {
@@ -42,8 +42,8 @@
   ],
   "shortcuts": [
     {
-      "name": "Boutik / Store",
-      "short_name": "Boutik",
+      "name": "Sèvis / Services",
+      "short_name": "Sèvis",
       "url": "/store?source=app",
       "icons": [
         {

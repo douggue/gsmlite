@@ -1,4 +1,4 @@
-# Haiti Gaming
+# GSMLite
 
 Responsive digital-goods store for Haiti: game top-ups, gift cards and subscriptions, paid with **MonCash** (automatic) or **NatCash** (staff-verified), plus an HTG/USD store-credit wallet. Built from *Website Blueprint v1.1*.
 

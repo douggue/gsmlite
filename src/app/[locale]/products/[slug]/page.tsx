@@ -52,6 +52,7 @@ export default async function ProductPage({ params }: { params: P }) {
   const ctx = await priceContext(user?.id);
   const related = (await searchProducts({ category: product.category.slug, take: 5 })).filter((p) => p.id !== product.id).slice(0, 4);
   const name = t(product.name, locale);
+  const images = [product.image, ...((product.gallery ?? []) as string[])].filter((x): x is string => !!x);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -86,22 +87,23 @@ export default async function ProductPage({ params }: { params: P }) {
         <Link href={`/categories/${product.category.slug}`} className="hover:text-text">{t(product.category.name, locale)}</Link>
       </nav>
       <div className="mt-4 grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-        <div className="space-y-4">
-          <ProductGallery name={name} accent={product.accent} images={[product.image, ...((product.gallery ?? []) as string[])].filter((x): x is string => !!x)} />
-          <div className="card space-y-3 p-5 text-sm">
-            <p className="flex items-center gap-2 font-semibold">
-              <BoltIcon width={18} height={18} className="text-success" />
-              {tp("delivery")}: <span className="font-normal text-muted">{t(product.deliveryEstimate, locale)}</span>
-            </p>
-            <p className="flex items-center gap-2 font-semibold">
-              <ShieldIcon width={18} height={18} className="text-primary" />
-              <span className="font-normal text-muted">{product.fulfillmentType === "CODE_INVENTORY" ? tp("instant") : tp("manual")}</span>
-            </p>
-          </div>
+        {/* Phones: the order card comes first (title, price, IMEI box); pictures follow. Computers: pictures on the left. */}
+        <div className={`order-2 space-y-4 lg:order-1 ${images.length ? "" : "max-lg:hidden"}`}>
+          <ProductGallery name={name} accent={product.accent} images={images} />
         </div>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{name}</h1>
-          <p className="mt-3 text-muted">{t(product.description, locale)}</p>
+        <div className="order-1 lg:order-2">
+          <h1 className="font-display text-3xl font-extrabold tracking-tight sm:text-4xl">{name}</h1>
+          <div className="mt-3 flex flex-wrap gap-2 text-sm">
+            {t(product.deliveryEstimate, locale) && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 font-semibold">
+                <BoltIcon width={15} height={15} className="text-success" /> {t(product.deliveryEstimate, locale)}
+              </span>
+            )}
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 font-semibold text-primary">
+              <ShieldIcon width={15} height={15} /> {product.fulfillmentType === "CODE_INVENTORY" ? tp("instant") : tp("manual")}
+            </span>
+          </div>
+          {t(product.description, locale) && <p className="mt-3 text-muted">{t(product.description, locale)}</p>}
           <ProductPurchase
             product={{
               id: product.id,

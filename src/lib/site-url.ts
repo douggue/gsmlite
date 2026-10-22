@@ -1,10 +1,10 @@
-/** The shop's own domain. haitigaming.net already redirects here. */
-export const CANONICAL_SITE = "https://www.haitigaming.net";
+/** The shop's own domain. */
+export const CANONICAL_SITE = "https://gsmlite.com";
 
 /**
  * Public address of the site, without a trailing slash. Used for links in emails, SEO and payment returns.
  * - NEXT_PUBLIC_SITE_URL when set to your own domain;
- * - on the live site (Vercel production): www.haitigaming.net, never the .vercel.app address;
+ * - on the live site (Vercel production): gsmlite.com, never the .vercel.app address;
  * - otherwise the Vercel address, then localhost for development.
  */
 export function siteUrl(): string {

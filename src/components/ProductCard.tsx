@@ -19,7 +19,7 @@ export async function ProductCard({ product }: { product: ProductWithVariants })
       <div className="relative">
         <ProductArt name={name} accent={product.accent} image={product.image} />
         {onSale && <span className="badge absolute left-2 top-2 bg-danger text-white">−%</span>}
-        {product.tags?.[0] && <span className="badge absolute right-2 top-2 bg-[#060b1a]/60 text-[11px] text-white backdrop-blur">{product.tags.slice(0, 2).join(" · ")}</span>}
+        {product.tags?.[0] && <span className="badge absolute right-2 top-2 bg-[#0b0e10]/60 text-[11px] text-white backdrop-blur">{product.tags.slice(0, 2).join(" · ")}</span>}
       </div>
       <div className="flex flex-1 flex-col px-1 pb-1 pt-3">
         <h3 className="line-clamp-2 font-semibold leading-snug">{name}</h3>

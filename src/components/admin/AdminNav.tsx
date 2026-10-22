@@ -16,7 +16,7 @@ function useAdminTheme() {
     document.documentElement.classList.toggle("dark", next);
     setDark(next);
     try {
-      localStorage.setItem("hg_admin_theme", next ? "dark" : "light");
+      localStorage.setItem("gl_admin_theme", next ? "dark" : "light");
     } catch {}
   };
   return { dark, toggle };
@@ -120,7 +120,7 @@ export function AdminNav({ items, user, logo }: { items: { href: string; label: 
               <Link href={i.href} aria-current={active(i.href) ? "page" : undefined} className={`flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-semibold ${active(i.href) ? "text-primary" : "text-muted"}`}>
                 <span className={`relative grid h-7 w-11 place-items-center rounded-full ${active(i.href) ? "bg-primary-soft" : ""}`}>
                   <i.short width={18} height={18} />
-                  {!!i.badge && <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-warning px-1 text-[10px] font-bold text-[#060b1a]">{i.badge}</span>}
+                  {!!i.badge && <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-warning px-1 text-[10px] font-bold text-[#0b0e10]">{i.badge}</span>}
                 </span>
                 <span className="max-w-full truncate px-1">{i.label}</span>
               </Link>

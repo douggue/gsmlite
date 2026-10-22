@@ -1,4 +1,4 @@
-# Haiti Gaming — Operator guide
+# GSMLite — Operator guide
 
 The things to do when running the store: daily checks, backups, what to do when something breaks, and how to change keys safely.
 
@@ -134,7 +134,7 @@ After any change: open `/api/health` (with the bearer token) and Admin → Secur
 
 | Service | Steps |
 |---|---|
-| **Email (Resend)** | Buy a domain → add it in Resend → add the DNS records → wait for "Verified" → set `RESEND_API_KEY` and `EMAIL_FROM="Haiti Gaming <no-reply@yourdomain.com>"` → redeploy → Admin → Email → Send test. |
+| **Email (Resend)** | Buy a domain → add it in Resend → add the DNS records → wait for "Verified" → set `RESEND_API_KEY` and `EMAIL_FROM="GSMLite <no-reply@yourdomain.com>"` → redeploy → Admin → Email → Send test. |
 | **Bot check (Cloudflare Turnstile)** | Cloudflare dashboard → Turnstile → Add site (your domain, "Managed" mode) → set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` → redeploy. Appears on sign-up, sign-in, forgot password, deposit and newsletter. |
 | **Error monitoring (Sentry)** | sentry.io → new project → copy the DSN → `SENTRY_DSN` → redeploy. |
 | **MonCash live** | Get live keys from Digicel → `MONCASH_MODE=live`, `MONCASH_CLIENT_ID`, `MONCASH_CLIENT_SECRET` → redeploy → do one real 50 HTG deposit and refund it to store credit. |

@@ -2,51 +2,51 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Brand palette: midnight blue ground, one blue accent. Admin → Appearance overrides these per store (theme-css.ts). */
+/* GSMLite palette: ink ground, one green accent. Admin → Appearance overrides these per store (theme-css.ts). */
 :root {
-  --hg-css: 1; /* checked by cssGuardScript: proves the stylesheet loaded */
-  --bg: #f3f6fd;
+  --gl-css: 1; /* checked by cssGuardScript: proves the stylesheet loaded */
+  --bg: #f4f5f2;
   --surface: #ffffff;
-  --surface-2: #eef2fa;
-  --text: #0b1426;
-  --muted: #52648a;
-  --border: #dbe3f1;
-  --primary: #1467f5;
-  --primary-hover: #0f56d6;
-  --primary-soft: #e4edff;
-  --navy: #0e1830;
-  --midnight: #060b1a;
-  --steel: #7b92b8;
-  --cyan: #0b8fc4;
-  --success: #138a52;
-  --success-soft: #e3f6ec;
+  --surface-2: #eceee9;
+  --text: #111418;
+  --muted: #4a5048;
+  --border: #dcdfd8;
+  --primary: #1f7a4d;
+  --primary-hover: #145c39;
+  --primary-soft: #e4f3ea;
+  --navy: #171b1f;
+  --midnight: #0b0e10;
+  --steel: #8a9187;
+  --cyan: #2266aa;
+  --success: #1f7a4d;
+  --success-soft: #e4f3ea;
   --warning: #a35f00;
   --warning-soft: #fff1d6;
   --danger: #c62f3c;
   --danger-soft: #fde8ea;
-  --glow: rgba(20, 103, 245, 0.27);
-  --glow-strength: 0.6;
+  --glow: rgba(31, 122, 77, 0.2);
+  --glow-strength: 0.3;
   color-scheme: light;
 }
 
 .dark {
-  --bg: #060b1a;
-  --surface: #0e1830;
-  --surface-2: #142243;
-  --text: #eef3ff;
-  --muted: #8fa3c8;
-  --border: #1f2f57;
-  --primary: #2f74ff;
-  --primary-hover: #5a92ff;
-  --primary-soft: #102a5e;
-  --cyan: #46d8ff;
-  --success: #2fd27f;
-  --success-soft: #0f3326;
+  --bg: #0b0e10;
+  --surface: #15191c;
+  --surface-2: #1c2125;
+  --text: #eef1ec;
+  --muted: #a3aaa0;
+  --border: #2a3029;
+  --primary: #1f7a4d;
+  --primary-hover: #26905b;
+  --primary-soft: #12291c;
+  --cyan: #7cc4ff;
+  --success: #7ce0a8;
+  --success-soft: #12291c;
   --warning: #ffb547;
   --warning-soft: #3a2a0c;
   --danger: #ff6b78;
   --danger-soft: #3d1419;
-  --glow: rgba(47, 116, 255, 0.33);
+  --glow: rgba(124, 224, 168, 0.2);
   color-scheme: dark;
 }
 
@@ -146,10 +146,10 @@ body {
 }
 /* The hero is always dark, in both modes, like the wallet card */
 .hero-dark {
-  color: #eef3ff;
+  color: #eef1ec;
   background:
-    radial-gradient(900px 420px at 80% 8%, rgb(47 116 255 / calc(var(--glow-strength) * 0.6)), transparent 60%),
-    linear-gradient(180deg, color-mix(in srgb, var(--midnight) 70%, #13306e), var(--midnight));
+    radial-gradient(900px 420px at 80% 8%, rgb(124 224 168 / calc(var(--glow-strength) * 0.35)), transparent 60%),
+    linear-gradient(180deg, color-mix(in srgb, var(--midnight) 80%, #1a2a20), var(--midnight));
 }
 .hero-grid {
   display: none;
@@ -159,7 +159,7 @@ body {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image: linear-gradient(rgb(70 216 255 / 0.07) 1px, transparent 1px), linear-gradient(90deg, rgb(70 216 255 / 0.07) 1px, transparent 1px);
+  background-image: linear-gradient(rgb(124 224 168 / 0.06) 1px, transparent 1px), linear-gradient(90deg, rgb(124 224 168 / 0.06) 1px, transparent 1px);
   background-size: 44px 44px;
   mask-image: linear-gradient(180deg, #000 30%, transparent);
 }
@@ -173,12 +173,12 @@ body {
      store turns animations off or in data-saver mode. Touch or hover pauses it. */
   animation: marquee 22s linear infinite;
 }
-/* Colorful band: a slowly moving gradient (blue → purple → pink → orange) behind the scrolling words. */
+/* Band: a slowly moving green gradient behind the scrolling words. */
 .marquee-color {
-  background: linear-gradient(90deg, #1467f5, #7c3aed, #e0338a, #f59e0b, #7c3aed, #1467f5);
+  background: linear-gradient(90deg, #111418, #1f7a4d, #145c39, #111418, #1f7a4d, #111418);
   background-size: 300% 100%;
   animation: marquee-hue 14s linear infinite;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.25), 0 10px 30px -12px rgba(124, 58, 237, 0.7);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.25), 0 10px 30px -12px rgba(31, 122, 77, 0.5);
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 @keyframes marquee-hue {
@@ -251,7 +251,7 @@ body {
     box-shadow: 0 0 0 1px var(--primary), 0 0 28px -6px var(--glow);
   }
   [data-motion="neon"] .neon-text {
-    background: linear-gradient(90deg, currentColor 30%, #46d8ff 45%, #ffffff 50%, #46d8ff 55%, currentColor 70%);
+    background: linear-gradient(90deg, currentColor 30%, #7ce0a8 45%, #ffffff 50%, #7ce0a8 55%, currentColor 70%);
     background-size: 200% 100%;
     -webkit-background-clip: text;
     background-clip: text;
@@ -387,7 +387,7 @@ html[data-switching] body::before {
   inset: 0 0 auto 0;
   height: 3px;
   z-index: 100;
-  background: linear-gradient(90deg, transparent, var(--primary), #7c3aed, transparent);
+  background: linear-gradient(90deg, transparent, var(--primary), #7ce0a8, transparent);
   background-size: 200% 100%;
   animation: lang-progress 0.9s linear infinite;
 }

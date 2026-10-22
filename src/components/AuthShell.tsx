@@ -22,7 +22,7 @@ export async function AuthShell({ children }: { children: React.ReactNode }) {
           <ul className="animate-rise mt-2 space-y-4">
             {items.map(([Icon, title, body]) => (
               <li key={title} className="flex items-center gap-4">
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#2f74ff]/25 text-[#8fb5ff]"><Icon /></span>
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#1f7a4d]/25 text-[#8fb5ff]"><Icon /></span>
                 <span>
                   <b className="block">{t(title)}</b>
                   <span className="text-sm text-[#9fb0d0]">{t(body)}</span>

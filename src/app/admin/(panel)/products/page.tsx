@@ -23,7 +23,7 @@ export default async function AdminProducts() {
       <Table head={["Product", "Category", "Fulfillment", "Variants", "From", "Status"]} empty={products.length === 0}>
         {products.map((p) => (
           <tr key={p.id} className="hover:bg-surface-2">
-            <td className="px-4 py-3"><div className="flex items-center gap-3">{p.image ? <img src={p.image} alt="" className="h-10 w-10 rounded-lg object-cover" /> : <span className="h-10 w-10 rounded-lg" style={{ background: p.accent ?? "#1467F5" }} />}<div><Link href={`/admin/products/${p.id}`} className="font-semibold text-primary">{t(p.name, "en")}</Link><br /><span className="text-xs text-muted">/{p.slug}</span></div></div></td>
+            <td className="px-4 py-3"><div className="flex items-center gap-3">{p.image ? <img src={p.image} alt="" className="h-10 w-10 rounded-lg object-cover" /> : <span className="h-10 w-10 rounded-lg" style={{ background: p.accent ?? "#1F7A4D" }} />}<div><Link href={`/admin/products/${p.id}`} className="font-semibold text-primary">{t(p.name, "en")}</Link><br /><span className="text-xs text-muted">/{p.slug}</span></div></div></td>
             <td className="px-4 py-3">{t(p.category.name, "en")}</td>
             <td className="px-4 py-3 text-xs">{p.serviceType} · {p.fulfillmentType === "SUPPLIER_API" ? "Supplier" : p.fulfillmentType === "MANUAL" ? "Manual" : "Stock"}</td>
             <td className="px-4 py-3">{p.variants.length}</td>

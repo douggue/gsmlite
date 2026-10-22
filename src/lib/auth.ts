@@ -30,7 +30,7 @@ const trustedOrigins = [
 ];
 
 export const auth = betterAuth({
-  appName: "Haiti Gaming",
+  appName: "GSMLite",
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   trustedOrigins,
   emailAndPassword: {
@@ -61,7 +61,7 @@ export const auth = betterAuth({
     autoSignInAfterVerification: true,
     expiresIn: 60 * 60 * 24,
     sendVerificationEmail: async ({ user, url }) => {
-      // The link must open on haitigaming.net even if the customer signed up on the .vercel.app address.
+      // The link must open on gsmlite.com even if the customer signed up on the .vercel.app address.
       await sendVerificationEmail(user as AuthUser, onSiteDomain(url));
     },
   },
@@ -98,7 +98,7 @@ export const auth = betterAuth({
           try {
             const h = (ctx as { headers?: Headers; request?: Request } | null)?.headers ?? (ctx as { request?: Request } | null)?.request?.headers;
             const cookie = h?.get("cookie") ?? "";
-            const code = /(?:^|;\s*)hg_ref=([A-Z0-9]{6,12})/i.exec(cookie)?.[1];
+            const code = /(?:^|;\s*)gl_ref=([A-Z0-9]{6,12})/i.exec(cookie)?.[1];
             const ip = h?.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
             await recordReferral(user.id, code, ip);
           } catch (e) {
@@ -120,7 +120,7 @@ export const auth = betterAuth({
         after: async (session, ctx) => {
           try {
             const h = (ctx as { headers?: Headers; request?: Request } | null)?.headers ?? (ctx as { request?: Request } | null)?.request?.headers;
-            const device = /(?:^|;\s*)hg_dev=([A-Za-z0-9_-]{16,64})/.exec(h?.get("cookie") ?? "")?.[1] ?? null;
+            const device = /(?:^|;\s*)gl_dev=([A-Za-z0-9_-]{16,64})/.exec(h?.get("cookie") ?? "")?.[1] ?? null;
             await recordDevice(session.userId, device, session.ipAddress ?? null, session.userAgent ?? null);
           } catch (e) {
             console.error("device record failed", e);
@@ -148,7 +148,7 @@ export const auth = betterAuth({
   advanced: {
     ipAddress: { ipAddressHeaders: ["x-forwarded-for", "x-real-ip"] },
   },
-  plugins: [twoFactor({ issuer: "Haiti Gaming" }), nextCookies()],
+  plugins: [twoFactor({ issuer: "GSMLite" }), nextCookies()],
 });
 
 export type AuthSession = typeof auth.$Infer.Session;
