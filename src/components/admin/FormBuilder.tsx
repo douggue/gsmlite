@@ -78,7 +78,7 @@ export function FormBuilder({ productId, initial, fromSupplier, serviceType }: {
         </div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)_minmax(0,1fr)_320px]">
+      <div className="grid gap-4 lg:grid-cols-[200px_minmax(0,0.8fr)_minmax(0,1.2fr)] 2xl:grid-cols-[200px_minmax(0,0.8fr)_minmax(0,1.3fr)_300px]">
         <aside className="card h-fit space-y-1 p-3">
           <p className="px-2 pb-1 text-xs font-semibold uppercase tracking-wide text-muted">Add a field</p>
           {(Object.keys(FIELD_TYPES) as FieldType[]).map((type) => (
@@ -207,7 +207,7 @@ export function FormBuilder({ productId, initial, fromSupplier, serviceType }: {
           )}
         </section>
 
-        <section className="card h-fit space-y-3.5 p-4">
+        <section className="card h-fit space-y-3.5 p-4 lg:col-span-2 lg:col-start-2 2xl:col-span-1 2xl:col-start-auto">
           <h2 className="font-semibold">Customer preview</h2>
           <OrderFields defs={fields} values={preview} onChange={setPreview} locale="en" text={PREVIEW_TEXT} canUpload={false} idPrefix="pv" />
           {fields.length > 0 && <p className={`text-xs ${problem ? "text-warning" : "text-success"}`}>{problem ? `Order button would say: check “${problem.def.label.en || problem.def.key}”` : "Ready to order"}</p>}

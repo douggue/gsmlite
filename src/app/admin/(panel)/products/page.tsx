@@ -87,7 +87,8 @@ export default async function AdminProducts({ searchParams }: { searchParams: Pr
         })}
       </Table>
 
-      <h2 id="categories" className="mb-3 mt-10 text-lg font-semibold">Categories</h2>
+      <details id="categories" className="mt-10">
+      <summary className="mb-3 cursor-pointer text-lg font-semibold">Categories ({categories.length})</summary>
       <div className="grid gap-4 xl:grid-cols-2 [&>*]:min-w-0">
         {categories.map((c) => (
           <ActionForm key={c.id} action={saveCategory} className="card space-y-3 p-4">
@@ -136,6 +137,7 @@ export default async function AdminProducts({ searchParams }: { searchParams: Pr
           <button className="btn-primary min-h-9 px-3 text-xs">Create</button>
         </ActionForm>
       </div>
+      </details>
     </>
   );
 }
