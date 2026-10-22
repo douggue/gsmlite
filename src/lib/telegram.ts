@@ -46,3 +46,24 @@ export async function channelMembers(chat: string): Promise<number | null> {
   if (!chat) return null;
   return call<number>("getChatMemberCount", { chat_id: chat });
 }
+
+/** The bot's @username (asked once per server start), for t.me links. */
+let botName: string | null = null;
+export async function botUsername(): Promise<string | null> {
+  if (botName) return botName;
+  const me = await call<{ username?: string }>("getMe", {});
+  botName = me?.username ?? null;
+  return botName;
+}
+
+/** Secret Telegram sends back on every webhook call, derived from the bot token (nothing extra to configure). */
+export async function webhookSecret(): Promise<string> {
+  const { hmac } = await import("./crypto");
+  return hmac(`telegram-webhook:${process.env.TELEGRAM_BOT_TOKEN ?? ""}`).replace(/[^A-Za-z0-9_-]/g, "").slice(0, 64);
+}
+
+/** Point the bot at this site (Settings → Telegram → Connect the bot). */
+export async function connectWebhook(siteUrl: string): Promise<boolean> {
+  const r = await call<boolean>("setWebhook", { url: `${siteUrl}/api/telegram/webhook`, secret_token: await webhookSecret(), allowed_updates: ["message"] });
+  return !!r;
+}

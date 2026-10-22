@@ -5,7 +5,7 @@ import { moncashMode } from "@/lib/payments/moncash";
 import { telegramReady } from "@/lib/telegram";
 import { describeRule } from "@/lib/countries";
 import { saveSettings } from "@/actions/admin";
-import { testTelegram } from "@/actions/marketing";
+import { connectTelegramBot, testTelegram } from "@/actions/marketing";
 import { ActionButton, ActionForm } from "@/components/admin/ActionButton";
 import { PageTitle } from "@/components/admin/ui";
 import { ImageField } from "@/components/admin/ImageField";
@@ -179,7 +179,10 @@ export default async function SettingsPage() {
               <Field name="telegramChannel" label="Channel for announcements" value={s.telegramChannel} hint="@yourchannel" />
               <Field name="telegramStaffChat" label="Staff chat id for alerts" value={s.telegramStaffChat} hint="-100… (send /id to @userinfobot in the group)" />
             </div>
-            <ActionButton label="Send a test message" action={testTelegram} />
+            <div className="flex flex-wrap gap-2">
+              <ActionButton label="Send a test message" action={testTelegram} />
+              <ActionButton label="Connect the bot (customer notifications)" action={connectTelegramBot} />
+            </div>
           </Section>
 
           <Section id="accounts" title="Accounts & referrals">

@@ -7,6 +7,8 @@ import { markNotificationsRead } from "@/actions/account";
 import { PrefsForm } from "@/components/PrivacyForms";
 import { emailEnabled } from "@/lib/email";
 import { PushToggle } from "@/components/PushToggle";
+import { TelegramConnect } from "@/components/TelegramConnect";
+import { telegramReady } from "@/lib/telegram";
 
 export default async function NotificationsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -15,7 +17,7 @@ export default async function NotificationsPage({ params }: { params: Promise<{ 
   const [tn, fmt] = await Promise.all([getTranslations("notifications"), getFormatter()]);
   const [items, me] = await Promise.all([
     prisma.notification.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 50 }),
-    prisma.user.findUnique({ where: { id: user.id }, select: { notifyPrefs: true } }),
+    prisma.user.findUnique({ where: { id: user.id }, select: { notifyPrefs: true, telegramChatId: true } }),
   ]);
   const render = (type: string, params: Record<string, string | number>) => {
     const p = { ...params };
@@ -31,7 +33,7 @@ export default async function NotificationsPage({ params }: { params: Promise<{ 
           <form action={markNotificationsRead}><button className="btn-secondary min-h-10">{tn("markAllRead")}</button></form>
         )}
       </div>
-      <div className="mt-6 max-w-xl"><PushToggle /></div>
+      <div className="mt-6 max-w-xl space-y-3"><PushToggle />{telegramReady() && <TelegramConnect linked={!!me?.telegramChatId} />}</div>
       {items.length === 0 ? (
         <div className="card mt-6 p-10 text-center text-muted">{tn("empty")}</div>
       ) : (

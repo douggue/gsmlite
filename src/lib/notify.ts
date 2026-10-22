@@ -50,12 +50,16 @@ export async function notify(
 ) {
   await db.notification.create({ data: { userId, type, params, link } });
   try {
-    const user = await prisma.user.findUnique({ where: { id: userId }, select: { email: true, name: true, locale: true, status: true, notifyPrefs: true } });
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { email: true, name: true, locale: true, status: true, notifyPrefs: true, telegramChatId: true } });
     if (!user || user.status === "CLOSED") return;
     const text = render(type, params, user.locale);
     const path = `/${user.locale}${link ?? "/account/notifications"}`;
     await sendPush(userId, { title: "GSMLite", body: text, url: path, tag: type });
-    const prefs = (user.notifyPrefs ?? {}) as { email?: boolean };
+    const prefs = (user.notifyPrefs ?? {}) as { email?: boolean; telegram?: boolean };
+    if (user.telegramChatId && prefs.telegram !== false) {
+      const { sendTelegram } = await import("./telegram");
+      await sendTelegram(user.telegramChatId, text, { url: `${siteUrl()}${path}`, label: "GSMLite" });
+    }
     if (!emailEnabled() || prefs.email === false) return;
     const url = `${siteUrl()}${path}`;
     await sendEmail({

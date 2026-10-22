@@ -425,7 +425,13 @@
     "kyc_needs_more": "Necesitamos una foto nueva para tu verificación: {reason}",
     "marketing_inactive": "Nuevos servicios y bajadas de precio te esperan en GSMLite.",
     "marketing_next_phone": "¿Otro teléfono para liberar? Verifica su IMEI gratis primero.",
-    "new_device": "Nuevo inicio de sesión desde {device} ({ip}). ¿No fuiste tú? Cambia tu contraseña y cierra todas las sesiones."
+    "new_device": "Nuevo inicio de sesión desde {device} ({ip}). ¿No fuiste tú? Cambia tu contraseña y cierra todas las sesiones.",
+    "telegramHint": "Recibe tus pedidos en Telegram.",
+    "telegramOn": "Conectado: las novedades también llegan a Telegram.",
+    "telegramWaiting": "Toca Iniciar en Telegram para terminar.",
+    "telegramConnect": "Conectar",
+    "telegramDisconnect": "Desconectar",
+    "telegramOff": "Telegram no está disponible ahora."
   },
   "pages": {
     "aboutTitle": "Sobre GSMLite",

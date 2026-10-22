@@ -36,6 +36,9 @@ enum Currency {
 }
 
 model User {
+  /// Telegram chat the customer linked for notifications (/start code from Account → Notifications)
+  telegramChatId   String?         @unique
+  telegramLinkCode String?         @unique
   orderFiles       OrderFile[]
   id               String          @id
   name             String

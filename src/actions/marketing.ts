@@ -170,3 +170,19 @@ export async function testTelegram(): Promise<R> {
     return fail(e);
   }
 }
+
+/** Settings → Telegram: point the bot at this site so customers can link their account (/start). */
+export async function connectTelegramBot(): Promise<R> {
+  try {
+    const staff = await assertStaff("settings.manage");
+    const { connectWebhook, botUsername, telegramReady } = await import("@/lib/telegram");
+    if (!telegramReady()) return { ok: false, error: "TELEGRAM_BOT_TOKEN is not set in the hosting environment" };
+    const { siteUrl } = await import("@/lib/site-url");
+    if (!siteUrl().startsWith("https://")) return { ok: false, error: "Telegram needs the live https address of the site" };
+    const ok = await connectWebhook(siteUrl());
+    await audit(staff.id, "telegram.webhook", "Settings", null, { ok });
+    return ok ? { ok: true, message: `Connected: customers link their account with @${(await botUsername()) ?? "your bot"}` } : { ok: false, error: "Telegram refused the address" };
+  } catch (e) {
+    return fail(e);
+  }
+}

@@ -35,3 +35,23 @@ export async function markNotificationsRead() {
   await prisma.notification.updateMany({ where: { userId: user.id, readAt: null }, data: { readAt: new Date() } });
   revalidatePath("/", "layout");
 }
+
+/** Account → Notifications: a one-time t.me link that links this account to the customer's Telegram. */
+export async function telegramLink(): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
+  const user = await assertUser();
+  const { botUsername, telegramReady } = await import("@/lib/telegram");
+  if (!telegramReady()) return { ok: false, error: "off" };
+  const name = await botUsername();
+  if (!name) return { ok: false, error: "off" };
+  const { randomToken } = await import("@/lib/crypto");
+  const code = randomToken(16).replace(/[^A-Za-z0-9_-]/g, "").slice(0, 24);
+  await prisma.user.update({ where: { id: user.id }, data: { telegramLinkCode: code } });
+  return { ok: true, url: `https://t.me/${name}?start=${code}` };
+}
+
+export async function telegramUnlink(): Promise<{ ok: true }> {
+  const user = await assertUser();
+  await prisma.user.update({ where: { id: user.id }, data: { telegramChatId: null, telegramLinkCode: null } });
+  revalidatePath("/[locale]/account/notifications", "page");
+  return { ok: true };
+}

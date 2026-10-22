@@ -425,7 +425,13 @@
     "kyc_needs_more": "We need a new photo for your verification: {reason}",
     "marketing_inactive": "New services and price drops are waiting for you on GSMLite.",
     "marketing_next_phone": "Another phone to unlock? Check its IMEI free first.",
-    "new_device": "New sign-in to your account from {device} ({ip}). Not you? Change your password and sign out everywhere."
+    "new_device": "New sign-in to your account from {device} ({ip}). Not you? Change your password and sign out everywhere.",
+    "telegramHint": "Get your order updates in Telegram.",
+    "telegramOn": "Connected: updates also arrive in Telegram.",
+    "telegramWaiting": "Tap Start in Telegram to finish.",
+    "telegramConnect": "Connect",
+    "telegramDisconnect": "Disconnect",
+    "telegramOff": "Telegram is not available right now."
   },
   "pages": {
     "aboutTitle": "About GSMLite",

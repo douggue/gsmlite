@@ -425,7 +425,13 @@
     "kyc_needs_more": "Nou bezwen yon nouvo foto pou verifikasyon ou: {reason}",
     "marketing_inactive": "Gen nouvo sèvis ak pri ki bese k ap tann ou sou GSMLite.",
     "marketing_next_phone": "Ou gen yon lòt telefòn pou debloke? Tcheke IMEI li gratis anvan.",
-    "new_device": "Gen yon nouvo koneksyon sou kont ou depi {device} ({ip}). Se pa ou? Chanje modpas ou epi dekonekte tout aparèy yo."
+    "new_device": "Gen yon nouvo koneksyon sou kont ou depi {device} ({ip}). Se pa ou? Chanje modpas ou epi dekonekte tout aparèy yo.",
+    "telegramHint": "Resevwa nouvèl kòmand ou yo sou Telegram.",
+    "telegramOn": "Konekte: nouvèl yo rive sou Telegram tou.",
+    "telegramWaiting": "Peze Start nan Telegram pou fini.",
+    "telegramConnect": "Konekte",
+    "telegramDisconnect": "Dekonekte",
+    "telegramOff": "Telegram pa disponib kounye a."
   },
   "pages": {
     "aboutTitle": "Sou GSMLite",

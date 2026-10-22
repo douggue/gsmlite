@@ -4,7 +4,7 @@ import { getDisplaySettings } from "@/lib/settings";
 import { themeCss, themeScript, cssGuardScript } from "@/lib/theme-css";
 import "../globals.css";
 
-export const metadata: Metadata = { title: { default: "Admin", template: "%s · GSMLite Admin" }, robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: { default: "Admin", template: "%s · GSMLite Admin" }, robots: { index: false, follow: false }, icons: { icon: "/app-icon/48", apple: "/app-icon/180" } };
 
 const sans = IBM_Plex_Sans({ subsets: ["latin", "latin-ext"], weight: ["400", "500", "600", "700"], variable: "--font-body", display: "swap" });
 const display = Bricolage_Grotesque({ subsets: ["latin", "latin-ext"], weight: ["600", "800"], variable: "--font-display-face", display: "optional" });
