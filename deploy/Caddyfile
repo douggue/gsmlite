@@ -1,0 +1,12 @@
+# Automatic HTTPS (Let's Encrypt) for the domain in SITE_DOMAIN; www redirects to the bare domain.
+{$SITE_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy app:3000 {
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Real-IP {remote_host}
+	}
+}
+
+www.{$SITE_DOMAIN} {
+	redir https://{$SITE_DOMAIN}{uri} permanent
+}

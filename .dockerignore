@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+uploads
+tests
+e2e
+docs
+*.log
+.env*
+!.env.example
+tsconfig.tsbuildinfo

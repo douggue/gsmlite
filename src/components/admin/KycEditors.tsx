@@ -1,10 +1,11 @@
 "use client";
+import { locales } from "@/i18n/routing";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { deleteKycRule, saveKycLevel, saveKycRule } from "@/actions/kyc-admin";
 import { withStepUp } from "./ActionButton";
 
-const LANGS = ["en", "ht", "fr", "es"] as const;
+const LANGS = ["en", ...locales.filter((l) => l !== "en")];
 const REQ_TYPES: Record<string, string> = {
   email: "Confirmed email", phone: "Phone number", id_doc: "ID / passport / licence", selfie: "Selfie", video_selfie: "Video selfie",
   address_proof: "Proof of address", business_doc: "Business paper", shop_photo: "Shop photo", receipt: "Phone purchase receipt", upload: "Other upload", question: "Question (text answer)",

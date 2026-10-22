@@ -29,7 +29,7 @@ const PageSchema = z.object({
 });
 export type WrittenPage = z.infer<typeof PageSchema>;
 
-const LANG_NAMES: Record<string, string> = { en: "English", ht: "Haitian Creole (Kreyòl ayisyen, natural everyday spelling)", fr: "French", es: "Spanish" };
+const LANG_NAMES: Record<string, string> = { en: "English", ht: "Haitian Creole (Kreyòl ayisyen, natural everyday spelling)", fr: "French", es: "Spanish", pt: "Brazilian Portuguese", ar: "Modern Standard Arabic (brand names stay in Latin script)" };
 
 const RULES = `You write pages for GSMLite, an online store for phone unlocking, IMEI checks and repair-tool credits.
 Use ONLY the facts given in the request. Never invent prices, delivery times, success rates, supported models, carriers, guarantees, legal claims or customer numbers.

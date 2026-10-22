@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { readLocalPublicFile } from "@/lib/storage";
 
-/** Serves locally stored public images in development. In production images live on Vercel Blob. */
+/** Serves public images stored on the server disk (UPLOAD_DIR on a VPS, or development). On Vercel they live on Blob. */
 export async function GET(_req: Request, { params }: { params: Promise<{ path: string[] }> }) {
   const { path } = await params;
   try {

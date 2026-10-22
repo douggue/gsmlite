@@ -13,6 +13,8 @@ export const MARKETS: Record<string, { location: number; language: string; count
   en: { location: 2840, language: "en", country: "US" },
   fr: { location: 2250, language: "fr", country: "FR" },
   es: { location: 2484, language: "es", country: "MX" },
+  pt: { location: 2076, language: "pt", country: "BR" },
+  ar: { location: 2682, language: "ar", country: "SA" },
 };
 
 type Item = {

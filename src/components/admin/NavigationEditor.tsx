@@ -1,10 +1,11 @@
 "use client";
+import { locales } from "@/i18n/routing";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { saveNavigation } from "@/actions/site";
 import type { NavLink } from "@/lib/settings";
 
-const LOCALES = ["ht", "fr", "en", "es"] as const;
+const LOCALES = locales;
 const DEFAULT_HEADER: NavLink[] = [
   { label: { ht: "Boutik", fr: "Boutique", en: "Store", es: "Tienda" }, href: "/store" },
   { label: { ht: "Kategori", fr: "Catégories", en: "Categories", es: "Categorías" }, href: "/categories" },

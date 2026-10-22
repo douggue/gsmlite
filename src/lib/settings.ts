@@ -1,3 +1,4 @@
+import { locales } from "@/i18n/routing";
 import { cache } from "react";
 import { revalidateTag, unstable_cache } from "next/cache";
 import { prisma } from "./db";
@@ -250,7 +251,7 @@ export const DEFAULT_SETTINGS: Settings = {
   appIconVersion: 0,
   maintenance: { on: false, message: {} },
   legal: { entity: "", registration: "", taxId: "", email: "", refundDays: 7 },
-  languages: ["ht", "fr", "en", "es"],
+  languages: [...locales],
   adminIpAllowlist: [],
   contentMachine: { onNewService: true, hubs: true, toolPosts: true, guides: true, refresh: true, perDay: 3, languages: ["en", "ht", "fr", "es"], budgetUsd: 20, model: "claude-opus-5-5", tone: "Clear, friendly and precise, for phone repair technicians and phone owners. Short sentences. No hype." },
   gsc: { site: "", refreshToken: "" },

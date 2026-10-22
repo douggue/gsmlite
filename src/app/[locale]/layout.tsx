@@ -3,7 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { routing } from "@/i18n/routing";
+import { routing, rtlLocales } from "@/i18n/routing";
 import { getDisplaySettings } from "@/lib/settings";
 import { getDisplayCurrency } from "@/lib/prefs";
 import { CartProvider } from "@/components/cart/CartProvider";
@@ -74,7 +74,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   const [methods, cats] = await Promise.all([payMethodsFor(country, "orders", locale), getCategories({ country, signedIn: !!user })]);
 
   return (
-    <html lang={locale} suppressHydrationWarning className={`${sans.variable} ${display.variable}${dataSaver ? " data-saver" : ""}${dark ? " dark" : ""}`} {...themeAttrs(settings.theme)}>
+    <html lang={locale} dir={rtlLocales.includes(locale) ? "rtl" : "ltr"} suppressHydrationWarning className={`${sans.variable} ${display.variable}${dataSaver ? " data-saver" : ""}${dark ? " dark" : ""}`} {...themeAttrs(settings.theme)}>
       <head>
         {/* Applies light/dark before paint to avoid a flash */}
         <script dangerouslySetInnerHTML={{ __html: themeScript(fullTheme(settings.theme).defaultMode) }} />

@@ -1,4 +1,5 @@
 "use server";
+import { locales } from "@/i18n/routing";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
@@ -15,7 +16,7 @@ export async function setCurrency(currency: "HTG" | "USD") {
 
 /** Remembers the language the visitor picked (the cookie is what "/" and the MonCash return use). */
 export async function saveLocalePreference(locale: string) {
-  if (!["ht", "fr", "en", "es"].includes(locale)) return;
+  if (!(locales as readonly string[]).includes(locale)) return;
   (await cookies()).set("NEXT_LOCALE", locale, { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" });
   const user = await getUser();
   if (user) await prisma.user.update({ where: { id: user.id }, data: { locale } });

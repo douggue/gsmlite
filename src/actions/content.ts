@@ -1,4 +1,5 @@
 "use server";
+import { locales } from "@/i18n/routing";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
@@ -12,7 +13,7 @@ import { announceToolUpdate } from "@/lib/marketing";
 
 type R = { ok: true; message?: string } | { ok: false; error: string };
 const fail = (e: unknown): R => ({ ok: false, error: e instanceof Error ? e.message : "Unexpected error" });
-const LOCALES = ["ht", "fr", "en", "es"] as const;
+const LOCALES = locales;
 const localized = (form: FormData, prefix: string, max = 300) =>
   Object.fromEntries(LOCALES.map((l) => [l, String(form.get(`${prefix}_${l}`) ?? "").trim().slice(0, max)]));
 
@@ -111,7 +112,7 @@ export async function saveRedirect(form: FormData): Promise<R> {
   try {
     const staff = await assertStaff("seo.manage");
     let from = String(form.get("from") ?? "").trim().replace(/\/+$/, "") || "/";
-    from = from.replace(/^\/(ht|fr|en|es)(?=\/|$)/, "") || "/";
+    from = from.replace(new RegExp(`^/(${locales.join("|")})(?=/|$)`), "") || "/";
     const to = String(form.get("to") ?? "").trim();
     if (!pathRe.test(from) || from === "/") return { ok: false, error: "From must be a path like /old-page" };
     if (!pathRe.test(to) && !/^https:\/\//.test(to)) return { ok: false, error: "To must be a path like /store or an https:// address" };
@@ -186,7 +187,7 @@ export async function saveTheme(input: ThemeConfig): Promise<R> {
     if (contrastRatio(theme.navy, "#FFFFFF") < 7) return { ok: false, error: "Dark cards must stay dark enough for white text (7:1)." };
     if (contrastRatio(theme.lightBg, "#111418") < 10) return { ok: false, error: "Light background is too dark for dark text. Pick a lighter color." };
     const marquee: Record<string, string> = {};
-    for (const l of ["ht", "fr", "en", "es"]) marquee[l] = String(theme.marquee[l] ?? "").replace(/[<>]/g, "").slice(0, 300);
+    for (const l of locales) marquee[l] = String(theme.marquee[l] ?? "").replace(/[<>]/g, "").slice(0, 300);
     const clean: ThemeConfig = {
       primary: theme.primary.toUpperCase(),
       primaryDark: theme.primaryDark.toUpperCase(),

@@ -1,11 +1,12 @@
 "use client";
+import { locales } from "@/i18n/routing";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { FIELD_TYPES, FORM_TEMPLATES, formProblem, type FieldDef, type FieldType } from "@/lib/order-form";
 import { saveProductForm } from "@/actions/forms";
 import { OrderFields } from "@/components/shop/OrderFields";
 
-const LANGS = ["en", "ht", "fr", "es"] as const;
+const LANGS = ["en", ...locales.filter((l) => l !== "en")];
 const PREVIEW_TEXT = { choose: "Choose…", addFile: "Tap to add a photo", uploading: "Sending…", uploadFailed: "", fileTooBig: "", signinToUpload: "Tap to add a photo", yes: "Yes" };
 const WITH_CHOICES: FieldType[] = ["select", "radio", "model"];
 const WITH_RULES: FieldType[] = ["text", "remoteId", "number", "textarea"];

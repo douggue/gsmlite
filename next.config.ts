@@ -35,6 +35,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Server (Docker) builds: a self-contained server in .next/standalone. Vercel ignores this.
+  ...(process.env.NEXT_OUTPUT === "standalone" ? { output: "standalone" as const } : {}),
   // Images (5 MB) and payment screenshots (3 MB) are sent through server actions; the default limit is 1 MB.
   experimental: { serverActions: { bodySizeLimit: "6mb" } },
   images: {

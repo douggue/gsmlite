@@ -1,3 +1,4 @@
+import { locales } from "@/i18n/routing";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { requireStaff } from "@/lib/session";
@@ -166,7 +167,7 @@ export default async function ContentMachine({ searchParams }: { searchParams: P
             </div>
             <fieldset>
               <legend className="label">Languages</legend>
-              <div className="flex flex-wrap gap-4 text-sm">{["en", "ht", "fr", "es"].map((l) => <label key={l} className="flex items-center gap-2"><input type="checkbox" name={`lang_${l}`} defaultChecked={cm.languages.includes(l)} /> {l.toUpperCase()}</label>)}</div>
+              <div className="flex flex-wrap gap-4 text-sm">{locales.map((l) => <label key={l} className="flex items-center gap-2"><input type="checkbox" name={`lang_${l}`} defaultChecked={cm.languages.includes(l)} /> {l.toUpperCase()}</label>)}</div>
             </fieldset>
             <label className="block"><span className="label">Model</span>
               <select name="model" defaultValue={cm.model} className="input">{WRITER_MODELS.map((m) => <option key={m} value={m}>{m}</option>)}</select>

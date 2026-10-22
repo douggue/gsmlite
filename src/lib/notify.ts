@@ -3,6 +3,8 @@ import ht from "@/messages/ht.json";
 import fr from "@/messages/fr.json";
 import en from "@/messages/en.json";
 import es from "@/messages/es.json";
+import pt from "@/messages/pt.json";
+import ar from "@/messages/ar.json";
 import { prisma, type Tx } from "./db";
 import { emailEnabled, sendEmail } from "./email";
 import { formatMoney } from "./money";
@@ -25,7 +27,7 @@ export type NotificationType =
   | "marketing_next_phone"
   | "new_device";
 
-const CATALOGS: Record<string, { notifications: Record<string, string> }> = { ht, fr, en, es };
+const CATALOGS: Record<string, { notifications: Record<string, string> }> = { ht, fr, en, es, pt, ar };
 
 function render(type: string, params: Record<string, string | number>, locale: string) {
   const template = (CATALOGS[locale] ?? ht).notifications[type] ?? ht.notifications[type as keyof typeof ht.notifications] ?? type;

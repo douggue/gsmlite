@@ -1,4 +1,5 @@
 "use client";
+import { locales } from "@/i18n/routing";
 import { LoginIcon, UserPlusIcon } from "./Icons";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
@@ -91,7 +92,7 @@ export function AuthForm({ mode: firstMode, google = false }: { mode: "login" | 
 
   function goNext() {
     const safeNext = next && next.startsWith("/") && !next.startsWith("//") ? next : "/account";
-    router.push(safeNext.replace(/^\/(ht|fr|en|es)(?=\/|$)/, "") || "/account");
+    router.push(safeNext.replace(new RegExp(`^/(${locales.join("|")})(?=/|$)`), "") || "/account");
     router.refresh();
   }
 

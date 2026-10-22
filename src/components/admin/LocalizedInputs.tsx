@@ -1,9 +1,5 @@
-const LOCALES = [
-  ["ht", "Kreyòl"],
-  ["fr", "Français"],
-  ["en", "English"],
-  ["es", "Español"],
-] as const;
+import { localeNames, locales } from "@/i18n/routing";
+const LOCALES = locales.map((l) => [l, localeNames[l]] as const);
 
 /** Four inputs (one per language) named `${prefix}_${locale}`. */
 export function LocalizedInputs({ prefix, label, value = {}, textarea = false, required = false }: { prefix: string; label: string; value?: Record<string, string>; textarea?: boolean; required?: boolean }) {

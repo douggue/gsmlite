@@ -2,7 +2,7 @@ import type { Locale } from "@/i18n/routing";
 
 /**
  * Small round flags for the language picker. Drawn as SVG so they look the same everywhere
- * (Windows does not draw flag emoji). Kreyòl → Haiti (real flag file in /public/flags), Français → France, English → USA, Español → Spain.
+ * (Windows does not draw flag emoji). Kreyòl → Haiti (real flag file in /public/flags), Français → France, English → USA, Español → Spain, Português → Brazil, العربية → the letter ع.
  */
 export function Flag({ locale, size = 22, className = "" }: { locale: Locale; size?: number; className?: string }) {
   // Haiti: the real flag with the coat of arms (flag-icons, MIT), zoomed a little so the arms show in the small circle.
@@ -55,6 +55,22 @@ const FLAGS: Record<Locale, React.ReactNode> = {
     <>
       <rect width="24" height="24" fill="#AA151B" />
       <rect y="6" width="24" height="12" fill="#F1BF00" />
+    </>
+  ),
+  // Português → Brazil
+  pt: (
+    <>
+      <rect width="24" height="24" fill="#009C3B" />
+      <path d="M12 4.5 21 12l-9 7.5L3 12z" fill="#FFDF00" />
+      <circle cx="12" cy="12" r="4.2" fill="#002776" />
+      <path d="M8 11.2c2.6-.6 5.4-.2 8 1.2" stroke="#fff" strokeWidth="0.8" fill="none" />
+    </>
+  ),
+  // العربية: no single country, so the letter ع on green
+  ar: (
+    <>
+      <rect width="24" height="24" fill="#0B7A43" />
+      <text x="12" y="16.5" textAnchor="middle" fontSize="13" fontWeight="700" fill="#fff" fontFamily="Arial, sans-serif">ع</text>
     </>
   ),
 };

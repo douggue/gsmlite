@@ -2,6 +2,8 @@ import en from "@/messages/en.json";
 import ht from "@/messages/ht.json";
 import fr from "@/messages/fr.json";
 import es from "@/messages/es.json";
+import pt from "@/messages/pt.json";
+import ar from "@/messages/ar.json";
 import { prisma } from "@/lib/db";
 import { requireStaff } from "@/lib/session";
 import { TranslationEditor } from "@/components/admin/TranslationEditor";
@@ -18,10 +20,10 @@ function flatten(obj: unknown, prefix = "", out: Record<string, string> = {}) {
 
 export default async function TranslationsPage() {
   await requireStaff("content.manage");
-  const base = { en: flatten(en), ht: flatten(ht), fr: flatten(fr), es: flatten(es) };
+  const base = { en: flatten(en), ht: flatten(ht), fr: flatten(fr), es: flatten(es), pt: flatten(pt), ar: flatten(ar) };
   const overrides = await prisma.translationOverride.findMany();
   const keys = Object.keys(base.en).sort();
-  const coverage = (["ht", "fr", "es"] as const).map((l) => ({ l, missing: keys.filter((k) => !base[l][k]).length }));
+  const coverage = (["ht", "fr", "es", "pt", "ar"] as const).map((l) => ({ l, missing: keys.filter((k) => !base[l][k]).length }));
   return (
     <>
       <PageTitle title="Translations" sub={`Change any interface wording without a developer. ${keys.length} texts. Clearing a box restores the standard wording.`} />

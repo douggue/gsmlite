@@ -1,4 +1,5 @@
 "use server";
+import { locales } from "@/i18n/routing";
 import { parseCountryRule } from "@/lib/countries";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { Prisma } from "@prisma/client";
@@ -12,7 +13,7 @@ import { randomToken } from "@/lib/crypto";
 
 type R = { ok: true; message?: string; id?: string } | { ok: false; error: string };
 const fail = (e: unknown): R => ({ ok: false, error: e instanceof Error ? e.message : "Unexpected error" });
-const LOCALES = ["ht", "fr", "en", "es"];
+const LOCALES: string[] = [...locales];
 const cleanL = (v: unknown, max = 200) => Object.fromEntries(LOCALES.map((l) => [l, String((v as Record<string, string>)?.[l] ?? "").trim().slice(0, max)]));
 
 // ───────────── Custom pages ─────────────

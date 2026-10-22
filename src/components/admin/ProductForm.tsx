@@ -1,4 +1,5 @@
 "use client";
+import { locales } from "@/i18n/routing";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -18,7 +19,7 @@ type P = {
   cardTitle: Record<string, string>; cardTag: Record<string, string>; cardStyle: string;
 };
 
-const LANGS = ["en", "ht", "fr", "es"] as const;
+const LANGS = ["en", ...locales.filter((l) => l !== "en")];
 
 /** Service editor (mockup "Edit service"): details on the left; image, what shows on the site and where it's sold on the right. */
 export function ProductForm({ product, categories, kycLevels = [], fieldsSummary = [] }: {

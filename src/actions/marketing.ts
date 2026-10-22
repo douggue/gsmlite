@@ -1,4 +1,5 @@
 "use server";
+import { locales } from "@/i18n/routing";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { assertStaff } from "@/lib/session";
@@ -13,7 +14,7 @@ import { importTacCsv } from "@/lib/free-check";
 
 type R = { ok: true; message?: string } | { ok: false; error: string };
 const fail = (e: unknown): R => ({ ok: false, error: e instanceof Error ? e.message : "Unexpected error" });
-const LANGS = ["ht", "fr", "en", "es"];
+const LANGS: string[] = [...locales];
 const loc = (form: FormData, p: string) => Object.fromEntries(LANGS.map((l) => [l, String(form.get(`${p}_${l}`) ?? "").trim().slice(0, 300)]).filter(([, v]) => v));
 const date = (v: FormDataEntryValue | null) => (v && String(v) ? new Date(String(v)) : null);
 

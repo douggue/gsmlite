@@ -1,4 +1,5 @@
 "use server";
+import { locales } from "@/i18n/routing";
 import { siteUrl } from "@/lib/site-url";
 import { revalidatePath } from "next/cache";
 import { Prisma, type FulfillmentType, type Role, type ServiceType } from "@prisma/client";
@@ -464,7 +465,7 @@ export async function saveSettings(form: FormData): Promise<R> {
     const code = str("defaultCountry").toUpperCase();
     if (code && !COUNTRY_CODES.includes(code)) return { ok: false, error: "Default country must be a 2-letter code such as HT" };
     next.defaultCountry = code || "HT";
-    const langs = ["ht", "fr", "en", "es"].filter((l) => form.get(`lang_${l}`) === "on");
+    const langs = [...locales].filter((l) => form.get(`lang_${l}`) === "on");
     if (!langs.length) return { ok: false, error: "Keep at least one language on" };
     next.languages = langs;
     next.telegramUrl = str("telegramUrl");

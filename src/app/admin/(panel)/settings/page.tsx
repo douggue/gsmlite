@@ -1,3 +1,4 @@
+import { localeNames, locales } from "@/i18n/routing";
 import Link from "next/link";
 import { requireStaff } from "@/lib/session";
 import { getSettings } from "@/lib/settings";
@@ -13,7 +14,7 @@ import { ImageField } from "@/components/admin/ImageField";
 export const metadata = { title: "Settings" };
 
 const m = (n: number) => (n / 100).toFixed(2);
-const LANGS = [["ht", "Kreyòl"], ["fr", "Français"], ["en", "English"], ["es", "Español"]] as const;
+const LANGS = locales.map((l) => [l, localeNames[l]] as const);
 
 const SECTIONS = [
   ["brand", "Brand & icons"],

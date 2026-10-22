@@ -1,4 +1,5 @@
 "use server";
+import { locales } from "@/i18n/routing";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { CURRENCY_COOKIE } from "@/lib/prefs";
@@ -11,7 +12,7 @@ import { normalizePhone } from "@/lib/phone";
 const profile = z.object({
   name: z.string().trim().min(1).max(80),
   phone: z.string().trim().max(30).optional(),
-  locale: z.enum(["ht", "fr", "en", "es"]),
+  locale: z.enum(locales),
   displayCurrency: z.enum(["HTG", "USD"]),
 });
 

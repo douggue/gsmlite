@@ -1,4 +1,5 @@
 "use server";
+import { locales } from "@/i18n/routing";
 import { revalidatePath } from "next/cache";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
@@ -104,7 +105,7 @@ export async function saveMachine(form: FormData): Promise<R> {
   try {
     const staff = await assertStaff("settings.manage");
     const s = await getSettings();
-    const langs = ["en", "ht", "fr", "es"].filter((l) => form.get(`lang_${l}`) === "on");
+    const langs = [...locales].filter((l) => form.get(`lang_${l}`) === "on");
     if (!langs.length) return { ok: false, error: "Pick at least one language" };
     const model = String(form.get("model") ?? "");
     await setSetting("contentMachine", {

@@ -1,11 +1,12 @@
 "use client";
+import { localeNames, locales } from "@/i18n/routing";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { deletePage, savePage } from "@/actions/site";
 import { BLOCK_LABELS, type PageBlock } from "@/lib/pages";
 import { ImageField } from "./ImageField";
 
-const LOCALES = [["ht", "Kreyòl"], ["fr", "Français"], ["en", "English"], ["es", "Español"]] as const;
+const LOCALES = locales.map((l) => [l, localeNames[l]] as const);
 type L = Record<string, string>;
 type PageData = { id?: string; slug: string; title: L; description: L; blocks: PageBlock[]; isPublished: boolean; showInFooter: boolean };
 

@@ -1,9 +1,10 @@
 "use client";
+import { locales } from "@/i18n/routing";
 import { useState } from "react";
 import { ProductArt } from "../ProductArt";
 import { ImageField } from "./ImageField";
 
-const LANGS = ["en", "ht", "fr", "es"] as const;
+const LANGS = ["en", ...locales.filter((l) => l !== "en")];
 
 /** Product image (mockup): the generated card art with its title, ribbon and color, or an uploaded image instead. */
 export function CardArtEditor({ name, category, title: t0, tag: g0, style: s0, image }: { name: string; category: string; title: Record<string, string>; tag: Record<string, string>; style: string; image: string | null }) {

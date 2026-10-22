@@ -69,8 +69,8 @@ export async function sendEmailResult(msg: { to: string; subject: string; html: 
   }
 }
 
-type L = "ht" | "fr" | "en" | "es";
-const lang = (l?: string | null): L => (l === "fr" || l === "en" || l === "es" ? l : "ht");
+type L = "ht" | "fr" | "en" | "es" | "pt" | "ar";
+const lang = (l?: string | null): L => (l === "fr" || l === "en" || l === "es" || l === "pt" || l === "ar" ? l : "ht");
 
 const COPY = {
   reset: {
@@ -78,12 +78,16 @@ const COPY = {
     fr: { subject: "Réinitialisez votre mot de passe GSMLite", body: "Nous avons reçu une demande de réinitialisation de votre mot de passe. Cliquez sur le bouton pour en choisir un nouveau. Le lien est valable 1 heure.", cta: "Réinitialiser mon mot de passe", ignore: "Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail." },
     en: { subject: "Reset your GSMLite password", body: "We received a request to reset your password. Click the button to choose a new one. The link is valid for 1 hour.", cta: "Reset my password", ignore: "If you didn't ask for this, you can ignore this email." },
     es: { subject: "Restablece tu contraseña de GSMLite", body: "Recibimos una solicitud para restablecer tu contraseña. Haz clic en el botón para elegir una nueva. El enlace es válido por 1 hora.", cta: "Restablecer mi contraseña", ignore: "Si no lo solicitaste, puedes ignorar este correo." },
+    pt: { subject: "Redefina sua senha da GSMLite", body: "Recebemos um pedido para redefinir sua senha. Clique no botão para escolher uma nova. O link vale por 1 hora.", cta: "Redefinir minha senha", ignore: "Se não foi você que pediu, pode ignorar este e-mail." },
+    ar: { subject: "إعادة تعيين كلمة مرور GSMLite", body: "تلقينا طلبًا لإعادة تعيين كلمة المرور. اضغط على الزر لاختيار كلمة مرور جديدة. الرابط صالح لمدة ساعة واحدة.", cta: "إعادة تعيين كلمة المرور", ignore: "إذا لم تطلب ذلك، يمكنك تجاهل هذه الرسالة." },
   },
   verify: {
     ht: { subject: "Konfime imèl ou pou GSMLite", body: "Klike sou bouton an pou konfime adrès imèl ou.", cta: "Konfime imèl mwen", ignore: "Si ou pa t kreye kont sa a, ou pa bezwen fè anyen." },
     fr: { subject: "Confirmez votre e-mail GSMLite", body: "Cliquez sur le bouton pour confirmer votre adresse e-mail.", cta: "Confirmer mon e-mail", ignore: "Si vous n'avez pas créé ce compte, ignorez cet e-mail." },
     en: { subject: "Confirm your GSMLite email", body: "Click the button to confirm your email address.", cta: "Confirm my email", ignore: "If you didn't create this account, you can ignore this email." },
     es: { subject: "Confirma tu correo de GSMLite", body: "Haz clic en el botón para confirmar tu correo.", cta: "Confirmar mi correo", ignore: "Si no creaste esta cuenta, puedes ignorar este correo." },
+    pt: { subject: "Confirme seu e-mail da GSMLite", body: "Clique no botão para confirmar seu endereço de e-mail.", cta: "Confirmar meu e-mail", ignore: "Se você não criou esta conta, pode ignorar este e-mail." },
+    ar: { subject: "تأكيد بريدك الإلكتروني في GSMLite", body: "اضغط على الزر لتأكيد عنوان بريدك الإلكتروني.", cta: "تأكيد بريدي الإلكتروني", ignore: "إذا لم تنشئ هذا الحساب، يمكنك تجاهل هذه الرسالة." },
   },
 } as const;
 

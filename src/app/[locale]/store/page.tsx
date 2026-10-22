@@ -1,3 +1,4 @@
+import { locales } from "@/i18n/routing";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getCategories, minPrice, searchProducts } from "@/lib/catalog";
@@ -7,7 +8,7 @@ import { StoreBrowser, type StoreCategory, type StoreProduct } from "@/component
 
 type SP = Promise<{ q?: string; category?: string; sort?: string; tag?: string; min?: string; max?: string }>;
 
-const LOCALES = ["ht", "fr", "en", "es"] as const;
+const LOCALES = locales;
 const allNames = (v: unknown) => LOCALES.map((l) => t(v, l)).filter(Boolean);
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {

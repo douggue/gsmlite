@@ -1,0 +1,79 @@
+# GSMLite on one server: Postgres + the site + Caddy (HTTPS) + scheduled jobs + nightly backups.
+# Usage (on the server, in this folder): cp ../.env.example .env, fill it in, then:  docker compose up -d --build
+name: gsmlite
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: gsmlite
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: gsmlite
+    volumes:
+      - db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gsmlite"]
+      interval: 10s
+      retries: 10
+
+  migrate:
+    build: { context: .., target: migrate }
+    env_file: .env
+    environment: &dburl
+      DATABASE_URL: postgresql://gsmlite:${POSTGRES_PASSWORD}@db:5432/gsmlite
+      DATABASE_URL_UNPOOLED: postgresql://gsmlite:${POSTGRES_PASSWORD}@db:5432/gsmlite
+    depends_on:
+      db: { condition: service_healthy }
+    restart: "no"
+
+  app:
+    build: { context: .., target: app }
+    restart: unless-stopped
+    env_file: .env
+    environment: *dburl
+    volumes:
+      - uploads:/data/uploads
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443", "443:443/udp"]
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?set SITE_DOMAIN in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [app]
+
+  # Scheduled jobs: calls the site's cron endpoints with CRON_SECRET (same jobs Vercel Cron runs).
+  cron:
+    image: alpine:3.20
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./cron.sh:/cron.sh:ro
+    entrypoint: ["sh", "/cron.sh"]
+    depends_on: [app]
+
+  # Nightly database dump + uploads archive, kept 14 days in ./backups (copy them off the server too).
+  backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./backups:/backups
+      - uploads:/uploads:ro
+      - ./backup.sh:/backup.sh:ro
+    entrypoint: ["sh", "-c", "echo '15 3 * * * sh /backup.sh' > /etc/crontabs/root && crond -f -l 8"]
+    depends_on: [db]
+
+volumes:
+  db:
+  uploads:
+  caddy_data:
+  caddy_config:
