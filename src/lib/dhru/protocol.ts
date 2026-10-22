@@ -15,7 +15,15 @@ export const DHRU_ACTIONS = [
   "placeimeiorderbulk",
   "getimeiorder",
   "getimeiorderbulk",
+  "modellist",
+  "providerlist",
+  "fileservicelist",
+  "placefileorder",
+  "getfileorder",
 ] as const;
+
+/** File services share the supplier's ID space with IMEI services, so we keep them apart with this prefix. */
+export const FILE_ID_PREFIX = "F";
 export type DhruAction = (typeof DHRU_ACTIONS)[number];
 
 export type DhruParams = Record<string, string | number | undefined>;
@@ -237,7 +245,7 @@ function fieldType(v: unknown): SupplierField["type"] {
 const isRequired = (v: unknown) => ["1", "on", "true", "required", "yes"].includes(String(v ?? "").toLowerCase());
 
 /** Flatten the service list (LIST → groups → SERVICES) into one array. Unknown shapes are skipped, not fatal. */
-export function parseServiceList(reply: DhruReply): ParsedService[] {
+export function parseServiceList(reply: DhruReply, forceType?: "FILE"): ParsedService[] {
   const s = first(reply, "SUCCESS");
   const list = pick(s, "LIST") as Record<string, unknown> | undefined;
   if (!list || typeof list !== "object") return [];
@@ -253,7 +261,7 @@ export function parseServiceList(reply: DhruReply): ParsedService[] {
       const sv = raw as Record<string, unknown>;
       const id = pick(sv, "SERVICEID");
       if (id === undefined || id === null || id === "") continue;
-      const type = serviceType(pick(sv, "SERVICETYPE") ?? pick(sv, "SERVER"), pick(group, "GROUPTYPE"));
+      const type = forceType ?? serviceType(pick(sv, "SERVICETYPE") ?? pick(sv, "SERVER"), pick(group, "GROUPTYPE"));
       const fields: SupplierField[] = [];
       for (const [label, param] of Object.entries(STANDARD_PARAMS)) {
         const flag = pick(sv, `Requires.${label}`);
@@ -283,7 +291,7 @@ export function parseServiceList(reply: DhruReply): ParsedService[] {
       const minQ = Number(pick(sv, "MINQNT")) || 1;
       const maxQ = Number(pick(sv, "MAXQNT")) || 0;
       out.push({
-        remoteId: String(id),
+        remoteId: forceType === "FILE" ? `${FILE_ID_PREFIX}${id}` : String(id),
         groupName,
         name: String(pick(sv, "SERVICENAME") ?? `Service ${id}`).trim(),
         type,
@@ -354,4 +362,34 @@ export function resultText(html: string): string {
  */
 export function isAccountProblem(message: string): boolean {
   return /credit|balance|fund|insufficient|auth|api ?(access )?key|access key|username|ip\b|ip address|unauthori[sz]ed|maintenance|too many|rate limit|frequent|suspend|blocked/i.test(message);
+}
+
+/**
+ * modellist / providerlist reply → [{ value, label }]. Kits differ: a LIST of { ID, NAME } objects (sometimes grouped
+ * by brand), or a plain { id: name } map. Unknown shapes give an empty list.
+ */
+export function parseChoiceList(reply: DhruReply): { value: string; label: string }[] {
+  const s = first(reply, "SUCCESS");
+  const list = (pick(s, "LIST") ?? s) as unknown;
+  const out: { value: string; label: string }[] = [];
+  const walk = (node: unknown, prefix: string, depth: number) => {
+    if (!node || typeof node !== "object" || depth > 3 || out.length >= 3000) return;
+    for (const [k, v] of Object.entries(node as Record<string, unknown>)) {
+      if (v && typeof v === "object") {
+        const o = v as Record<string, unknown>;
+        const id = pick(o, "ID", "MODELID", "PROVIDERID");
+        const name = pick(o, "NAME", "MODEL", "PROVIDER", "MODELNAME", "PROVIDERNAME");
+        if (id != null && name != null) out.push({ value: String(id), label: `${prefix}${String(name)}`.trim().slice(0, 120) });
+        else {
+          // Brand groups add their name; numeric keys and containers such as "MODELS" do not.
+          const group = String(pick(o, "BRAND", "GROUPNAME") ?? (/^(\d+|[A-Z_]+)$/.test(k) ? "" : k));
+          walk(v, group ? `${group} ` : prefix, depth + 1);
+        }
+      } else if (typeof v === "string" && /^[\w-]+$/.test(k) && !["MESSAGE", "BRAND", "NAME", "GROUPNAME", "ID"].includes(k.toUpperCase())) {
+        out.push({ value: k, label: `${prefix}${v}`.trim().slice(0, 120) });
+      }
+    }
+  };
+  walk(list, "", 0);
+  return out;
 }

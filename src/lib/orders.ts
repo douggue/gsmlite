@@ -1,7 +1,7 @@
 import { Prisma, type Currency, type OrderStatus, type PaymentMethodKind } from "@prisma/client";
 import { z } from "zod";
 import { prisma, type Tx } from "./db";
-import { decrypt, randomToken } from "./crypto";
+import { decrypt, encrypt, randomToken } from "./crypto";
 import { priceIn } from "./money";
 import { getSettings } from "./settings";
 import { chargeOrder, refundItemToWallet } from "./wallet";
@@ -17,17 +17,8 @@ import { maybeRewardReferral } from "./referrals";
 import { parseIdentifiers, type IdentifierFormat } from "./imei";
 import { priceContext, unitPriceUsd } from "./pricing";
 
-export type FieldDef = {
-  key: string;
-  label: Record<string, string>;
-  type: "text" | "email" | "number" | "tel" | "textarea" | "select";
-  required: boolean;
-  placeholder?: string;
-  /** select: the choices */
-  options?: string[];
-  /** Name of this input on the supplier's side (Dhru CUSTOMFIELD key). Empty = same as the label in English. */
-  supplierName?: string;
-};
+import { fieldProblem, isVisible, normalizeValue, NO_VALUE, SECRET_TYPES, type FieldDef } from "./order-form";
+export type { FieldDef } from "./order-form";
 
 /** Most identifiers one order can carry (each one is its own order line). */
 export const MAX_IDENTIFIERS = 100;
@@ -49,18 +40,22 @@ export class OrderError extends Error {
   }
 }
 
+/**
+ * Check the customer's answers against the service's form. Hidden (condition not met) fields are dropped,
+ * passwords are encrypted before they are stored, and unknown keys are dropped (data minimization).
+ */
 export function validateFields(defs: FieldDef[], values: Record<string, string>) {
   const clean: Record<string, string> = {};
+  const raw = Object.fromEntries(Object.entries(values ?? {}).map(([k, v]) => [k, String(v ?? "")]));
   for (const d of defs) {
-    const v = (values[d.key] ?? "").trim();
-    if (d.required && !v) throw new OrderError("missing_field", t(d.label, "en") || d.key);
-    if (v && d.type === "email" && !z.string().email().safeParse(v).success) throw new OrderError("invalid_field", d.key);
-    if (v && d.type === "number" && !/^\d+$/.test(v)) throw new OrderError("invalid_field", d.key);
-    if (v && d.type === "select" && d.options?.length && !d.options.includes(v)) throw new OrderError("invalid_field", d.key);
-    if (v.length > (d.type === "textarea" ? 1000 : 200)) throw new OrderError("invalid_field", d.key);
-    if (v) clean[d.key] = v;
+    if (NO_VALUE.includes(d.type) || !isVisible(d, raw)) continue;
+    const v = normalizeValue(d, raw[d.key] ?? "");
+    const problem = fieldProblem(d, v);
+    if (problem === "missing" || problem === "confirm") throw new OrderError("missing_field", t(d.label, "en") || d.key);
+    if (problem) throw new OrderError("invalid_field", d.key);
+    if (v) clean[d.key] = SECRET_TYPES.includes(d.type) ? `enc:${encrypt(v)}` : v;
   }
-  return clean; // unknown keys are dropped (data minimization)
+  return clean;
 }
 
 export async function addEvent(tx: Tx, orderId: string, status: OrderStatus, note?: string, actorId?: string | null) {
@@ -94,7 +89,13 @@ export async function buildLines(userId: string, items: CartItemInput[], currenc
     const v = variants.find((x) => x.id === item.variantId);
     if (!v || v.soldOut) throw new OrderError("unavailable");
     if (country !== undefined && !allowedIn(v.product, country)) throw new OrderError("not_in_country");
-    const fieldValues = validateFields(v.product.fields as FieldDef[], item.fields);
+    const defs = v.product.fields as FieldDef[];
+    const fieldValues = validateFields(defs, item.fields);
+    // Uploaded files must be the customer's own, not yet used by another order
+    for (const d of defs) {
+      const id = d.type === "file" ? fieldValues[d.key] : undefined;
+      if (id && !(await prisma.orderFile.findFirst({ where: { id, userId, orderItemId: null } }))) throw new OrderError("invalid_field", d.key);
+    }
     const unitUsd = unitPriceUsd(v, ctx);
     const base = {
       variantId: v.id,
@@ -203,6 +204,7 @@ export async function createOrder(input: {
       },
     });
     await addEvent(tx, created.id, "AWAITING_PAYMENT", `Payment method: ${input.method}`);
+    await linkOrderFiles(tx, created.id, input.userId);
 
     if (totalHtg >= settings.reviewOrderThresholdHtg) {
       await flag(tx, "High-value order: review before release", { userId: input.userId, orderId: created.id });
@@ -373,4 +375,49 @@ export function itemTitle(item: { productName: unknown; variantName: unknown }, 
   const p = t(item.productName, locale);
   const v = t(item.variantName, locale);
   return v && v !== p ? `${p} — ${v}` : p;
+}
+
+/** Files picked in the order form now belong to the order's first line that names them. */
+async function linkOrderFiles(tx: Tx, orderId: string, userId: string) {
+  const items = await tx.orderItem.findMany({ where: { orderId }, select: { id: true, fieldValues: true }, orderBy: { id: "asc" } });
+  for (const i of items) {
+    const ids = Object.values((i.fieldValues ?? {}) as Record<string, string>).filter((v) => /^c[a-z0-9]{20,30}$/.test(v));
+    if (ids.length) await tx.orderFile.updateMany({ where: { id: { in: ids }, userId, orderItemId: null }, data: { orderItemId: i.id } });
+  }
+}
+
+/**
+ * Remove "hidden after done" answers (passwords, remote IDs, files) from finished lines and canceled orders.
+ * Run by the maintenance cron.
+ */
+export async function scrubFinishedFields(limit = 300) {
+  const { deletePrivateFile } = await import("./storage");
+  const items = await prisma.orderItem.findMany({
+    where: { fieldsScrubbedAt: null, OR: [{ finishedAt: { not: null } }, { order: { status: { in: ["CANCELED", "REFUNDED"] } } }] },
+    select: { id: true, fieldValues: true, variant: { select: { product: { select: { fields: true } } } } },
+    take: limit,
+  });
+  for (const i of items) {
+    const defs = (i.variant.product.fields ?? []) as FieldDef[];
+    const values = { ...((i.fieldValues ?? {}) as Record<string, string>) };
+    for (const d of defs) {
+      if (!d.hideAfterDone || !(d.key in values)) continue;
+      if (d.type === "file") {
+        const f = await prisma.orderFile.findFirst({ where: { id: values[d.key], deletedAt: null } });
+        if (f) {
+          await deletePrivateFile(f.path);
+          await prisma.orderFile.update({ where: { id: f.id }, data: { deletedAt: new Date() } });
+        }
+      }
+      values[d.key] = "(removed)";
+    }
+    await prisma.orderItem.update({ where: { id: i.id }, data: { fieldValues: values, fieldsScrubbedAt: new Date() } });
+  }
+  // Uploads never attached to an order are deleted after a day.
+  const stale = await prisma.orderFile.findMany({ where: { orderItemId: null, deletedAt: null, createdAt: { lt: new Date(Date.now() - 86_400_000) } }, take: 200 });
+  for (const f of stale) {
+    await deletePrivateFile(f.path);
+    await prisma.orderFile.update({ where: { id: f.id }, data: { deletedAt: new Date() } });
+  }
+  return items.length;
 }

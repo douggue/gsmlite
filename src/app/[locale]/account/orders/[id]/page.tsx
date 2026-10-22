@@ -18,6 +18,16 @@ import { BackIcon, WhatsAppIcon } from "@/components/Icons";
 import { PushToggle } from "@/components/PushToggle";
 import { ReviewRequest } from "@/components/ReviewRequest";
 import { formatPhone } from "@/lib/phone";
+import { displayValue, type FieldDef } from "@/lib/order-form";
+
+/** The customer's own answers: passwords masked, files named, removed ones skipped. */
+function customerAnswers(values: Record<string, string>, defs: FieldDef[], locale: string) {
+  return Object.entries(values).filter(([, v]) => v !== "(removed)").map(([k, v]) => {
+    const d = defs.find((x) => x.key === k);
+    const shown = v.startsWith("enc:") ? "••••••" : d?.type === "file" ? "📎" : displayValue(d, v);
+    return d ? `${t(d.label, locale)}: ${shown}` : shown;
+  });
+}
 
 const CHIP = {
   green: "bg-[#e4f3ea] text-[#145c39]",
@@ -42,7 +52,7 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
         include: {
           codes: true,
           supplierOrders: { orderBy: { createdAt: "desc" }, take: 1, select: { createdAt: true, status: true } },
-          variant: { include: { product: { select: { id: true, slug: true, serviceType: true, deliveryEstimate: true, name: true } } } },
+          variant: { include: { product: { select: { id: true, slug: true, serviceType: true, deliveryEstimate: true, name: true, fields: true } } } },
         },
       },
       events: { orderBy: { createdAt: "asc" } },
@@ -153,8 +163,8 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
                 </span>
                 <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${chip.c}`}>{chip.l}</span>
               </div>
-              {!item.identifier && Object.keys(item.fieldValues as object).length > 0 && (
-                <p className="text-sm text-muted">{Object.values(item.fieldValues as Record<string, string>).join(" · ")}</p>
+              {Object.keys(item.fieldValues as object).length > 0 && (
+                <p className="text-sm text-muted">{customerAnswers(item.fieldValues as Record<string, string>, item.variant.product.fields as FieldDef[], locale).join(" · ")}</p>
               )}
 
               {item.codes.length > 0 && (

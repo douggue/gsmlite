@@ -2,7 +2,7 @@ import "server-only";
 import { Prisma } from "@prisma/client";
 import { prisma } from "../db";
 import { callSupplier } from "../dhru/client";
-import { parseAccountInfo, parseServiceList, replyError, resultText, type SupplierField } from "../dhru/protocol";
+import { parseAccountInfo, parseChoiceList, parseServiceList, replyError, resultText, type SupplierField } from "../dhru/protocol";
 import type { FieldDef } from "../orders";
 import { importPrice, type PriceRounding } from "../import-price";
 import { recordChange } from "../service-changes";
@@ -36,6 +36,9 @@ export async function syncCatalog(supplierId: string): Promise<{ ok: true; servi
   if (problem || !reply) return { ok: false, error: problem ?? "No answer" };
   const services = parseServiceList(reply);
   if (services.length === 0) return { ok: false, error: "The supplier returned an empty service list" };
+  // File services (unlock by file, dumps): not every supplier has them, so a failure here is not an error.
+  const files = await callSupplier(supplier, "fileservicelist").catch(() => null);
+  if (files?.reply && !replyError(files.reply)) services.push(...parseServiceList(files.reply, "FILE"));
 
   const seen = new Set<string>();
   const before = new Map(
@@ -103,6 +106,25 @@ export function fieldsFromSupplier(inputs: SupplierField[]): FieldDef[] {
   }));
 }
 
+/**
+ * Finish an imported form: model and carrier boxes become lists from the supplier (modellist / providerlist),
+ * and a file service gets its upload field.
+ */
+async function supplierForm(supplierId: string, remoteId: string, type: string, fields: FieldDef[]): Promise<FieldDef[]> {
+  const supplier = await prisma.supplier.findUniqueOrThrow({ where: { id: supplierId } });
+  for (const f of fields) {
+    const action = f.supplierName === "param:MODELID" ? "modellist" : f.supplierName === "param:PROVIDERID" ? "providerlist" : null;
+    if (!action) continue;
+    const { reply } = await callSupplier(supplier, action, { ID: remoteId }).catch(() => ({ reply: null }));
+    const choices = reply && !replyError(reply) ? parseChoiceList(reply) : [];
+    if (choices.length) Object.assign(f, { type: action === "modellist" ? "model" : "select", choices });
+  }
+  if (type === "FILE" && !fields.some((f) => f.type === "file")) {
+    fields.unshift({ key: "file", type: "file", accept: "any", required: true, label: L("File"), supplierName: "FILE" });
+  }
+  return fields;
+}
+
 function paramLabel(p: string) {
   return (
     { NETWORK: "Network", MODELID: "Model", PROVIDERID: "Carrier", PIN: "PIN", KBH: "KBH", MEP: "MEP", PRD: "PRD", TYPE: "Type", REFERENCE: "Reference", LOCKS: "Locks", SN: "Serial number", SECRO: "SecRO" } as Record<string, string>
@@ -149,7 +171,7 @@ export async function importService(supplierServiceId: string, opts: { categoryI
       identifierLabel: s.type === "IMEI" ? L(meta.identifierLabel || "IMEI") : Prisma.JsonNull,
       identifierFormat: s.type === "IMEI" && /^imei$/i.test(meta.identifierLabel ?? "IMEI") ? "imei" : "any",
       allowBulk: s.type === "IMEI",
-      fields: fieldsFromSupplier(meta.inputs ?? []) as Prisma.InputJsonValue,
+      fields: (await supplierForm(s.supplierId, s.remoteId, s.type, fieldsFromSupplier(meta.inputs ?? []))) as Prisma.InputJsonValue,
       isPublished: !!opts.publish,
       variants: {
         create: {

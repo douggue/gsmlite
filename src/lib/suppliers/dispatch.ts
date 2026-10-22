@@ -2,9 +2,11 @@ import "server-only";
 import { Prisma, type SupplierOrder } from "@prisma/client";
 import { prisma } from "../db";
 import { callSupplier } from "../dhru/client";
-import { encodeCustomFields, isAccountProblem, parseOrderStatus, parsePlaceOrder, resultText, type DhruParams } from "../dhru/protocol";
+import { encodeCustomFields, FILE_ID_PREFIX, isAccountProblem, parseOrderStatus, parsePlaceOrder, resultText, type DhruParams } from "../dhru/protocol";
 import { deliverItemManually, rejectItem, type FieldDef } from "../orders";
 import { t } from "../text";
+import { decrypt } from "../crypto";
+import { readEncryptedDocument } from "../storage";
 import { parseModel, rememberTac } from "../free-check";
 
 /** Supplier orders that still count as "with the supplier" (at most one per line, enforced by a unique index). */
@@ -44,8 +46,9 @@ export function buildOrderParams(
   if (product.serviceType === "SERVER") params.QNT = item.quantity;
   const custom: Record<string, string> = {};
   for (const f of (product.fields ?? []) as FieldDef[]) {
-    const v = values[f.key];
-    if (!v) continue;
+    const raw = values[f.key];
+    if (!raw || raw === "(removed)" || f.type === "file" || f.type === "info") continue;
+    const v = raw.startsWith("enc:") ? decrypt(raw.slice(4)) : raw;
     const target = f.supplierName?.trim() || t(f.label, "en") || f.key;
     if (target.startsWith("param:")) params[target.slice(6).toUpperCase()] = v;
     else custom[target] = v;
@@ -77,7 +80,22 @@ export async function submitItem(itemId: string): Promise<SupplierOrder | null> 
     throw e;
   }
 
-  const { reply, error } = await callSupplier(supplier, "placeimeiorder", buildOrderParams(item, item.variant.product, serviceId));
+  const isFile = serviceId.startsWith(FILE_ID_PREFIX);
+  const params = buildOrderParams(item, item.variant.product, isFile ? serviceId.slice(FILE_ID_PREFIX.length) : serviceId);
+  if (isFile) {
+    // File services: the customer's upload goes as FILENAME + FILEDATA (base64).
+    const fileDef = ((item.variant.product.fields ?? []) as FieldDef[]).find((f) => f.type === "file");
+    const fileId = fileDef ? ((item.fieldValues ?? {}) as Record<string, string>)[fileDef.key] : undefined;
+    const file = fileId ? await prisma.orderFile.findFirst({ where: { id: fileId, deletedAt: null } }) : null;
+    if (!file) {
+      await prisma.supplierOrder.update({ where: { id: so.id }, data: { status: "REJECTED", error: "No file attached to send" } });
+      await rejectItem(item.id, null, "The file was missing: nothing was charged by the supplier");
+      return prisma.supplierOrder.findUniqueOrThrow({ where: { id: so.id } });
+    }
+    params.FILENAME = file.name;
+    params.FILEDATA = (await readEncryptedDocument(file.path)).toString("base64");
+  }
+  const { reply, error } = await callSupplier(supplier, isFile ? "placefileorder" : "placeimeiorder", params);
   if (!reply) {
     return prisma.supplierOrder.update({ where: { id: so.id }, data: { status: "UNKNOWN", error } });
   }
@@ -102,7 +120,7 @@ export async function submitItem(itemId: string): Promise<SupplierOrder | null> 
 export async function checkSupplierOrder(so: SupplierOrder & { supplier?: unknown }) {
   if (!so.remoteRef || !["WAITING", "IN_PROCESS"].includes(so.status)) return so.status;
   const supplier = await prisma.supplier.findUniqueOrThrow({ where: { id: so.supplierId } });
-  const { reply, error } = await callSupplier(supplier, "getimeiorder", { ID: so.remoteRef });
+  const { reply, error } = await callSupplier(supplier, so.serviceId.startsWith(FILE_ID_PREFIX) ? "getfileorder" : "getimeiorder", { ID: so.remoteRef });
   const parsed = reply ? parseOrderStatus(reply) : { error: error ?? "No answer" };
   const nextCheckAt = new Date(Date.now() + nextCheckDelayMs(so.checks + 1));
 

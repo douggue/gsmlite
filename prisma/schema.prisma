@@ -36,6 +36,7 @@ enum Currency {
 }
 
 model User {
+  orderFiles       OrderFile[]
   id               String          @id
   name             String
   email            String          @unique
@@ -395,29 +396,31 @@ enum ItemStatus {
 }
 
 model OrderItem {
-  id             String          @id @default(cuid())
-  orderId        String
-  order          Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  variantId      String
-  variant        ProductVariant  @relation(fields: [variantId], references: [id])
-  productName    Json
-  variantName    Json
-  quantity       Int
-  unitPrice      Int
+  id               String          @id @default(cuid())
+  orderId          String
+  order            Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variantId        String
+  variant          ProductVariant  @relation(fields: [variantId], references: [id])
+  productName      Json
+  variantName      Json
+  quantity         Int
+  unitPrice        Int
   /// Unit price in USD cents and the supplier cost at the time of the order (sales and profit reports)
-  priceUsd       Int?
-  costUsd        Int?
-  fieldValues    Json            @default("{}")
+  priceUsd         Int?
+  costUsd          Int?
+  fieldValues      Json            @default("{}")
   /// IMEI / serial for IMEI services (also inside fieldValues), indexed for lookups
-  identifier     String?
-  status         ItemStatus      @default(PENDING)
+  identifier       String?
+  status           ItemStatus      @default(PENDING)
   /// Result shown to the customer: unlock code, check report, rejection reason (from staff or the supplier)
-  deliveryNote   String?
-  refundedAt     DateTime?
+  deliveryNote     String?
+  refundedAt       DateTime?
   /// When the line got its result or was refunded (real delivery time and success rate per service)
-  finishedAt     DateTime?
-  codes          CodeItem[]
-  supplierOrders SupplierOrder[]
+  finishedAt       DateTime?
+  codes            CodeItem[]
+  supplierOrders   SupplierOrder[]
+  /// Fields marked "hidden after done" were removed (passwords, remote IDs, files)
+  fieldsScrubbedAt DateTime?
 
   @@index([identifier])
   @@index([variantId, finishedAt])
@@ -1022,21 +1025,21 @@ model SupplierLog {
 
 /// Customer groups with their own prices (e.g. Retail, Repair shop, Gold shop).
 model PriceGroup {
-  id          String       @id @default(cuid())
-  name        String       @unique
+  id                 String       @id @default(cuid())
+  name               String       @unique
   /// Shown to staff: who it is for ("Shop verified (KYC)", "Spends $200+ a month")
-  description String?
+  description        String?
   /// Discount off the list price in basis points (500 = 5 %)
-  discountBps Int          @default(0)
+  discountBps        Int          @default(0)
   /// How customers join: "manual" (staff), "kyc" (the KYC level that joins it), "spend" (30-day spending ≥ minMonthlySpendUsd, checked daily)
-  autoRule    String       @default("manual")
-  minMonthlySpendUsd Int   @default(0)
+  autoRule           String       @default("manual")
+  minMonthlySpendUsd Int          @default(0)
   /// Never sell below cost + this (USD cents) to this group, whatever the discount
-  floorProfitUsd Int       @default(0)
-  sortOrder   Int          @default(0)
-  users       User[]
-  prices      GroupPrice[]
-  createdAt   DateTime     @default(now())
+  floorProfitUsd     Int          @default(0)
+  sortOrder          Int          @default(0)
+  users              User[]
+  prices             GroupPrice[]
+  createdAt          DateTime     @default(now())
 }
 
 /// A fixed price for one option in one group (wins over the group discount).
@@ -1238,4 +1241,21 @@ model KycView {
   staffId    String
   ip         String?
   createdAt  DateTime    @default(now())
+}
+
+/// File a customer attached to an order form (photo, dump, backup). Encrypted at rest, deleted with "hidden after done".
+model OrderFile {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItemId String?
+  path        String
+  name        String
+  mime        String
+  size        Int
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([userId, createdAt])
+  @@index([orderItemId])
 }

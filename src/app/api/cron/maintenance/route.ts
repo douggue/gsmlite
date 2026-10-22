@@ -4,7 +4,7 @@ import { verifyMoncashIntent } from "@/lib/payments/verify";
 import { grantTopupBonus, releaseHold } from "@/lib/wallet";
 import { notify } from "@/lib/notify";
 import { getSettings } from "@/lib/settings";
-import { refundOrCancel } from "@/lib/orders";
+import { refundOrCancel, scrubFinishedFields } from "@/lib/orders";
 import { LIVE } from "@/lib/suppliers/dispatch";
 import { endExpiredDeals } from "@/lib/deals";
 import { deletePrivateFile } from "@/lib/storage";
@@ -93,5 +93,6 @@ export async function GET(req: NextRequest) {
   const groupsMoved = await applySpendGroups();
   const messages = await dailyMessages();
   const successWatch = await watchSuccessRates();
-  return NextResponse.json({ ...result, kycDocsDeleted: oldDocs.length, groupsMoved, messages, successWatch });
+  const fieldsScrubbed = await scrubFinishedFields();
+  return NextResponse.json({ ...result, kycDocsDeleted: oldDocs.length, groupsMoved, messages, successWatch, fieldsScrubbed });
 }

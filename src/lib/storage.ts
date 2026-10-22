@@ -146,6 +146,24 @@ export async function saveEncryptedDocument(file: File, folder: string): Promise
   return { path: name, mime, size: buf.length };
 }
 
+/** Any file (firmware dump, backup, log) for an order form: no type check, encrypted, private. */
+export const MAX_ORDER_FILE_BYTES = 25 * 1024 * 1024;
+export async function saveEncryptedFile(file: File, folder: string): Promise<{ path: string; size: number }> {
+  const buf = Buffer.from(await file.arrayBuffer());
+  if (buf.length === 0 || buf.length > MAX_ORDER_FILE_BYTES) throw new UploadError("size");
+  const { encryptBytes } = await import("./crypto");
+  const sealed = encryptBytes(buf);
+  const name = `${folder}/${Date.now()}-${randomToken(12)}.bin.enc`;
+  if (blobEnabled()) {
+    const blob = await put(name, sealed, { access: "private", contentType: "application/octet-stream", addRandomSuffix: false });
+    return { path: blob.pathname, size: buf.length };
+  }
+  if (!uploadsEnabled()) throw new UploadError("storage");
+  await mkdir(path.join(ROOT, folder), { recursive: true });
+  await writeFile(path.join(ROOT, name), sealed);
+  return { path: name, size: buf.length };
+}
+
 export async function readEncryptedDocument(relPath: string): Promise<Buffer> {
   const { decryptBytes } = await import("./crypto");
   return decryptBytes(await readPrivateFile(relPath));

@@ -919,7 +919,15 @@
       "notifyNote": "W ap resevwa yon notifikasyon depi chak rezilta pare.",
       "stickyOrder": "Kòmande",
       "kycNeeded": "Verifye kont ou pou w kontinye.",
-      "verifyNow": "Verifye kounye a"
+      "verifyNow": "Verifye kounye a",
+      "fieldBad": "Verifye “{field}”.",
+      "choose": "Chwazi…",
+      "addFile": "Peze pou mete yon foto oswa yon fichye",
+      "uploading": "N ap voye…",
+      "uploadFailed": "Fichye a pa t ka pase. Eseye ankò.",
+      "fileTooBig": "Fichye sa a twò gwo.",
+      "signinToUpload": "Konekte pou mete yon fichye",
+      "yes": "Wi"
     },
     "order": {
       "lines": "Telefòn nan kòmand sa a",

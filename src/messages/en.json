@@ -919,7 +919,15 @@
       "notifyNote": "You'll get a notification as soon as each result is ready.",
       "stickyOrder": "Order",
       "kycNeeded": "Verify your account to continue.",
-      "verifyNow": "Verify now"
+      "verifyNow": "Verify now",
+      "fieldBad": "Check “{field}”.",
+      "choose": "Choose…",
+      "addFile": "Tap to add a photo or file",
+      "uploading": "Sending…",
+      "uploadFailed": "The file could not be sent. Try again.",
+      "fileTooBig": "This file is too big.",
+      "signinToUpload": "Sign in to add a file",
+      "yes": "Yes"
     },
     "order": {
       "lines": "Phones in this order",

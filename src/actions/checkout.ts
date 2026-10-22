@@ -64,9 +64,14 @@ async function rememberPlayerIds(userId: string, items: z.infer<typeof cartSchem
   for (const item of items) {
     const v = variants.find((x) => x.id === item.variantId);
     const defs = (v?.product.fields ?? []) as FieldDef[];
-    if (!v || defs.length === 0 || Object.keys(item.fields).length === 0) continue;
+    // Never keep passwords, files or anything removed after the order (remote IDs) on the account.
+    const keep = Object.fromEntries(Object.entries(item.fields).filter(([k]) => {
+      const d = defs.find((x) => x.key === k);
+      return d && !d.hideAfterDone && d.type !== "secret" && d.type !== "file" && d.type !== "info";
+    }));
+    if (!v || defs.length === 0 || Object.keys(keep).length === 0) continue;
     const existing = await prisma.savedPlayerId.findMany({ where: { userId, productId: v.productId } });
-    if (existing.some((s) => JSON.stringify(s.values) === JSON.stringify(item.fields))) continue;
-    await prisma.savedPlayerId.create({ data: { userId, productId: v.productId, values: item.fields, label: Object.values(item.fields)[0] } });
+    if (existing.some((s) => JSON.stringify(s.values) === JSON.stringify(keep))) continue;
+    await prisma.savedPlayerId.create({ data: { userId, productId: v.productId, values: keep, label: Object.values(keep)[0] } });
   }
 }

@@ -19,6 +19,8 @@ function fakeSupplier(services: Record<string, { name: string; credit: string }>
     const body =
       action === "accountinfo"
         ? { SUCCESS: [{ AccoutInfo: { credit: "$100.00", currency: "USD" } }] }
+        : action === "fileservicelist"
+        ? { ERROR: [{ MESSAGE: "Invalid Action" }] }
         : {
             SUCCESS: [{
               LIST: {

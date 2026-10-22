@@ -8,13 +8,13 @@ import { ActionForm } from "@/components/admin/ActionButton";
 import { LocalizedInputs } from "@/components/admin/LocalizedInputs";
 import { ProductForm } from "@/components/admin/ProductForm";
 import { PageTitle } from "@/components/admin/ui";
-import type { FieldDef } from "@/lib/orders";
+import { FIELD_TYPES, type FieldDef } from "@/lib/order-form";
 
 export const metadata = { title: "Edit service" };
 
 /** Lines like "Model · list · required · sent as MODELID" for the fields panel. */
 function summarize(fields: FieldDef[]) {
-  return fields.map((f) => `${t(f.label, "en") || f.key} · ${f.type}${f.required ? " · required" : ""}${f.supplierName ? ` · sent as ${f.supplierName.replace(/^param:/, "")}` : ""}`);
+  return fields.map((f) => `${t(f.label, "en") || f.key} · ${FIELD_TYPES[f.type]?.split(" (")[0].toLowerCase() ?? f.type}${f.required ? " · required" : ""}${f.supplierName ? ` · sent as ${f.supplierName.replace(/^param:/, "")}` : ""}`);
 }
 
 export default async function EditProduct({ params }: { params: Promise<{ id: string }> }) {

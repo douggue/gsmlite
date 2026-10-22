@@ -919,7 +919,15 @@
       "notifyNote": "Vous recevrez une notification dès que chaque résultat est prêt.",
       "stickyOrder": "Commander",
       "kycNeeded": "Vérifiez votre compte pour continuer.",
-      "verifyNow": "Vérifier maintenant"
+      "verifyNow": "Vérifier maintenant",
+      "fieldBad": "Vérifiez « {field} ».",
+      "choose": "Choisir…",
+      "addFile": "Touchez pour ajouter une photo ou un fichier",
+      "uploading": "Envoi…",
+      "uploadFailed": "Le fichier n'a pas pu être envoyé. Réessayez.",
+      "fileTooBig": "Ce fichier est trop lourd.",
+      "signinToUpload": "Connectez-vous pour ajouter un fichier",
+      "yes": "Oui"
     },
     "order": {
       "lines": "Téléphones de cette commande",

@@ -919,7 +919,15 @@
       "notifyNote": "Recibirás una notificación en cuanto cada resultado esté listo.",
       "stickyOrder": "Pedir",
       "kycNeeded": "Verifica tu cuenta para continuar.",
-      "verifyNow": "Verificar ahora"
+      "verifyNow": "Verificar ahora",
+      "fieldBad": "Revisa «{field}».",
+      "choose": "Elegir…",
+      "addFile": "Toca para añadir una foto o un archivo",
+      "uploading": "Enviando…",
+      "uploadFailed": "No se pudo enviar el archivo. Inténtalo de nuevo.",
+      "fileTooBig": "Este archivo es demasiado grande.",
+      "signinToUpload": "Inicia sesión para añadir un archivo",
+      "yes": "Sí"
     },
     "order": {
       "lines": "Teléfonos de este pedido",

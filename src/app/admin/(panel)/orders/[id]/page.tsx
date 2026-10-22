@@ -9,6 +9,8 @@ import { itemTitle } from "@/lib/orders";
 import { deliverItem, refundOrder, revealOrderCodes, runFulfillment } from "@/actions/admin";
 import { ActionButton } from "@/components/admin/ActionButton";
 import { RevealCodes } from "@/components/admin/RevealCodes";
+import { FieldAnswers } from "@/components/admin/FieldAnswers";
+import type { FieldDef } from "@/lib/order-form";
 import { StatusBadge } from "@/components/StatusBadge";
 import { PageTitle } from "@/components/admin/ui";
 import { formatPhone, waNumber } from "@/lib/phone";
@@ -16,8 +18,6 @@ import { formatPhone, waNumber } from "@/lib/phone";
 export const metadata = { title: "Order" };
 
 
-/** Readable names for what "customer enters the amount" products store on the item. */
-const AMOUNT_LABELS: Record<string, string> = { amountUsd: "Amount to send (USD)", feeUsd: "Fee charged (USD)", rate: "Rate used (HTG per USD)" };
 export default async function AdminOrder({ params }: { params: Promise<{ id: string }> }) {
   const staff = await requireStaff("orders.view");
   const { id } = await params;
@@ -54,9 +54,7 @@ export default async function AdminOrder({ params }: { params: Promise<{ id: str
                   <StatusBadge status={i.status} label={i.status} />
                 </div>
                 <p className="text-xs text-muted">{i.variant.product.fulfillmentType} · {formatMoney(i.unitPrice, order.currency, "en")} each · {i._count.codes} code(s) assigned</p>
-                {Object.entries(i.fieldValues as Record<string, string>).map(([k, v]) => (
-                  <p key={k} className="text-sm"><span className="text-muted">{AMOUNT_LABELS[k] ?? k}:</span> <span className="font-mono font-semibold">{v}</span></p>
-                ))}
+                <FieldAnswers itemId={i.id} values={i.fieldValues as Record<string, string>} defs={i.variant.product.fields as FieldDef[]} />
                 {i.deliveryNote && <p className="rounded-lg bg-surface-2 p-3 text-sm">{i.deliveryNote}</p>}
                 {manage && i.status === "PENDING" && ["PAID", "PROCESSING"].includes(order.status) && (
                   <ActionButton label="Mark delivered…" className="btn-primary min-h-9 px-3 text-xs" prompt="Delivery note shown to the customer (e.g. 'Diamonds sent to ID 12345')" action={deliverItem.bind(null, i.id)} />

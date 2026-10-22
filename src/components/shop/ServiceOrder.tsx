@@ -3,7 +3,8 @@ import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { t } from "@/lib/text";
-import type { FieldDef } from "@/lib/orders";
+import { formProblem, normalizeValue, type FieldDef } from "@/lib/order-form";
+import { OrderFields } from "./OrderFields";
 import { identifierProblem, parseIdentifiers, type IdentifierFormat } from "@/lib/imei";
 import { formatMoney, priceIn } from "@/lib/money";
 import { placeOrder } from "@/actions/checkout";
@@ -86,6 +87,18 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
   const fmt = (n: number, c: "HTG" | "USD") => formatMoney(n, c, locale);
   const walletShort = method === "WALLET" && balances ? balances[payCurrency] < total : false;
 
+  // Remembered answers from the last order on this device.
+  useEffect(() => {
+    try {
+      const got: Record<string, string> = {};
+      for (const f of product.fields) {
+        const v = f.remember ? localStorage.getItem(`gl_f_${f.supplierName || f.key}`) : null;
+        if (v) got[f.key] = v;
+      }
+      if (Object.keys(got).length) setFields((cur) => ({ ...got, ...cur }));
+    } catch {}
+  }, [product.fields]);
+
   // Coming back from sign-in: put back what was typed.
   useEffect(() => {
     try {
@@ -126,17 +139,24 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
         return false;
       }
     }
-    for (const f of product.fields) {
-      if (f.required && !fields[f.key]?.trim()) {
-        setError(g("fieldMissing", { field: t(f.label, locale) }));
-        document.getElementById(`field-${f.key}`)?.focus();
-        return false;
-      }
+    const bad = formProblem(product.fields, fields);
+    if (bad) {
+      const field = t(bad.def.label, locale);
+      setError(bad.problem === "missing" || bad.problem === "confirm" ? g("fieldMissing", { field }) : g("fieldBad", { field }));
+      document.getElementById(`field-${bad.def.key}`)?.focus();
+      return false;
     }
     return true;
   }
 
-  const cleanFields = () => Object.fromEntries(product.fields.map((f) => [f.key, (fields[f.key] ?? "").trim()]).filter(([, v]) => v));
+  const cleanFields = () => {
+    const out = Object.fromEntries(product.fields.map((f) => [f.key, normalizeValue(f, fields[f.key] ?? "")]).filter(([, v]) => v));
+    // "Remember for next order" fields are kept on this device only.
+    try {
+      for (const f of product.fields) if (f.remember && out[f.key]) localStorage.setItem(`gl_f_${f.supplierName || f.key}`, out[f.key]);
+    } catch {}
+    return out;
+  };
 
   function addToCart() {
     if (!check() || !variant) return;
@@ -266,24 +286,8 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
               ))}
             </div>
           )}
-          {product.fields.map((f) => (
-            <div key={f.key}>
-              <label htmlFor={`field-${f.key}`} className="block text-sm font-semibold">
-                {t(f.label, locale)} {f.required && <span className="text-danger">*</span>}
-              </label>
-              {f.type === "select" ? (
-                <select id={`field-${f.key}`} className="input mt-1.5" value={fields[f.key] ?? ""} onChange={(e) => setFields({ ...fields, [f.key]: e.target.value })}>
-                  <option value="">—</option>
-                  {(f.options ?? []).map((o) => <option key={o} value={o}>{o}</option>)}
-                </select>
-              ) : f.type === "textarea" ? (
-                <textarea id={`field-${f.key}`} className="input mt-1.5 min-h-24 py-3" maxLength={1000} placeholder={f.placeholder} value={fields[f.key] ?? ""} onChange={(e) => setFields({ ...fields, [f.key]: e.target.value })} />
-              ) : (
-                <input id={`field-${f.key}`} className="input mt-1.5" type={f.type === "number" ? "text" : f.type} inputMode={f.type === "number" ? "numeric" : undefined}
-                  autoComplete="off" maxLength={200} placeholder={f.placeholder} value={fields[f.key] ?? ""} onChange={(e) => setFields({ ...fields, [f.key]: e.target.value })} />
-              )}
-            </div>
-          ))}
+          <OrderFields defs={product.fields} values={fields} onChange={setFields} locale={locale} canUpload={signedIn}
+            text={{ choose: g("choose"), addFile: g("addFile"), uploading: g("uploading"), uploadFailed: g("uploadFailed"), fileTooBig: g("fileTooBig"), signinToUpload: g("signinToUpload"), yes: g("yes") }} />
         </fieldset>
       )}
 

@@ -8,7 +8,8 @@ import { assertStaff, assertStepUp } from "@/lib/session";
 import { audit } from "@/lib/audit";
 import { recordChange, recordVariantChange } from "@/lib/service-changes";
 import { parseCountryRule } from "@/lib/countries";
-import { encrypt, hmac, randomToken } from "@/lib/crypto";
+import { decrypt, encrypt, hmac, randomToken } from "@/lib/crypto";
+import { sanitizeFields } from "@/lib/order-form";
 import { completePayment, rejectPayment } from "@/lib/payments/complete";
 import { deliverItemManually, fulfillOrder, refundOrCancel, revealCode } from "@/lib/orders";
 import { adjustWallet } from "@/lib/wallet";
@@ -134,17 +135,6 @@ const localized = (form: FormData, prefix: string) => ({
   es: String(form.get(`${prefix}_es`) ?? "").trim(),
 });
 
-const fieldDefSchema = z.array(
-  z.object({
-    key: z.string().regex(/^[a-zA-Z][a-zA-Z0-9_]{0,30}$/),
-    label: z.record(z.string().max(100)),
-    type: z.enum(["text", "email", "number", "tel", "textarea", "select"]),
-    required: z.boolean(),
-    placeholder: z.string().max(100).optional(),
-    options: z.array(z.string().max(100)).max(50).optional(),
-    supplierName: z.string().max(100).optional(),
-  }),
-).max(12);
 
 export async function saveProduct(form: FormData): Promise<R & { id?: string }> {
   try {
@@ -156,9 +146,9 @@ export async function saveProduct(form: FormData): Promise<R & { id?: string }> 
     if (!name.ht && !name.fr && !name.en) return { ok: false, error: "A name is required" };
     let fields: unknown;
     try {
-      fields = fieldDefSchema.parse(JSON.parse(String(form.get("fields") || "[]")));
-    } catch {
-      return { ok: false, error: "Custom fields JSON is invalid" };
+      fields = sanitizeFields(JSON.parse(String(form.get("fields") || "[]")));
+    } catch (e) {
+      return { ok: false, error: `Order form fields: ${e instanceof Error ? e.message : "invalid JSON"}` };
     }
     const image = String(form.get("image") ?? "").trim();
     if (image && !isOwnImageUrl(image)) return { ok: false, error: "Invalid main image" };
@@ -733,6 +723,20 @@ export async function reconcileStatement(text: string, provider: string, days: n
     }
     await audit(staff.id, "reconcile.run", "PaymentIntent", null, { provider, rows: rows.length, missing: result.missing.length, unknown: result.unknown.length });
     return { ok: true, result, rows: rows.length };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Error" };
+  }
+}
+
+/** Staff read a password the customer typed in the order form (remote job). Logged. */
+export async function revealFieldSecret(itemId: string, key: string): Promise<{ ok: true; value: string } | { ok: false; error: string }> {
+  try {
+    const staff = await assertStaff("orders.manage");
+    const item = await prisma.orderItem.findUnique({ where: { id: itemId }, select: { fieldValues: true, orderId: true } });
+    const v = ((item?.fieldValues ?? {}) as Record<string, string>)[key];
+    if (!item || !v?.startsWith("enc:")) return { ok: false, error: "Nothing to show (already removed?)" };
+    await audit(staff.id, "order.secret.view", "OrderItem", itemId, { key, orderId: item.orderId });
+    return { ok: true, value: decrypt(v.slice(4)) };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Error" };
   }
