@@ -6,7 +6,7 @@ import { t } from "@/lib/text";
 import { formatMoney } from "@/lib/money";
 import { describeRule } from "@/lib/countries";
 import { channelMembers, telegramReady } from "@/lib/telegram";
-import { deleteSlide, saveOffers, saveSlide, startWeeklyDeal, stopDeal } from "@/actions/marketing";
+import { deleteSlide, importTacList, saveCheckSettings, saveOffers, saveSlide, startWeeklyDeal, stopDeal } from "@/actions/marketing";
 import { ActionButton, ActionForm } from "@/components/admin/ActionButton";
 import { LocalizedInputs } from "@/components/admin/LocalizedInputs";
 import { ImageField } from "@/components/admin/ImageField";
@@ -58,7 +58,7 @@ export default async function MarketingPage() {
   monthStart.setDate(1);
   monthStart.setHours(0, 0, 0, 0);
   const now = new Date();
-  const [s, slides, deal, variants, updates, checks, refs, refsOrdered, bonuses] = await Promise.all([
+  const [s, slides, deal, variants, updates, checks, refs, refsOrdered, bonuses, tacs, checkVariants] = await Promise.all([
     getSettings(),
     prisma.homeSlide.findMany({ orderBy: { sortOrder: "asc" } }),
     prisma.deal.findFirst({ where: { endedAt: null }, orderBy: { startsAt: "desc" } }),
@@ -68,6 +68,8 @@ export default async function MarketingPage() {
     prisma.referral.count({ where: { createdAt: { gte: monthStart } } }),
     prisma.referral.count({ where: { createdAt: { gte: monthStart }, status: "REWARDED" } }),
     prisma.ledgerEntry.groupBy({ by: ["currency"], where: { createdAt: { gte: monthStart }, transaction: { type: "BONUS" }, amount: { gt: 0 } }, _sum: { amount: true } }),
+    prisma.tacModel.groupBy({ by: ["source"], _count: true }),
+    prisma.productVariant.findMany({ where: { isActive: true, supplierId: { not: null }, product: { serviceType: "IMEI" } }, include: { product: { select: { name: true } } }, orderBy: { priceUsd: "asc" }, take: 200 }),
   ]);
   const unlocksAfter = checks.length
     ? await prisma.orderItem.count({ where: { identifier: { in: [...new Set(checks.map((c) => c.imei))] }, order: { paidAt: { gte: monthStart }, userId: { in: [...new Set(checks.map((c) => c.userId))] } }, variant: { product: { category: { slug: { contains: "unlock" } } } } } })
@@ -150,8 +152,27 @@ export default async function MarketingPage() {
           </ActionForm>
         </section>
 
+        <section id="check" className={box}>
+          <h2 className="font-semibold">Free IMEI check</h2>
+          <p className="text-sm text-muted">Phone models known: <b>{tacs.reduce((a, x) => a + x._count, 0)}</b>{tacs.length > 0 && ` (${tacs.map((x) => `${x._count} ${x.source}`).join(", ")})`}. Unknown numbers are asked to the supplier service below, and every delivered check teaches the list.</p>
+          <ActionForm action={saveCheckSettings} className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_140px_auto] sm:items-end">
+            <label><span className="label">Look up unknown models with</span>
+              <select name="variantId" defaultValue={s.freeCheckVariantId} className="input">
+                <option value="">Nobody (only the model list)</option>
+                {checkVariants.map((v) => <option key={v.id} value={v.id}>{t(v.product.name, "en")} · {t(v.name, "en")} ({formatMoney(v.costUsd ?? 0, "USD", "en")} cost)</option>)}
+              </select>
+            </label>
+            <label><span className="label">Paid check refunded on unlock within (days)</span><input name="creditDays" defaultValue={s.checkCreditDays} inputMode="numeric" className="input" /></label>
+            <button className="btn-secondary min-h-11 px-4">Save</button>
+          </ActionForm>
+          <ActionForm action={importTacList} className="flex flex-wrap items-end gap-2" resetOnSuccess>
+            <label className="flex-1"><span className="label">Import a model list (CSV: tac, brand, model)</span><input type="file" name="file" accept=".csv,text/csv" className="input py-2" required /></label>
+            <button className="btn-secondary min-h-11 px-4">Import</button>
+          </ActionForm>
+        </section>
+
         <section className={box}>
-          <div className="flex items-center justify-between"><h2 className="font-semibold">Latest tool updates</h2><Link href="/admin/news?kind=tool" className="btn-secondary min-h-9 px-3 text-xs">+ Post an update</Link></div>
+          <div className="flex items-center justify-between"><h2 className="font-semibold">Latest tool updates</h2><Link href="/admin/news/new?kind=tool" className="btn-secondary min-h-9 px-3 text-xs">+ Post an update</Link></div>
           {updates.length === 0 && <p className="text-sm text-muted">None yet.</p>}
           <ul className="divide-y divide-border text-sm">
             {updates.map((u) => <li key={u.id} className="flex justify-between py-2"><span>{u.toolName ?? t(u.title, "en")} {u.version && `v${u.version}`}</span><Link href={`/admin/news/${u.id}`} className="text-primary">Edit</Link></li>)}

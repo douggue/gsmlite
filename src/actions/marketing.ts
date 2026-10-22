@@ -9,6 +9,7 @@ import { parseCountryRule } from "@/lib/countries";
 import { endDeal, startDeal } from "@/lib/deals";
 import { channelPost } from "@/lib/marketing";
 import { t } from "@/lib/text";
+import { importTacCsv } from "@/lib/free-check";
 
 type R = { ok: true; message?: string } | { ok: false; error: string };
 const fail = (e: unknown): R => ({ ok: false, error: e instanceof Error ? e.message : "Unexpected error" });
@@ -115,6 +116,39 @@ export async function saveOffers(form: FormData): Promise<R> {
     await audit(staff.id, "settings.marketing", "Settings", null, Object.fromEntries(form));
     revalidatePath("/", "layout");
     return { ok: true, message: "Saved" };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+/** Free IMEI check: which supplier service looks up unknown models, and how long a paid check counts toward an unlock. */
+export async function saveCheckSettings(form: FormData): Promise<R> {
+  try {
+    const staff = await assertStaff("settings.manage");
+    const variantId = String(form.get("variantId") ?? "");
+    if (variantId && !(await prisma.productVariant.findFirst({ where: { id: variantId, supplierId: { not: null } } }))) return { ok: false, error: "Pick a service that is sent to a supplier" };
+    const days = Math.max(0, Math.min(90, Math.round(Number(form.get("creditDays") ?? 7)) || 0));
+    await setSetting("freeCheckVariantId", variantId);
+    await setSetting("checkCreditDays", days);
+    await audit(staff.id, "settings.freeCheck", "Settings", null, { variantId, days });
+    revalidatePath("/admin/marketing");
+    return { ok: true, message: "Saved" };
+  } catch (e) {
+    return fail(e);
+  }
+}
+
+/** Phone model list (CSV with columns tac, brand, model) used by the free IMEI check. */
+export async function importTacList(form: FormData): Promise<R> {
+  try {
+    const staff = await assertStaff("settings.manage");
+    const file = form.get("file");
+    if (!(file instanceof File) || !file.size) return { ok: false, error: "Choose a CSV file" };
+    if (file.size > 5_500_000) return { ok: false, error: "The file is over 5 MB: split it in parts" };
+    const n = await importTacCsv(await file.text());
+    await audit(staff.id, "tac.import", "TacModel", null, { rows: n, name: file.name });
+    revalidatePath("/admin/marketing");
+    return n ? { ok: true, message: `${n} models imported` } : { ok: false, error: "No rows found: the first line must name the columns (tac, brand, model)" };
   } catch (e) {
     return fail(e);
   }
