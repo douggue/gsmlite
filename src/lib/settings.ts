@@ -104,6 +104,8 @@ export type Settings = {
   legal: { entity: string; registration: string; taxId: string; email: string; refundDays: number };
   /** Languages offered to customers (the rest are hidden from the switcher) */
   languages: string[];
+  /** Admin only from these addresses (IPs or IPv4 CIDR). Empty = from anywhere (2FA still required). */
+  adminIpAllowlist: string[];
 };
 
 export type NavLink = { label: Record<string, string>; href: string };
@@ -234,6 +236,7 @@ export const DEFAULT_SETTINGS: Settings = {
   maintenance: { on: false, message: {} },
   legal: { entity: "", registration: "", taxId: "", email: "", refundDays: 7 },
   languages: ["ht", "fr", "en", "es"],
+  adminIpAllowlist: [],
 };
 
 export async function getSettings(): Promise<Settings> {

@@ -1,5 +1,6 @@
 "use server";
 import { closedFor } from "@/lib/maintenance";
+import { rateLimit } from "@/lib/rate-limit";
 import { prisma } from "@/lib/db";
 import { assertUser } from "@/lib/session";
 import { cartSchema, createOrder, OrderError, type FieldDef } from "@/lib/orders";
@@ -30,6 +31,7 @@ export async function placeOrder(raw: unknown): Promise<PlaceOrderResult> {
     return { ok: false, error: "signin" };
   }
   if (await closedFor(user)) return { ok: false, error: "maintenance" };
+  if (!(await rateLimit(`order:${user.id}`, 20, 600))) return { ok: false, error: "busy" };
   if (await mustVerifyEmail(user.id)) return { ok: false, error: "verify_email" };
   const parsed = input.safeParse(raw);
   if (!parsed.success) return { ok: false, error: "invalid_field" };

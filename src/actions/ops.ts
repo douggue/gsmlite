@@ -154,3 +154,25 @@ export async function sendTestEmail(to: string): Promise<R> {
     return fail(e);
   }
 }
+
+/** Admin → Security: the admin only opens from these addresses. Your own current address must be in the list. */
+export async function saveIpAllowlist(form: FormData): Promise<R> {
+  try {
+    const staff = await assertStaff("staff.manage");
+    await assertStepUp();
+    const { validEntry, ipAllowed } = await import("@/lib/ip-allow");
+    const { requestIp } = await import("@/lib/session");
+    const { setSetting } = await import("@/lib/settings");
+    const list = [...new Set(String(form.get("list") ?? "").split(/[\s,;]+/).map((x) => x.trim()).filter(Boolean))].slice(0, 50);
+    const bad = list.find((x) => !validEntry(x));
+    if (bad) return { ok: false, error: `Not an address: ${bad}` };
+    const ip = await requestIp();
+    if (list.length && !ipAllowed(ip, list)) return { ok: false, error: `Your current address (${ip ?? "unknown"}) is not in the list: you would lock yourself out` };
+    await setSetting("adminIpAllowlist", list);
+    await audit(staff.id, "settings.admin_ip", "SiteSetting", null, { list });
+    revalidatePath("/admin/security");
+    return { ok: true, message: list.length ? `Admin limited to ${list.length} address${list.length > 1 ? "es" : ""}` : "Admin open from any address (2FA still required)" };
+  } catch (e) {
+    return fail(e);
+  }
+}

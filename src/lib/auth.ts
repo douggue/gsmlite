@@ -12,6 +12,8 @@ import { recordDevice } from "./devices";
 import { verifyTurnstile } from "./turnstile";
 import { CANONICAL_SITE, onSiteDomain, siteUrl } from "./site-url";
 
+export const googleEnabled = () => !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
+
 // Argon2id parameters (OWASP recommended minimums)
 const argonOpts = { memoryCost: 19456, timeCost: 2, parallelism: 1, algorithm: 2 as const };
 const site = () => siteUrl();
@@ -33,6 +35,11 @@ export const auth = betterAuth({
   appName: "GSMLite",
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   trustedOrigins,
+  // "Continue with Google" appears once GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET are set in the hosting env.
+  ...(googleEnabled()
+    ? { socialProviders: { google: { clientId: process.env.GOOGLE_CLIENT_ID!, clientSecret: process.env.GOOGLE_CLIENT_SECRET!, prompt: "select_account" as const } } }
+    : {}),
+  account: { accountLinking: { enabled: true, trustedProviders: ["google"] } },
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,

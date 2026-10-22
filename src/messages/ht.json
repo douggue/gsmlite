@@ -205,7 +205,8 @@
       "not_in_country": "Sèvis sa a pa disponib nan peyi ou.",
       "kyc_required": "Sa mande yon kont verifye. Verifye l nan kèk minit.",
       "kyc_blocked": "Sa pa pèmèt sou kont ou. Kontakte sipò.",
-      "maintenance": "Sit la an antretyen pou kèk minit. Eseye ankò talè."
+      "maintenance": "Sit la an antretyen pou kèk minit. Eseye ankò talè.",
+      "busy": "Twòp eseye nan yon ti tan. Tann kèk minit epi eseye ankò."
     }
   },
   "order": {
@@ -423,7 +424,8 @@
     "kyc_rejected": "Verifikasyon ou pa t aksepte: {reason}",
     "kyc_needs_more": "Nou bezwen yon nouvo foto pou verifikasyon ou: {reason}",
     "marketing_inactive": "Gen nouvo sèvis ak pri ki bese k ap tann ou sou GSMLite.",
-    "marketing_next_phone": "Ou gen yon lòt telefòn pou debloke? Tcheke IMEI li gratis anvan."
+    "marketing_next_phone": "Ou gen yon lòt telefòn pou debloke? Tcheke IMEI li gratis anvan.",
+    "new_device": "Gen yon nouvo koneksyon sou kont ou depi {device} ({ip}). Se pa ou? Chanje modpas ou epi dekonekte tout aparèy yo."
   },
   "pages": {
     "aboutTitle": "Sou GSMLite",
@@ -601,7 +603,10 @@
     "secure": "Koneksyon sekirize",
     "loginSub": "Konekte pou wè kòmand ou ak bous ou.",
     "registerSub": "Gratis. Ou ka achte touswit apre.",
-    "welcomeBack": "Bon retou!"
+    "welcomeBack": "Bon retou!",
+    "google": "Kontinye ak Google",
+    "orEmail": "oswa ak imèl",
+    "googleFailed": "Koneksyon ak Google pa mache. Eseye ankò oswa sèvi ak imèl ou."
   },
   "verifyGate": {
     "title": "Konfime imèl ou pou kontinye",

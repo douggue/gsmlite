@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
-import { getSession, requireStaff } from "@/lib/session";
-import { revokeAllSessions, revokeSession } from "@/actions/ops";
-import { ActionButton } from "@/components/admin/ActionButton";
+import { getSession, requestIp, requireStaff } from "@/lib/session";
+import { revokeAllSessions, revokeSession, saveIpAllowlist } from "@/actions/ops";
+import { getSettings } from "@/lib/settings";
+import { ActionButton, ActionForm } from "@/components/admin/ActionButton";
 import { PageTitle, Stat, Table } from "@/components/admin/ui";
 import { checkDatabase, serviceStatus } from "@/lib/health";
 
@@ -20,6 +21,7 @@ function browser(ua: string | null) {
 export default async function Security() {
   await requireStaff("staff.manage");
   const current = await getSession();
+  const [settings, myIp] = await Promise.all([getSettings(), requestIp()]);
   const [sessions, events, shared, noTwoFa] = await Promise.all([
     prisma.session.findMany({
       where: { expiresAt: { gt: new Date() }, user: { role: { not: "CUSTOMER" } } },
@@ -64,6 +66,12 @@ export default async function Security() {
         <Stat label="Shared browsers" value={shared.length} tone={shared.length ? "warn" : undefined} />
         <Stat label="Sensitive actions (last 50)" value={events.length} />
       </div>
+      <ActionForm action={saveIpAllowlist} className="card mt-4 space-y-3 p-5">
+        <h2 className="font-semibold">Admin only from these addresses</h2>
+        <p className="text-sm text-muted">One IP per line (or a range like 196.3.0.0/16). Empty = from anywhere, 2FA still required. Your address now: <b className="font-mono">{myIp ?? "unknown"}</b>. Locked out? Set ADMIN_IP_ALLOWLIST_OFF=1 in the hosting environment.</p>
+        <textarea name="list" rows={3} defaultValue={settings.adminIpAllowlist.join("\n")} className="input py-2 font-mono text-sm" placeholder={myIp ?? ""} />
+        <button className="btn-secondary min-h-10 px-4">Save the list</button>
+      </ActionForm>
 
       <h2 className="mb-3 mt-8 font-semibold">Services</h2>
       <div className="card divide-y divide-border text-sm">

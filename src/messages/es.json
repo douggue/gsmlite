@@ -205,7 +205,8 @@
       "not_in_country": "Este servicio no está disponible en tu país.",
       "kyc_required": "Esto necesita una cuenta verificada. Verifícala en unos minutos.",
       "kyc_blocked": "Esto no está permitido en tu cuenta. Contacta con soporte.",
-      "maintenance": "El sitio está en mantenimiento unos minutos. Inténtalo pronto."
+      "maintenance": "El sitio está en mantenimiento unos minutos. Inténtalo pronto.",
+      "busy": "Demasiados intentos en poco tiempo. Espera unos minutos y vuelve a intentarlo."
     }
   },
   "order": {
@@ -423,7 +424,8 @@
     "kyc_rejected": "Tu verificación no fue aprobada: {reason}",
     "kyc_needs_more": "Necesitamos una foto nueva para tu verificación: {reason}",
     "marketing_inactive": "Nuevos servicios y bajadas de precio te esperan en GSMLite.",
-    "marketing_next_phone": "¿Otro teléfono para liberar? Verifica su IMEI gratis primero."
+    "marketing_next_phone": "¿Otro teléfono para liberar? Verifica su IMEI gratis primero.",
+    "new_device": "Nuevo inicio de sesión desde {device} ({ip}). ¿No fuiste tú? Cambia tu contraseña y cierra todas las sesiones."
   },
   "pages": {
     "aboutTitle": "Sobre GSMLite",
@@ -601,7 +603,10 @@
     "secure": "Conexión segura",
     "loginSub": "Inicia sesión para ver tus pedidos y tu billetera.",
     "registerSub": "Gratis. Puedes comprar enseguida.",
-    "welcomeBack": "¡Hola de nuevo!"
+    "welcomeBack": "¡Hola de nuevo!",
+    "google": "Continuar con Google",
+    "orEmail": "o con correo",
+    "googleFailed": "El acceso con Google no funcionó. Inténtalo de nuevo o usa tu correo."
   },
   "verifyGate": {
     "title": "Confirma tu correo para continuar",

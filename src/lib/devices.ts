@@ -9,6 +9,11 @@ import { getSettings } from "./settings";
 export async function recordDevice(userId: string, deviceId: string | null, ip: string | null, userAgent: string | null) {
   if (!deviceId || !/^[A-Za-z0-9_-]{16,64}$/.test(deviceId)) return;
   const existing = await prisma.deviceSeen.findUnique({ where: { userId_deviceId: { userId, deviceId } } });
+  // A sign-in from a browser this account never used: tell the customer (not on the very first one).
+  if (!existing && (await prisma.deviceSeen.count({ where: { userId } })) > 0) {
+    const { notify } = await import("./notify");
+    await notify(userId, "new_device", { device: deviceLabel(userAgent), ip: ip ?? "?" }, "/account/security").catch(() => {});
+  }
   await prisma.deviceSeen.upsert({
     where: { userId_deviceId: { userId, deviceId } },
     create: { userId, deviceId, ip, userAgent: userAgent?.slice(0, 300) },
@@ -49,4 +54,12 @@ export async function linkedAccounts(userId: string) {
   }
   const users = await prisma.user.findMany({ where: { id: { in: [...byUser.keys()] } }, select: { id: true, name: true, email: true, status: true } });
   return users.map((u) => ({ ...u, ...byUser.get(u.id)! })).sort((a, b) => Number(b.sameDevice) - Number(a.sameDevice));
+}
+
+/** "Safari · iPhone" from a user agent, for alerts and the sessions list. */
+export function deviceLabel(ua: string | null) {
+  if (!ua) return "?";
+  const os = /iPhone/.test(ua) ? "iPhone" : /iPad/.test(ua) ? "iPad" : /Android/.test(ua) ? "Android" : /Windows/.test(ua) ? "Windows" : /Mac OS/.test(ua) ? "Mac" : /Linux/.test(ua) ? "Linux" : "";
+  const b = /Edg\//.test(ua) ? "Edge" : /CriOS|Chrome\//.test(ua) ? "Chrome" : /FxiOS|Firefox\//.test(ua) ? "Firefox" : /Safari\//.test(ua) ? "Safari" : "Browser";
+  return `${b}${os ? ` · ${os}` : ""}`;
 }

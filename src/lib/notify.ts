@@ -22,7 +22,8 @@ export type NotificationType =
   | "kyc_rejected"
   | "kyc_needs_more"
   | "marketing_inactive"
-  | "marketing_next_phone";
+  | "marketing_next_phone"
+  | "new_device";
 
 const CATALOGS: Record<string, { notifications: Record<string, string> }> = { ht, fr, en, es };
 
