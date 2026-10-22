@@ -10,6 +10,7 @@ import { recordChange, recordVariantChange } from "@/lib/service-changes";
 import { parseCountryRule } from "@/lib/countries";
 import { decrypt, encrypt, hmac, randomToken } from "@/lib/crypto";
 import { sanitizeFields } from "@/lib/order-form";
+import { COUNTRY_CODES } from "@/lib/countries";
 import { completePayment, rejectPayment } from "@/lib/payments/complete";
 import { deliverItemManually, fulfillOrder, refundOrCancel, revealCode } from "@/lib/orders";
 import { adjustWallet } from "@/lib/wallet";
@@ -452,6 +453,31 @@ export async function saveSettings(form: FormData): Promise<R> {
     next.heroImageUrl = img("heroImageUrl");
     next.ogImageUrl = img("ogImageUrl");
     next.natcashQrUrl = img("natcashQrUrl");
+    const before = await getSettings();
+    next.appIconUrl = img("appIconUrl");
+    if (next.appIconUrl !== before.appIconUrl) next.appIconVersion = Date.now();
+    const pct = (k: string, max = 100) => Math.max(0, Math.min(max, num(k) || 0));
+    const code = str("defaultCountry").toUpperCase();
+    if (code && !COUNTRY_CODES.includes(code)) return { ok: false, error: "Default country must be a 2-letter code such as HT" };
+    next.defaultCountry = code || "HT";
+    const langs = ["ht", "fr", "en", "es"].filter((l) => form.get(`lang_${l}`) === "on");
+    if (!langs.length) return { ok: false, error: "Keep at least one language on" };
+    next.languages = langs;
+    next.telegramUrl = str("telegramUrl");
+    next.telegramChannel = str("telegramChannel");
+    next.telegramStaffChat = str("telegramStaffChat");
+    if (next.telegramChannel && !/^(@[\w]{4,}|-?\d{5,})$/.test(next.telegramChannel)) return { ok: false, error: "Telegram channel: @name or the numeric chat id" };
+    if (next.telegramStaffChat && !/^-?\d{5,}$/.test(next.telegramStaffChat)) return { ok: false, error: "Staff chat: the numeric chat id (e.g. -1001234567890)" };
+    next.kycRetentionMonths = Math.max(1, Math.min(120, Math.round(num("kycRetentionMonths")) || 12));
+    next.supplierDefaults = { markupPct: pct("markupPct", 1000), minProfitUsd: money("minProfitUsd"), round: (["99", "49"].includes(str("round")) ? str("round") : "none") as "99" | "49" | "none" };
+    next.successRate = { minOrders: Math.max(1, Math.round(num("srMinOrders")) || 20), alertBelowPct: pct("srAlert"), pauseBelowPct: pct("srPause") };
+    next.legal = { entity: str("legalEntity"), registration: str("legalRegistration"), taxId: str("legalTaxId"), email: str("legalEmail"), refundDays: Math.max(0, Math.min(90, Math.round(num("legalRefundDays")))) };
+    if (next.legal.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(next.legal.email)) return { ok: false, error: "Legal email looks wrong" };
+    next.maintenance = {
+      on: form.get("maintenanceOn") === "on",
+      message: { ht: str("maintenance_ht"), fr: str("maintenance_fr"), en: str("maintenance_en"), es: str("maintenance_es") },
+      until: String(form.get("maintenanceUntil") ?? "") || undefined,
+    };
     for (const url of [next.socialFacebook, next.socialInstagram, next.socialTiktok, next.announcement?.link]) {
       if (url && !/^https:\/\//.test(url) && !url.startsWith("/")) return { ok: false, error: "Links must start with https:// or /" };
     }

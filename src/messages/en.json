@@ -62,7 +62,8 @@
     "choose": "Choose",
     "tabAccount": "Account",
     "more": "More",
-    "faqShort": "FAQ"
+    "faqShort": "FAQ",
+    "maintenance": "We are improving the site. Back very soon: your orders and wallet are safe."
   },
   "home": {
     "eyebrow": "Unlock · Check · Repair",
@@ -203,7 +204,8 @@
       "verify_email": "Confirm your email before continuing. Check your inbox.",
       "not_in_country": "This service is not available in your country.",
       "kyc_required": "This needs a verified account. Verify it in a few minutes.",
-      "kyc_blocked": "This isn't allowed on your account. Contact support."
+      "kyc_blocked": "This isn't allowed on your account. Contact support.",
+      "maintenance": "The site is under maintenance for a few minutes. Try again soon."
     }
   },
   "order": {

@@ -62,7 +62,8 @@
     "choose": "Elegir",
     "tabAccount": "Cuenta",
     "more": "Más",
-    "faqShort": "Preguntas"
+    "faqShort": "Preguntas",
+    "maintenance": "Estamos mejorando el sitio. Volvemos muy pronto: tus pedidos y tu billetera están seguros."
   },
   "home": {
     "eyebrow": "Liberar · Verificar · Reparar",
@@ -203,7 +204,8 @@
       "verify_email": "Confirma tu correo antes de continuar. Revisa tu bandeja.",
       "not_in_country": "Este servicio no está disponible en tu país.",
       "kyc_required": "Esto necesita una cuenta verificada. Verifícala en unos minutos.",
-      "kyc_blocked": "Esto no está permitido en tu cuenta. Contacta con soporte."
+      "kyc_blocked": "Esto no está permitido en tu cuenta. Contacta con soporte.",
+      "maintenance": "El sitio está en mantenimiento unos minutos. Inténtalo pronto."
     }
   },
   "order": {

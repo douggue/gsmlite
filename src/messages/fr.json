@@ -62,7 +62,8 @@
     "choose": "Choisir",
     "tabAccount": "Compte",
     "more": "Plus",
-    "faqShort": "FAQ"
+    "faqShort": "FAQ",
+    "maintenance": "Nous améliorons le site. De retour très vite : vos commandes et votre portefeuille sont en sécurité."
   },
   "home": {
     "eyebrow": "Débloquer · Vérifier · Réparer",
@@ -203,7 +204,8 @@
       "verify_email": "Confirmez votre e-mail avant de continuer. Vérifiez votre boîte de réception.",
       "not_in_country": "Ce service n'est pas disponible dans votre pays.",
       "kyc_required": "Ceci demande un compte vérifié. Vérifiez-le en quelques minutes.",
-      "kyc_blocked": "Ce n'est pas autorisé sur votre compte. Contactez le support."
+      "kyc_blocked": "Ce n'est pas autorisé sur votre compte. Contactez le support.",
+      "maintenance": "Le site est en maintenance pour quelques minutes. Réessayez bientôt."
     }
   },
   "order": {

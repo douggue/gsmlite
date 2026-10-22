@@ -5,7 +5,8 @@ import { Flag } from "./Flags";
 import { useLocale, useTranslations } from "next-intl";
 import { useParams, useRouter as useNextRouter } from "next/navigation";
 import { Link, getPathname, usePathname, useRouter } from "@/i18n/navigation";
-import { localeNames, locales, type Locale } from "@/i18n/routing";
+import { localeNames, type Locale } from "@/i18n/routing";
+import { useSiteLocales } from "./SiteLangs";
 import { setCurrency, saveLocalePreference } from "@/actions/prefs";
 import { authClient } from "@/lib/auth-client";
 import { useStore } from "./cart/CartProvider";
@@ -102,6 +103,7 @@ function useChangeLocale() {
   const router = useRouter();
   const nextRouter = useNextRouter();
   const [pending, start] = useTransition();
+  const locales = useSiteLocales();
   const [picked, setPicked] = useState<Locale>(locale);
   useEffect(() => setPicked(locale), [locale]);
 
@@ -132,13 +134,13 @@ function useChangeLocale() {
       router.replace({ pathname, params }, { locale: next, scroll: false });
     });
   };
-  return { locale: picked, change, pending, prefetch };
+  return { locale: picked, change, pending, prefetch, locales };
 }
 
 /** Header: the current flag; tapping it opens the four languages. */
 export function LocaleSwitch() {
   const t = useTranslations("common");
-  const { locale, change, pending, prefetch } = useChangeLocale();
+  const { locale, change, pending, prefetch, locales } = useChangeLocale();
   const [open, setOpen] = useState(false);
   useEffect(() => {
     if (!open) return;
@@ -190,7 +192,7 @@ export function LocaleSwitch() {
 /** Row of four flags (menu, sign-in and sign-up pages): one tap changes the language. */
 export function LanguageFlags({ className = "" }: { className?: string }) {
   const t = useTranslations("common");
-  const { locale, change, pending, prefetch } = useChangeLocale();
+  const { locale, change, pending, prefetch, locales } = useChangeLocale();
   useEffect(() => {
     const id = setTimeout(prefetch, 800); // after the page has settled
     return () => clearTimeout(id);

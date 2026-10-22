@@ -1,4 +1,5 @@
 "use server";
+import { closedFor } from "@/lib/maintenance";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
@@ -53,6 +54,7 @@ export async function createDeposit(form: FormData): Promise<ActionResult<{ redi
   if (!(await verifyTurnstile(String(form.get("cf-turnstile-response") ?? ""), (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim()))) {
     return { ok: false, error: "captcha" };
   }
+  if (await closedFor(user)) return { ok: false, error: "maintenance" };
   if (await mustVerifyEmail(user.id)) return { ok: false, error: "verify_email" };
   const settings = await getSettings();
   const method = form.get("method");

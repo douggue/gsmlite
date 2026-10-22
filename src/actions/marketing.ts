@@ -153,3 +153,20 @@ export async function importTacList(form: FormData): Promise<R> {
     return fail(e);
   }
 }
+
+/** Settings → Telegram: send a test message to the staff chat and the channel. */
+export async function testTelegram(): Promise<R> {
+  try {
+    await assertStaff("settings.manage");
+    const { sendTelegram, telegramReady } = await import("@/lib/telegram");
+    if (!telegramReady()) return { ok: false, error: "TELEGRAM_BOT_TOKEN is not set in the hosting environment" };
+    const s = await getSettings();
+    const results: string[] = [];
+    if (s.telegramStaffChat) results.push(`staff chat ${(await sendTelegram(s.telegramStaffChat, "✅ GSMLite test: staff alerts work")) ? "OK" : "failed"}`);
+    if (s.telegramChannel) results.push(`channel ${(await sendTelegram(s.telegramChannel, "✅ GSMLite test message")) ? "OK" : "failed (is the bot an admin of the channel?)"}`);
+    if (!results.length) return { ok: false, error: "Save a channel or a staff chat first" };
+    return { ok: true, message: results.join(" · ") };
+  } catch (e) {
+    return fail(e);
+  }
+}

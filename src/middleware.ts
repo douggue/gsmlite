@@ -48,5 +48,5 @@ function withLanguage(req: NextRequest, lang: string) {
 }
 
 export const config = {
-  matcher: ["/((?!api|admin|media|_next|_vercel|.*\\..*).*)"],
+  matcher: ["/((?!api|admin|media|app-icon|_next|_vercel|.*\\..*).*)"],
 };

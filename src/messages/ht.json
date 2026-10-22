@@ -62,7 +62,8 @@
     "choose": "Chwazi",
     "tabAccount": "Kont",
     "more": "Plis",
-    "faqShort": "Kesyon"
+    "faqShort": "Kesyon",
+    "maintenance": "N ap amelyore sit la. N ap tounen talè: kòmand ou ak pòtfèy ou an sekirite."
   },
   "home": {
     "eyebrow": "Debloke · Tcheke · Repare",
@@ -203,7 +204,8 @@
       "verify_email": "Konfime imèl ou anvan ou kontinye. Gade bwat resepsyon ou.",
       "not_in_country": "Sèvis sa a pa disponib nan peyi ou.",
       "kyc_required": "Sa mande yon kont verifye. Verifye l nan kèk minit.",
-      "kyc_blocked": "Sa pa pèmèt sou kont ou. Kontakte sipò."
+      "kyc_blocked": "Sa pa pèmèt sou kont ou. Kontakte sipò.",
+      "maintenance": "Sit la an antretyen pou kèk minit. Eseye ankò talè."
     }
   },
   "order": {

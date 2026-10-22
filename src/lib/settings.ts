@@ -94,6 +94,16 @@ export type Settings = {
   successRate: { minOrders: number; alertBelowPct: number; pauseBelowPct: number };
   /** Last low-success alert / automatic pause per product (ISO dates), so staff are told once a day */
   successWatch: Record<string, { alertedAt?: string; pausedAt?: string }>;
+  /** Square app icon (PNG, at least 512×512): favicon, home-screen icon and install icon are made from it. Empty = built-in. */
+  appIconUrl: string;
+  /** Changes with every new icon so phones and browsers fetch it again */
+  appIconVersion: number;
+  /** Maintenance mode: customers see a message; staff still use the admin and can preview the site. */
+  maintenance: { on: boolean; message: Record<string, string>; until?: string };
+  /** Legal details shown in the footer, terms and receipts */
+  legal: { entity: string; registration: string; taxId: string; email: string; refundDays: number };
+  /** Languages offered to customers (the rest are hidden from the switcher) */
+  languages: string[];
 };
 
 export type NavLink = { label: Record<string, string>; href: string };
@@ -219,6 +229,11 @@ export const DEFAULT_SETTINGS: Settings = {
   supplierDefaults: { markupPct: 35, minProfitUsd: 50, round: "99" },
   successRate: { minOrders: 20, alertBelowPct: 80, pauseBelowPct: 0 },
   successWatch: {},
+  appIconUrl: "",
+  appIconVersion: 0,
+  maintenance: { on: false, message: {} },
+  legal: { entity: "", registration: "", taxId: "", email: "", refundDays: 7 },
+  languages: ["ht", "fr", "en", "es"],
 };
 
 export async function getSettings(): Promise<Settings> {

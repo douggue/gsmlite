@@ -24,6 +24,8 @@ import { getUser } from "@/lib/session";
 import { ServiceWorker } from "@/components/ServiceWorker";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { SPLASH } from "@/lib/splash";
+import { SiteLangs } from "@/components/SiteLangs";
+import { isStaff } from "@/lib/permissions";
 import "../globals.css";
 
 export const viewport: Viewport = {
@@ -45,7 +47,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     manifest: "/manifest.webmanifest",
     // Installed on iPhone: full screen, no Safari bar, logo launch screen.
     appleWebApp: { capable: true, title: "GSMLite", statusBarStyle: "black", startupImage: SPLASH },
-    icons: { icon: [{ url: "/favicon-48.png", sizes: "48x48", type: "image/png" }, { url: "/icon-192.png", sizes: "192x192", type: "image/png" }], apple: "/apple-touch-icon.png" },
+    icons: (() => {
+      const v = settings.appIconVersion ? `?v=${settings.appIconVersion}` : "";
+      return { icon: [{ url: `/app-icon/48${v}`, sizes: "48x48", type: "image/png" }, { url: `/app-icon/192${v}`, sizes: "192x192", type: "image/png" }], apple: `/app-icon/180${v}` };
+    })(),
   };
 }
 
@@ -64,6 +69,8 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   const themeCookie = jar.get("gl_theme")?.value;
   const dark = themeCookie ? themeCookie === "dark" : fullTheme(settings.theme).defaultMode === "dark";
   const country = await shopperCountry(user);
+  // Maintenance mode: customers see the message; staff keep using the site.
+  const closed = settings.maintenance.on && !(user && isStaff(user.role));
   const [methods, cats] = await Promise.all([payMethodsFor(country, "orders", locale), getCategories({ country, signedIn: !!user })]);
 
   return (
@@ -79,10 +86,11 @@ export default async function LocaleLayout({ children, params }: { children: Rea
           {t("skipToContent")}
         </a>
         <NextIntlClientProvider>
+          <SiteLangs value={settings.languages}>
           <CartProvider currency={currency} htgPerUsd={settings.htgPerUsd} signedIn={!!user}>
             <AnnouncementBar settings={settings} locale={locale} />
             <SiteHeader />
-            <main id="main">{children}</main>
+            <main id="main">{closed ? <Maintenance message={txt(settings.maintenance.message, locale) || t("maintenance")} until={settings.maintenance.until} /> : children}</main>
             <SiteFooter settings={settings} methods={methods} categories={cats.filter((c) => c.inMenu).map((c) => ({ slug: c.slug, name: txt(c.name, locale) }))} />
             {/* Room for the phone bottom navigation so it never covers the footer */}
             <div className="md:hidden" style={{ height: "calc(4rem + env(safe-area-inset-bottom, 0px))" }} aria-hidden />
@@ -91,8 +99,21 @@ export default async function LocaleLayout({ children, params }: { children: Rea
             <ServiceWorker />
             <InstallPrompt />
           </CartProvider>
+          </SiteLangs>
         </NextIntlClientProvider>
       </body>
     </html>
+  );
+}
+
+function Maintenance({ message, until }: { message: string; until?: string }) {
+  return (
+    <section className="mx-auto grid min-h-[60vh] max-w-xl place-items-center px-4 py-16 text-center">
+      <div className="space-y-3">
+        <p className="text-5xl" aria-hidden>🛠</p>
+        <p className="whitespace-pre-line text-lg font-semibold">{message}</p>
+        {until && <p className="text-sm text-muted">{new Date(until).toLocaleString("fr-FR", { dateStyle: "medium", timeStyle: "short" })}</p>}
+      </div>
+    </section>
   );
 }

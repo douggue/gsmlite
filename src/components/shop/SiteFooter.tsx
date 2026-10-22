@@ -62,7 +62,7 @@ export async function SiteFooter({ settings, methods, categories }: { settings: 
       {settings.newsletterEnabled && <div className="container-page pb-6"><NewsletterForm /></div>}
       <div className="container-page flex flex-wrap items-center gap-x-6 gap-y-3 pb-5 text-[#b9c0b6] [&_*]:!text-[#b9c0b6]"><DataSaverToggle /><InstallLink /></div>
       <div className="container-page flex flex-wrap items-center justify-between gap-3 border-t border-white/10 py-5 text-[13px] text-[#b9c0b6]">
-        <span>© {new Date().getFullYear()} {settings.businessName}. {t("rights")}</span>
+        <span>© {new Date().getFullYear()} {settings.legal?.entity || settings.businessName}. {t("rights")}{settings.legal?.registration ? ` · ${settings.legal.registration}` : ""}{settings.legal?.taxId ? ` · NIF ${settings.legal.taxId}` : ""}</span>
         {badges.length > 0 && (
           <span className="flex flex-wrap gap-1.5">
             {badges.map((b) => <span key={b} className="rounded-md bg-white px-2 py-1 text-xs font-bold text-[#111418]">{b}</span>)}
