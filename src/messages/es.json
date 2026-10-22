@@ -5,7 +5,7 @@
   },
   "common": {
     "siteName": "GSMLite",
-    "shopNow": "Comprar ahora",
+    "shopNow": "Ver servicios",
     "browseCategories": "Ver categorías",
     "search": "Buscar",
     "searchPlaceholder": "Busca un servicio o pega un IMEI…",
@@ -24,7 +24,7 @@
     "light": "Claro",
     "dark": "Oscuro",
     "home": "Inicio",
-    "store": "Tienda",
+    "store": "Servicios",
     "categories": "Categorías",
     "guides": "Guías de pago",
     "faq": "Preguntas frecuentes",

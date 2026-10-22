@@ -173,7 +173,7 @@ export async function saveTheme(input: ThemeConfig): Promise<R> {
     if (contrastRatio(theme.primary, "#FFFFFF") < 4.5) return { ok: false, error: "Main color is too light for white button text (needs 4.5:1 contrast). Pick a darker color." };
     if (contrastRatio(theme.primaryDark, theme.midnight) < 3) return { ok: false, error: "Dark-mode accent is too dark to see on the dark background. Pick a lighter color." };
     if (contrastRatio(theme.navy, "#FFFFFF") < 7) return { ok: false, error: "Dark cards must stay dark enough for white text (7:1)." };
-    if (contrastRatio(theme.lightBg, "#0B1426") < 10) return { ok: false, error: "Light background is too dark for dark text. Pick a lighter color." };
+    if (contrastRatio(theme.lightBg, "#111418") < 10) return { ok: false, error: "Light background is too dark for dark text. Pick a lighter color." };
     const marquee: Record<string, string> = {};
     for (const l of ["ht", "fr", "en", "es"]) marquee[l] = String(theme.marquee[l] ?? "").replace(/[<>]/g, "").slice(0, 300);
     const clean: ThemeConfig = {

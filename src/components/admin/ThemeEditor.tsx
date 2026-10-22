@@ -34,7 +34,7 @@ export function ThemeEditor({ initial, defaults, history }: { initial: ThemeConf
     primaryDark: contrastRatio(th.primaryDark, th.midnight),
     navy: contrastRatio(th.navy, "#FFFFFF"),
     midnight: 21,
-    lightBg: contrastRatio(th.lightBg, "#0B1426"),
+    lightBg: contrastRatio(th.lightBg, "#111418"),
   };
   const ok = COLORS.every(([k, , , min]) => ratio[k] >= min);
   const publish = (t: ThemeConfig) =>
@@ -152,7 +152,7 @@ export function ThemeEditor({ initial, defaults, history }: { initial: ThemeConf
           <span className="mt-4 inline-flex min-h-11 items-center rounded-xl px-5 text-sm font-bold text-white" style={{ background: th.primaryDark, boxShadow: `0 14px 34px -14px rgba(47,116,255,${glowA + 0.1})` }}>Achte kounye a →</span>
         </div>
         {(["light", "dark"] as const).map((mode) => (
-          <div key={mode} className="rounded-2xl border border-border p-4" style={{ background: mode === "light" ? th.lightBg : th.midnight, color: mode === "light" ? "#0b1426" : "#eef3ff" }}>
+          <div key={mode} className="rounded-2xl border border-border p-4" style={{ background: mode === "light" ? th.lightBg : th.midnight, color: mode === "light" ? "#111418" : "#e4f3ea" }}>
             <p className="mb-3 text-xs uppercase tracking-wide opacity-70">{mode} mode {th.defaultMode === mode && "· default"}</p>
             <div className="p-4" style={{ background: mode === "light" ? "#fff" : th.navy, borderRadius: th.radius, border: `1px solid ${mode === "light" ? "#dbe3f1" : "#1f2f57"}` }}>
               <p className="font-bold" style={{ fontFamily: displayFont }}>Debloke iPhone AT&amp;T</p>

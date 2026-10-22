@@ -89,7 +89,7 @@ const COPY = {
 
 export function emailLayout(name: string, body: string, cta: string, url: string, ignore: string) {
   const safeName = name.replace(/[<>&"]/g, "");
-  const html = `<!doctype html><html><body style="margin:0;background:#F5F7FC;font-family:Arial,sans-serif;color:#0b1426">
+  const html = `<!doctype html><html><body style="margin:0;background:#f4f5f2;font-family:Arial,sans-serif;color:#111418">
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px">
 <table width="100%" style="max-width:480px;background:#fff;border-radius:16px;padding:28px" cellpadding="0" cellspacing="0"><tr><td>
 <p style="font-size:20px;font-weight:800;margin:0 0 16px">GSM<span style="color:#1F7A4D">Lite</span></p>

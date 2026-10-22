@@ -142,14 +142,14 @@ export default async function HomePage({ params, searchParams }: { params: Promi
     wallet: (
       <>
 <section className="container-page mt-6">
-        <div className="relative flex flex-col items-start gap-5 overflow-hidden rounded-3xl bg-[linear-gradient(135deg,#3b7dff,#1f56d8_45%,#0d2a78)] p-6 text-white shadow-[0_26px_50px_-24px_var(--glow)] sm:flex-row sm:items-center sm:p-8">
-          <span aria-hidden className="ds-hide pointer-events-none absolute -right-10 -top-16 h-56 w-56 rounded-full bg-[#46d8ff]/40 blur-3xl" />
+        <div className="relative flex flex-col items-start gap-5 overflow-hidden rounded-3xl bg-[linear-gradient(135deg,#2fa36a,#1f7a4d_45%,#0f3d27)] p-6 text-white shadow-[0_26px_50px_-24px_var(--glow)] sm:flex-row sm:items-center sm:p-8">
+          <span aria-hidden className="ds-hide pointer-events-none absolute -right-10 -top-16 h-56 w-56 rounded-full bg-[#7ce0a8]/40 blur-3xl" />
           <span className="relative grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white/20"><WalletIcon /></span>
           <div className="relative flex-1">
             <h2 className="display text-xl font-bold sm:text-2xl">{th("walletTitle")}</h2>
             <p className="mt-1 text-sm text-[#dbe7ff]">{th("walletBody")}</p>
           </div>
-          <Link href="/account/wallet" className="btn relative bg-white text-[#0d2a78] hover:bg-[#e6efff]">{th("walletCta")}</Link>
+          <Link href="/account/wallet" className="btn relative bg-white text-[#0f3d27] hover:bg-[#e4f3ea]">{th("walletCta")}</Link>
         </div>
       </section>
       </>
@@ -228,7 +228,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
           <div className="stagger flex flex-col gap-5">
             {heroText("eyebrow") && <p className="animate-rise text-sm font-bold uppercase tracking-[0.14em] text-[#7CE0A8]">{heroText("eyebrow")}</p>}
             <h1 className="display neon-text animate-rise text-4xl font-bold leading-[1.04] sm:text-5xl lg:text-6xl">{heroText("title")}</h1>
-            <p className="animate-rise max-w-xl text-base text-[#b7c6e4] sm:text-lg">{heroText("subtitle")}</p>
+            <p className="animate-rise max-w-xl text-base text-[#c9cfc6] sm:text-lg">{heroText("subtitle")}</p>
             <div className="animate-rise flex flex-wrap gap-3">
               <Link href={home.ctaHref || "/store"} className="btn-primary glow-btn neon-pulse min-h-13 px-6 text-base">
                 {tc("shopNow")} <ArrowRightIcon width={18} height={18} />
@@ -237,7 +237,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 {tc("browseCategories")}
               </Link>
             </div>
-            <div className="animate-rise flex flex-wrap items-center gap-3 text-sm text-[#b7c6e4]">
+            <div className="animate-rise flex flex-wrap items-center gap-3 text-sm text-[#c9cfc6]">
               <PayLogo brand="moncash" height={25} />
               <PayLogo brand="natcash" height={25} />
               <Link href="/guides" className="underline-offset-4 hover:text-white hover:underline">{th("payGuideLink")}</Link>
@@ -254,15 +254,15 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 <span className="mt-3 font-bold">{featured[0] ? t(featured[0].name, locale) : "GSMLite"}</span>
                 <span className="text-sm opacity-80">{th("trustDelivery")}</span>
               </div>
-              <div className="animate-rise absolute left-0 top-16 flex w-60 flex-col gap-2 rounded-2xl border border-[#46d8ff]/35 bg-[#0e1830]/90 p-4 shadow-[0_0_40px_-12px_rgba(70,216,255,.6)] backdrop-blur">
+              <div className="animate-rise absolute left-0 top-16 flex w-60 flex-col gap-2 rounded-2xl border border-[#7ce0a8]/35 bg-[#0e1830]/90 p-4 shadow-[0_0_40px_-12px_rgba(70,216,255,.6)] backdrop-blur">
                 <span className="text-xs font-semibold text-[#8fa3c8]">{tc("codeReady")}</span>
-                <span className="font-mono text-sm tracking-wider text-[#46d8ff]">XXXX-XXXX-XXXX</span>
+                <span className="font-mono text-sm tracking-wider text-[#7ce0a8]">XXXX-XXXX-XXXX</span>
                 <span className="flex items-center gap-1.5 text-sm font-bold text-[#2fd27f]"><BoltIcon width={16} height={16} /> {th("trustDelivery")}</span>
               </div>
               <div className="animate-rise absolute bottom-0 left-0 flex w-52 flex-col gap-1 rounded-2xl bg-[linear-gradient(135deg,#1f7a4d,#1340a8)] p-4 shadow-[0_24px_50px_-20px_rgba(47,116,255,.9)]">
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#cfe0ff]">{tc("wallet")}</span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#d3eedd]">{tc("wallet")}</span>
                 <span className="text-2xl font-extrabold">HTG · USD</span>
-                <span className="text-sm text-[#cfe0ff]">{th("walletTitle")}</span>
+                <span className="text-sm text-[#d3eedd]">{th("walletTitle")}</span>
               </div>
             </div>
           )}

@@ -7,7 +7,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
   useEffect(() => reportClientError(error), [error]);
   return (
     <html lang="ht">
-      <body style={{ fontFamily: "system-ui, sans-serif", background: "#050b18", color: "#f5f7fc", display: "grid", placeItems: "center", minHeight: "100vh", margin: 0, textAlign: "center", padding: 16 }}>
+      <body style={{ fontFamily: "system-ui, sans-serif", background: "#050b18", color: "#f4f5f2", display: "grid", placeItems: "center", minHeight: "100vh", margin: 0, textAlign: "center", padding: 16 }}>
         <div>
           <h1 style={{ fontSize: 20 }}>Gen yon pwoblèm. · Une erreur est survenue. · Something went wrong.</h1>
           {error.digest && <p style={{ fontFamily: "monospace", fontSize: 12, opacity: 0.7 }}>Ref: {error.digest}</p>}
