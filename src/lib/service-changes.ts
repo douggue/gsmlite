@@ -11,6 +11,10 @@ export async function recordChange(kind: ServiceChangeKind, productId: string, o
     const recent = await prisma.serviceChange.findFirst({ where: { kind, productId, variantId: opts.variantId ?? null, createdAt: { gte: new Date(Date.now() - 3_600_000) } } });
     if (recent) return;
     await prisma.serviceChange.create({ data: { kind, productId, variantId: opts.variantId ?? null, oldPrice: opts.oldPrice ?? null, newPrice: opts.newPrice ?? null } });
+    if (kind === "NEW" || kind === "PRICE_DOWN" || kind === "BACK") {
+      const { announceChange } = await import("./marketing");
+      await announceChange(kind, productId, opts.newPrice);
+    }
   } catch (e) {
     console.error("service change not recorded", e);
   }

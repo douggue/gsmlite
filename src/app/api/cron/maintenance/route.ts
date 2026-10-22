@@ -9,6 +9,7 @@ import { LIVE } from "@/lib/suppliers/dispatch";
 import { endExpiredDeals } from "@/lib/deals";
 import { deletePrivateFile } from "@/lib/storage";
 import { applySpendGroups } from "@/lib/pricing";
+import { dailyMessages } from "@/lib/marketing";
 
 /**
  * Scheduled maintenance (call every 5–10 minutes with `Authorization: Bearer $CRON_SECRET`, e.g. Vercel Cron or Inngest):
@@ -44,7 +45,7 @@ export async function GET(req: NextRequest) {
     const released = await prisma.$transaction(async (tx) => {
       const r = await releaseHold(tx, h);
       await tx.paymentIntent.update({ where: { id: h.id }, data: { holdUntil: null } });
-      await grantTopupBonus(tx, h, settings.topupBonus, settings.htgPerUsd);
+      await grantTopupBonus(tx, h, settings.topupBonus, settings.htgPerUsd, settings.welcomeCreditUsd);
       return !r.duplicate;
     });
     if (released) {
@@ -89,5 +90,6 @@ export async function GET(req: NextRequest) {
     await prisma.kycDocument.update({ where: { id: d.id }, data: { deletedAt: new Date() } });
   }
   const groupsMoved = await applySpendGroups();
-  return NextResponse.json({ ...result, kycDocsDeleted: oldDocs.length, groupsMoved });
+  const messages = await dailyMessages();
+  return NextResponse.json({ ...result, kycDocsDeleted: oldDocs.length, groupsMoved, messages });
 }

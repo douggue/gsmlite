@@ -79,6 +79,13 @@ export type Settings = {
   checkCreditDays: number;
   /** KYC documents are deleted this many months after the account is closed */
   kycRetentionMonths: number;
+  /** Telegram: public channel (@name or -100…) for announcements, and the staff chat id for alerts */
+  telegramChannel: string;
+  telegramStaffChat: string;
+  /** Welcome credit in USD cents, paid once with the first top-up (0 = off) */
+  welcomeCreditUsd: number;
+  /** Automatic messages (Admin → Marketing) */
+  autoMessages: { inactiveOn: boolean; inactiveDays: number; afterUnlockOn: boolean; backOnlineTelegram: boolean; toolUpdateTelegram: boolean; dealTelegram: boolean };
   /** Wallet top-up bonus: % on the first top-up, % on top-ups of at least minUsd (cents); 0 = off */
   topupBonus: { firstPct: number; pct: number; minUsd: number };
   /** Defaults on the supplier import screen */
@@ -202,6 +209,10 @@ export const DEFAULT_SETTINGS: Settings = {
   freeCheckVariantId: "",
   checkCreditDays: 7,
   kycRetentionMonths: 12,
+  telegramChannel: "",
+  telegramStaffChat: "",
+  welcomeCreditUsd: 0,
+  autoMessages: { inactiveOn: false, inactiveDays: 14, afterUnlockOn: true, backOnlineTelegram: true, toolUpdateTelegram: true, dealTelegram: true },
   topupBonus: { firstPct: 10, pct: 3, minUsd: 5000 },
   supplierDefaults: { markupPct: 35, minProfitUsd: 50, round: "99" },
   successRate: { minOrders: 20, alertBelowPct: 80, pauseBelowPct: 0 },

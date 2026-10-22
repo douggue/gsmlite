@@ -419,7 +419,9 @@
     "referral_rewarded": "You received {amount} because a friend you invited made a purchase.",
     "kyc_approved": "Your account is now {level}. You can continue.",
     "kyc_rejected": "Your verification was not approved: {reason}",
-    "kyc_needs_more": "We need a new photo for your verification: {reason}"
+    "kyc_needs_more": "We need a new photo for your verification: {reason}",
+    "marketing_inactive": "New services and price drops are waiting for you on GSMLite.",
+    "marketing_next_phone": "Another phone to unlock? Check its IMEI free first."
   },
   "pages": {
     "aboutTitle": "About GSMLite",

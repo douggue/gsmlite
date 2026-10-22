@@ -3,6 +3,8 @@ import { prisma } from "@/lib/db";
 import { pollSuppliers } from "@/lib/suppliers/dispatch";
 import { refreshBalance } from "@/lib/suppliers/sync";
 import { endExpiredDeals } from "@/lib/deals";
+import { supplierAttentionCount } from "@/lib/suppliers/attention";
+import { staffAlert } from "@/lib/marketing";
 
 export const maxDuration = 60;
 
@@ -17,6 +19,7 @@ export async function GET(req: NextRequest) {
   if (!process.env.CRON_SECRET || req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+  const before = await supplierAttentionCount();
   const result = await pollSuppliers();
   const dealsEnded = await endExpiredDeals();
   const minute = new Date().getUTCMinutes();
@@ -28,5 +31,7 @@ export async function GET(req: NextRequest) {
     }
     await prisma.supplierLog.deleteMany({ where: { createdAt: { lt: new Date(Date.now() - 30 * 86_400_000) } } });
   }
-  return NextResponse.json({ ...result, balances, dealsEnded });
+  const after = await supplierAttentionCount();
+  if (after > before) await staffAlert(`⚠️ ${after} supplier issue${after > 1 ? "s" : ""} need you`, "/admin/suppliers").catch(() => {});
+  return NextResponse.json({ ...result, balances, dealsEnded, attention: after });
 }

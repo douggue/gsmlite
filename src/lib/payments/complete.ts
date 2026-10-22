@@ -53,7 +53,7 @@ export async function completePayment(
       },
     });
     await creditPayment(tx, updated, { hold, actorId: opts.actorId });
-    if (!hold && !intent.orderId && !noBonus) await grantTopupBonus(tx, updated, settings.topupBonus, settings.htgPerUsd);
+    if (!hold && !intent.orderId && !noBonus) await grantTopupBonus(tx, updated, settings.topupBonus, settings.htgPerUsd, settings.welcomeCreditUsd);
 
     if (intent.orderId) {
       const order = await tx.order.findUniqueOrThrow({ where: { id: intent.orderId } });

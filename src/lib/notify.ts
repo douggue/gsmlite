@@ -20,7 +20,9 @@ export type NotificationType =
   | "referral_rewarded"
   | "kyc_approved"
   | "kyc_rejected"
-  | "kyc_needs_more";
+  | "kyc_needs_more"
+  | "marketing_inactive"
+  | "marketing_next_phone";
 
 const CATALOGS: Record<string, { notifications: Record<string, string> }> = { ht, fr, en, es };
 

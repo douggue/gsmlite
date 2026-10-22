@@ -419,7 +419,9 @@
     "referral_rewarded": "Vous avez reçu {amount} grâce à un ami parrainé.",
     "kyc_approved": "Votre compte est maintenant {level}. Vous pouvez continuer.",
     "kyc_rejected": "Votre vérification n'a pas été acceptée : {reason}",
-    "kyc_needs_more": "Il nous faut une nouvelle photo pour votre vérification : {reason}"
+    "kyc_needs_more": "Il nous faut une nouvelle photo pour votre vérification : {reason}",
+    "marketing_inactive": "De nouveaux services et des baisses de prix vous attendent sur GSMLite.",
+    "marketing_next_phone": "Un autre téléphone à débloquer ? Vérifiez d'abord son IMEI gratuitement."
   },
   "pages": {
     "aboutTitle": "À propos de GSMLite",

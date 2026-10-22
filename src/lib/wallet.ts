@@ -144,9 +144,21 @@ export function quoteExchange(
  * Top-up bonus (Settings → topupBonus): firstPct on the customer's first top-up, otherwise pct on top-ups of at least
  * minUsd. Paid once per payment, into the wallet, when the money becomes spendable (at once, or when a hold ends).
  */
-export async function grantTopupBonus(tx: Tx, intent: PaymentIntent, bonus: { firstPct: number; pct: number; minUsd: number }, htgPerUsd: number) {
+export async function grantTopupBonus(tx: Tx, intent: PaymentIntent, bonus: { firstPct: number; pct: number; minUsd: number }, htgPerUsd: number, welcomeCreditUsd = 0) {
   if (intent.orderId || intent.status !== "SUCCEEDED") return null;
   const earlier = await tx.paymentIntent.count({ where: { userId: intent.userId, orderId: null, status: "SUCCEEDED", id: { not: intent.id }, createdAt: { lt: intent.createdAt } } });
+  // Welcome credit: once per customer, with their first top-up (USD wallet).
+  if (earlier === 0 && welcomeCreditUsd > 0) {
+    const src = await systemAccount(tx, "marketing", "USD", "welcome");
+    const usdWallet = await walletAccount(tx, intent.userId, "USD");
+    await post(tx, {
+      type: "BONUS",
+      idempotencyKey: `welcome:${intent.userId}`,
+      description: "Welcome credit",
+      metadata: { paymentIntentId: intent.id },
+      entries: [{ accountId: src.id, currency: "USD", amount: -welcomeCreditUsd }, { accountId: usdWallet.id, currency: "USD", amount: welcomeCreditUsd }],
+    });
+  }
   const usd = intent.currency === "USD" ? intent.amount : Math.round(intent.amount / htgPerUsd);
   const pct = earlier === 0 ? bonus.firstPct : usd >= bonus.minUsd ? bonus.pct : 0;
   const amount = Math.floor((intent.amount * pct) / 100);

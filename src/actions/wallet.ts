@@ -17,6 +17,10 @@ import { normalizePhone } from "@/lib/phone";
 import { mustVerifyEmail } from "@/lib/verify-email";
 import { methodAllowed } from "@/lib/pay-methods";
 import { evaluateKyc } from "@/lib/kyc";
+import { staffAlert } from "@/lib/marketing";
+import { formatMoney } from "@/lib/money";
+
+const formatMoneyPlain = (n: number, c: "HTG" | "USD") => formatMoney(n, c, "en");
 import { shopperCountry } from "@/lib/prefs";
 import { cardAvailable } from "@/lib/payments/card";
 import { startCardPayment } from "@/lib/payments/start";
@@ -106,6 +110,7 @@ export async function createDeposit(form: FormData): Promise<ActionResult<{ redi
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") return { ok: false, error: "duplicate_ref" };
       throw e;
     }
+    await staffAlert(`💰 Top-up to check: ${formatMoneyPlain(amount, currency)} · ${method === "MANUAL" ? manual?.code : "NatCash"}`, "/admin/payments").catch(() => {});
     revalidatePath("/[locale]/account/wallet", "page");
     return { ok: true };
   }
@@ -138,6 +143,7 @@ export async function submitOrderNatcash(form: FormData): Promise<ActionResult> 
     console.error("order payment proof failed", e);
     return { ok: false, error: "error" };
   }
+  await staffAlert(`💰 Order #${order.number} payment to check (${order.paymentMethod.toLowerCase()})`, "/admin/payments").catch(() => {});
   revalidatePath(`/[locale]/account/orders/${order.id}`, "page");
   return { ok: true };
 }

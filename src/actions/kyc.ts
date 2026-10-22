@@ -41,6 +41,8 @@ export async function submitKyc(form: FormData): Promise<R> {
     await tx.kycSubmission.updateMany({ where: { userId: user.id, levelId: level.id, status: { in: ["PENDING", "NEEDS_MORE"] } }, data: { status: "REJECTED", note: "Replaced by a newer request" } });
     await tx.kycSubmission.create({ data: { userId: user.id, levelId: level.id, answers, documents: { create: saved } } });
   });
+  const { staffAlert } = await import("@/lib/marketing");
+  await staffAlert(`🪪 KYC request: ${user.name} asks for ${(level.name as Record<string, string>).en ?? level.key}`, "/admin/kyc").catch(() => {});
   revalidatePath("/[locale]/account/verification", "page");
   return { ok: true };
 }
