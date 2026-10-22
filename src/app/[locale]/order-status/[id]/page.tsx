@@ -60,7 +60,7 @@ export default async function OrderStatusPage({ params, searchParams }: { params
         </ol>
       </section>
       <div className="flex flex-wrap gap-3">
-        <Link href={`/account/orders/${order.id}`} className="btn-primary">{tc("signIn")} → {to("yourCodes")}</Link>
+        <Link href={`/account/orders/${order.id}`} className="btn-primary">{tc("signIn")} <span className="inline-block rtl:-scale-x-100">→</span> {to("yourCodes")}</Link>
         <a href={`https://wa.me/${settings.whatsappNumber}?text=${help}`} target="_blank" rel="noopener" className="btn-secondary">
           <WhatsAppIcon width={18} height={18} className="text-[#1fa855]" /> {to("getHelp")}
         </a>

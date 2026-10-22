@@ -25,7 +25,7 @@ export function ServiceCard({ card, orderLabel }: { card: CardView; orderLabel: 
         {card.tag ? <span className={`relative self-start rounded-md px-1.5 py-0.5 text-[11px] font-bold uppercase ${s.tag}`}>{card.tag}</span> : <span />}
       </Link>
       <div className="flex flex-1 flex-col gap-2 p-3.5">
-        <Link href={`/products/${card.slug}`} className="line-clamp-2 text-[13.5px] leading-snug hover:text-primary">{card.name}</Link>
+        <Link href={`/products/${card.slug}`} dir="auto" className="line-clamp-2 text-[13.5px] leading-snug hover:text-primary">{card.name}</Link>
         <div className="mt-auto flex items-center justify-between gap-2">
           <b className="text-lg tabular-nums"><Price usd={card.price} /></b>
           <Link href={`/products/${card.slug}#order`} aria-label={`${orderLabel}: ${card.name}`} className="grid h-10 w-10 place-items-center rounded-xl bg-primary-soft text-primary hover:bg-primary hover:text-white">

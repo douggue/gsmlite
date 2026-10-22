@@ -228,8 +228,8 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
                   className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-[14px] bg-surface p-3.5 ${active ? "border-2 border-[#111418] dark:border-primary" : "border border-border"} ${!v.inStock ? "cursor-not-allowed opacity-60" : ""}`}>
                   <input type="radio" name="variant" checked={active} disabled={!v.inStock} onChange={() => { setVariantId(v.id); setQty(v.minQty); }} className="h-5 w-5 accent-[#111418] dark:accent-[var(--primary)]" />
                   <span className="min-w-0 flex-1">
-                    <b className={`block text-[15px] ${!v.inStock ? "line-through" : ""}`}>{title.trim()}</b>
-                    {rest.length > 0 && <span className="text-xs text-muted">{rest.join("·").trim()}</span>}
+                    <b dir="auto" className={`block text-[15px] ${!v.inStock ? "line-through" : ""}`}>{title.trim()}</b>
+                    {rest.length > 0 && <span dir="auto" className="text-xs text-muted">{rest.join("·").trim()}</span>}
                     {!v.inStock && <span className="text-xs text-danger"> {g("soldOut")}</span>}
                   </span>
                   <span className="text-right">

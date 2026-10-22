@@ -40,7 +40,7 @@ export default async function TrackPage({ params, searchParams }: { params: Prom
         <Link href="/auth/login?next=/track" className="btn-primary mt-5 min-h-12">{g("signIn")}</Link>
       )}
       {notFound && <p className="mt-3 rounded-xl bg-[#fcebdd] px-4 py-3 text-sm text-[#8a3607]">{g("notFound")}</p>}
-      {user && <Link href="/account/orders" className="mt-6 inline-block text-sm font-semibold text-primary">{g("all")} →</Link>}
+      {user && <Link href="/account/orders" className="mt-6 inline-block text-sm font-semibold text-primary">{g("all")} <span className="inline-block rtl:-scale-x-100">→</span></Link>}
     </div>
   );
 }

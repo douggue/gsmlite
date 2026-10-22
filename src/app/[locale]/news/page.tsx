@@ -85,7 +85,7 @@ export default async function NewsPage({ params, searchParams }: { params: Promi
                 <span className={`rounded-md px-2 py-0.5 text-[11px] font-bold uppercase ${badge[r.kind]}`}>{g(`change.${r.kind}`)}</span>
                 <Link href={`/products/${p.slug}`} className="min-w-0 flex-1 font-semibold hover:text-primary">{t(p.name, locale)}</Link>
                 {r.oldPrice != null && r.newPrice != null && (
-                  <span className="tabular-nums"><span className="text-muted line-through"><Price usd={r.oldPrice} /></span> → <b><Price usd={r.newPrice} /></b></span>
+                  <span className="tabular-nums"><span className="text-muted line-through"><Price usd={r.oldPrice} /></span> <span className="inline-block rtl:-scale-x-100">→</span> <b><Price usd={r.newPrice} /></b></span>
                 )}
                 <span className="w-full text-xs text-muted sm:w-auto">{fmt.dateTime(r.createdAt, { dateStyle: "medium" })}</span>
               </li>
@@ -108,7 +108,7 @@ export default async function NewsPage({ params, searchParams }: { params: Promi
       <div className="mt-5 flex gap-2">
         <Link href="/news" className={tabCls(tab === "posts")}>{g("posts")}</Link>
         <Link href="/news?tab=changes" className={tabCls(tab === "changes")}>{g("changes")}</Link>
-        <Link href="/status" className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary">{g("status")} →</Link>
+        <Link href="/status" className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary">{g("status")} <span className="inline-block rtl:-scale-x-100">→</span></Link>
       </div>
       {body}
     </div>

@@ -57,7 +57,7 @@ export function PriceList({ groups, deal, telegram }: { groups: PriceGroupView[]
                   <li key={r.slug}>
                     <Link href={`/products/${r.slug}`} className="flex items-center gap-3 px-4 py-3">
                       <span className="min-w-0 flex-1">
-                        <b className="block text-[15px] text-primary">{r.name}</b>
+                        <b dir="auto" className="block text-[15px] text-primary">{r.name}</b>
                         <span className="text-xs"><span className={`font-semibold ${statusCls[r.status]}`}>● {g(`st.${r.status}`)}</span><span className="text-muted"> · {r.time}</span></span>
                       </span>
                       <b className="shrink-0 tabular-nums"><Price usd={r.price} /></b>
@@ -75,7 +75,7 @@ export function PriceList({ groups, deal, telegram }: { groups: PriceGroupView[]
                   <tbody>
                     {gr.rows.map((r) => (
                       <tr key={r.slug} className="border-t border-border">
-                        <td className="px-4 py-3"><Link href={`/products/${r.slug}`} className="font-semibold text-primary">{r.name}</Link></td>
+                        <td className="px-4 py-3"><Link href={`/products/${r.slug}`} dir="auto" className="font-semibold text-primary">{r.name}</Link></td>
                         <td className={`px-4 py-3 font-semibold ${statusCls[r.status]}`}>● {g(`st.${r.status}`)}</td>
                         <td className="px-4 py-3">{r.time}</td>
                         <td className="px-4 py-3 text-right font-semibold tabular-nums"><Price usd={r.price} /></td>

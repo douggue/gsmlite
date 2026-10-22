@@ -40,8 +40,8 @@ export function HomeSlider({ slides, prevLabel, nextLabel }: { slides: Slide[]; 
         )}
         <div className="mt-6 flex flex-wrap gap-2.5">
           {s.buttonText && (external(s.buttonHref)
-            ? <a href={s.buttonHref} className="inline-flex min-h-[50px] items-center rounded-xl bg-[#7ce0a8] px-5 font-semibold text-[#0b2a1a]">{s.buttonText} →</a>
-            : <Link href={s.buttonHref} className="inline-flex min-h-[50px] items-center rounded-xl bg-[#7ce0a8] px-5 font-semibold text-[#0b2a1a]">{s.buttonText} →</Link>)}
+            ? <a href={s.buttonHref} className="inline-flex min-h-[50px] items-center rounded-xl bg-[#7ce0a8] px-5 font-semibold text-[#0b2a1a]">{s.buttonText} <span className="inline-block rtl:-scale-x-100">→</span></a>
+            : <Link href={s.buttonHref} className="inline-flex min-h-[50px] items-center rounded-xl bg-[#7ce0a8] px-5 font-semibold text-[#0b2a1a]">{s.buttonText} <span className="inline-block rtl:-scale-x-100">→</span></Link>)}
           {s.button2Text && s.button2Href && (external(s.button2Href)
             ? <a href={s.button2Href} target="_blank" rel="noopener" className="inline-flex min-h-[50px] items-center rounded-xl border border-white/25 px-5 font-semibold">{s.button2Text}</a>
             : <Link href={s.button2Href} className="inline-flex min-h-[50px] items-center rounded-xl border border-white/25 px-5 font-semibold">{s.button2Text}</Link>)}

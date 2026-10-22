@@ -59,7 +59,7 @@ export default async function Dashboard({ params }: { params: Promise<{ locale: 
         <section className="card p-5">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-semibold">{ta("recentOrders")}</h2>
-            <Link href="/account/orders" className="text-sm font-semibold text-primary">→</Link>
+            <Link href="/account/orders" className="text-sm font-semibold text-primary"><span className="inline-block rtl:-scale-x-100">→</span></Link>
           </div>
           {orders.length === 0 ? (
             <p className="py-6 text-center text-sm text-muted">{ta("noOrders")}</p>
@@ -82,7 +82,7 @@ export default async function Dashboard({ params }: { params: Promise<{ locale: 
         <section className="card p-5">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-semibold">{ta("recentActivity")}</h2>
-            <Link href="/account/wallet" className="text-sm font-semibold text-primary">→</Link>
+            <Link href="/account/wallet" className="text-sm font-semibold text-primary"><span className="inline-block rtl:-scale-x-100">→</span></Link>
           </div>
           {activity.length === 0 ? (
             <p className="py-6 text-center text-sm text-muted">{ta("noActivity")}</p>

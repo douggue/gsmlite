@@ -134,7 +134,7 @@ export default async function ProductPage({ params }: { params: P }) {
   const statBox = (
     <dl className="grid grid-cols-3 divide-x divide-border overflow-hidden rounded-[14px] border border-border bg-surface text-center">
       <div className="p-3"><dt className="text-xs text-muted">{g("service.statPrice")}</dt><dd className="mt-0.5 font-semibold tabular-nums"><Price usd={from} /></dd></div>
-      <div className="p-3"><dt className="text-xs text-muted">{stats?.medianMinutes != null ? g("service.statAvg") : g("service.statTime")}</dt><dd className="mt-0.5 font-semibold">{deliveryText || "—"}</dd></div>
+      <div className="p-3"><dt className="text-xs text-muted">{stats?.medianMinutes != null ? g("service.statAvg") : g("service.statTime")}</dt><dd dir="auto" className="mt-0.5 font-semibold">{deliveryText || "—"}</dd></div>
       <div className="p-3">
         <dt className="text-xs text-muted">{g("service.statSuccess")}</dt>
         <dd className="mt-0.5 font-semibold">{stats?.successRate != null ? `${stats.successRate.toLocaleString(locale === "ht" ? "fr" : locale)} %` : g("service.newService")}</dd>
@@ -156,13 +156,13 @@ export default async function ProductPage({ params }: { params: P }) {
           on computers the order card sits in a sticky right column next to the rest. */}
       <div className="mt-1 flex flex-col gap-5 lg:mt-3 lg:grid lg:grid-cols-[minmax(0,1fr)_440px] lg:grid-rows-[repeat(6,auto)_1fr] lg:gap-x-10 lg:gap-y-0 [&>*:empty]:hidden [&>*]:lg:col-start-1 [&>*:not(:empty)]:lg:mb-5">
         <div>
-          <h1 className="display text-[28px] leading-[1.1] tracking-tight lg:text-4xl">{name}</h1>
+          <h1 dir="auto" className="display text-[28px] leading-[1.1] tracking-tight lg:text-4xl">{name}</h1>
           <div className="mt-2.5 flex flex-wrap gap-1.5">
-            {deliveryText && <span className="rounded-full border border-border bg-surface px-2.5 py-1 text-xs font-semibold">{deliveryText}</span>}
+            {deliveryText && <span dir="auto" className="rounded-full border border-border bg-surface px-2.5 py-1 text-xs font-semibold">{deliveryText}</span>}
             {product.tags.slice(0, 3).map((x) => <span key={x} className="rounded-full border border-border bg-surface px-2.5 py-1 text-xs font-semibold">{x}</span>)}
             <span className="rounded-full bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary">{g("service.refundChip")}</span>
           </div>
-          {t(product.description, locale) && <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-muted lg:text-base">{t(product.description, locale)}</p>}
+          {t(product.description, locale) && <p dir="auto" className="mt-3 whitespace-pre-line text-sm leading-relaxed text-muted lg:text-base">{t(product.description, locale)}</p>}
         </div>
 
         <div>
@@ -177,7 +177,7 @@ export default async function ProductPage({ params }: { params: P }) {
           {check && check.variants[0] && (
             <Link href={`/products/${check.slug}#order`} className="flex items-center justify-between gap-3 rounded-[14px] border border-[#cfe7d8] bg-primary-soft px-4 py-3 text-sm">
               <span>{g("service.checkFirst", { name: t(check.name, locale) })}</span>
-              <b className="shrink-0 text-primary"><Price usd={unitPriceUsd(check.variants[0], ctx)} /> →</b>
+              <b className="shrink-0 text-primary"><Price usd={unitPriceUsd(check.variants[0], ctx)} /> <span className="inline-block rtl:-scale-x-100">→</span></b>
             </Link>
           )}
         </div>

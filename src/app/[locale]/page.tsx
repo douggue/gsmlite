@@ -42,7 +42,7 @@ function SectionHead({ title, sub, href, linkLabel }: { title: string; sub?: str
         <b className="display block text-xl">{title}</b>
         {sub && <span className="text-[13px] text-[#c9cfc6]">{sub}</span>}
       </span>
-      {href && linkLabel && <Link href={href} className="inline-flex min-h-10 shrink-0 items-center rounded-xl bg-white px-3.5 text-sm font-semibold text-[#111418]">{linkLabel} →</Link>}
+      {href && linkLabel && <Link href={href} className="inline-flex min-h-10 shrink-0 items-center rounded-xl bg-white px-3.5 text-sm font-semibold text-[#111418]">{linkLabel} <span className="inline-block rtl:-scale-x-100">→</span></Link>}
     </div>
   );
 }
@@ -203,7 +203,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                   </li>
                 ))}
               </ul>
-              <Link href="/categories" className="px-4 py-3 text-sm font-semibold text-primary underline">{g("home.viewAllCategories")} →</Link>
+              <Link href="/categories" className="px-4 py-3 text-sm font-semibold text-primary underline">{g("home.viewAllCategories")} <span className="inline-block rtl:-scale-x-100">→</span></Link>
             </aside>
             <HomeSlider slides={slides} prevLabel={g("home.prev")} nextLabel={g("home.next")} />
             <aside className="flex flex-col gap-5">
@@ -282,7 +282,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 <b className="mt-1 block text-xl">{g("home.creditsTitle")}</b>
                 <span className="text-sm text-[#b9c0b6]">{g("home.creditsSub")}</span>
               </span>
-              <span className="inline-flex min-h-11 shrink-0 items-center rounded-xl bg-[#7ce0a8] px-4 font-semibold text-[#0b2a1a]">{g("home.creditsBtn")} →</span>
+              <span className="inline-flex min-h-11 shrink-0 items-center rounded-xl bg-[#7ce0a8] px-4 font-semibold text-[#0b2a1a]">{g("home.creditsBtn")} <span className="inline-block rtl:-scale-x-100">→</span></span>
             </Link>
             <Link href="/check" className="flex items-center justify-between gap-4 rounded-2xl border border-[#cfe7d8] bg-[#e4f3ea] p-6 text-[#111418]">
               <span>
@@ -290,7 +290,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 <b className="mt-1 block text-xl">{g("home.checkTitle")}</b>
                 <span className="text-sm text-[#4a5048]">{g("home.checkSub")}</span>
               </span>
-              <span className="inline-flex min-h-11 shrink-0 items-center rounded-xl bg-[#111418] px-4 font-semibold text-white">{g("home.checkBtn")} →</span>
+              <span className="inline-flex min-h-11 shrink-0 items-center rounded-xl bg-[#111418] px-4 font-semibold text-white">{g("home.checkBtn")} <span className="inline-block rtl:-scale-x-100">→</span></span>
             </Link>
           </div>
         )}
@@ -346,7 +346,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 <h2 className="display mt-2 text-[40px] leading-[1.05]">{g("home.howHeadline1")} <span className="text-[#7ce0a8]">{g("home.howHeadline2")}</span></h2>
                 <p className="mt-3 text-[#dfe4dc]">{g("home.howText")}</p>
                 <div className="mt-5 flex items-center gap-3">
-                  <Link href="/store" className="inline-flex min-h-12 items-center rounded-xl bg-[#7ce0a8] px-5 font-semibold text-[#0b2a1a]">{g("home.browse")} →</Link>
+                  <Link href="/store" className="inline-flex min-h-12 items-center rounded-xl bg-[#7ce0a8] px-5 font-semibold text-[#0b2a1a]">{g("home.browse")} <span className="inline-block rtl:-scale-x-100">→</span></Link>
                   <span className="rounded-full bg-white/[0.06] px-3 py-1.5">{status}</span>
                 </div>
               </div>

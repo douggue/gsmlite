@@ -18,7 +18,7 @@ import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { alternates } from "@/lib/seo";
 import { themeAttrs, themeCss, themeScript, cssGuardScript } from "@/lib/theme-css";
 import { fullTheme } from "@/lib/settings";
-import { Bricolage_Grotesque, IBM_Plex_Sans } from "next/font/google";
+import { Bricolage_Grotesque, IBM_Plex_Sans, IBM_Plex_Sans_Arabic } from "next/font/google";
 import { cookies, headers } from "next/headers";
 import { getUser } from "@/lib/session";
 import { ServiceWorker } from "@/components/ServiceWorker";
@@ -55,6 +55,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 // Self-hosted at build time by Next.js (no request to Google from visitors' phones).
+// Arabic letters: same family, downloaded only by pages that show Arabic (not preloaded).
+const arabic = IBM_Plex_Sans_Arabic({ subsets: ["arabic"], weight: ["400", "600", "700"], variable: "--font-arabic", display: "swap", preload: false });
 const sans = IBM_Plex_Sans({ subsets: ["latin", "latin-ext"], weight: ["400", "500", "600", "700"], variable: "--font-body", display: "swap" });
 const display = Bricolage_Grotesque({ subsets: ["latin", "latin-ext"], weight: ["600", "800"], variable: "--font-display-face", display: "optional" });
 
@@ -74,7 +76,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   const [methods, cats] = await Promise.all([payMethodsFor(country, "orders", locale), getCategories({ country, signedIn: !!user })]);
 
   return (
-    <html lang={locale} dir={rtlLocales.includes(locale) ? "rtl" : "ltr"} suppressHydrationWarning className={`${sans.variable} ${display.variable}${dataSaver ? " data-saver" : ""}${dark ? " dark" : ""}`} {...themeAttrs(settings.theme)}>
+    <html lang={locale} dir={rtlLocales.includes(locale) ? "rtl" : "ltr"} suppressHydrationWarning className={`${sans.variable} ${display.variable} ${arabic.variable}${dataSaver ? " data-saver" : ""}${dark ? " dark" : ""}`} {...themeAttrs(settings.theme)}>
       <head>
         {/* Applies light/dark before paint to avoid a flash */}
         <script dangerouslySetInnerHTML={{ __html: themeScript(fullTheme(settings.theme).defaultMode) }} />

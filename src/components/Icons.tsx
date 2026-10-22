@@ -16,7 +16,7 @@ export const BoltIcon = (p: P) => (<svg {...base} {...p}><path d="M13 2 4 14h7l-
 export const ShieldIcon = (p: P) => (<svg {...base} {...p}><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z" /><path d="m9 12 2 2 4-4" /></svg>);
 export const ChatIcon = (p: P) => (<svg {...base} {...p}><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z" /></svg>);
 export const PinIcon = (p: P) => (<svg {...base} {...p}><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12Z" /><circle cx="12" cy="9" r="2.5" /></svg>);
-export const ArrowRightIcon = (p: P) => (<svg {...base} {...p}><path d="M5 12h14M13 6l6 6-6 6" /></svg>);
+export const ArrowRightIcon = (p: P) => (<svg {...base} {...p} className={`rtl:-scale-x-100 ${p.className ?? ""}`}><path d="M5 12h14M13 6l6 6-6 6" /></svg>);
 export const SwapIcon = (p: P) => (<svg {...base} {...p}><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7" /></svg>);
 export const PlusIcon = (p: P) => (<svg {...base} {...p}><path d="M12 5v14M5 12h14" /></svg>);
 export const CopyIcon = (p: P) => (<svg {...base} {...p}><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V6a2 2 0 0 1 2-2h9" /></svg>);
@@ -46,7 +46,7 @@ export const UnlockPhoneIcon = (p: P) => (<svg {...base} {...p}><rect x="6" y="2
 export const CheckListIcon = (p: P) => (<svg {...base} {...p}><path d="M4 5h16M4 10h10M4 15h7" /><circle cx="17" cy="16" r="3" /><path d="m19.5 18.5 2 2" /></svg>);
 export const KeyIcon = (p: P) => (<svg {...base} {...p}><circle cx="8" cy="15" r="4" /><path d="m11 12 9-9M17 6l3 3M15 8l2 2" /></svg>);
 export const ChipIcon = (p: P) => (<svg {...base} {...p}><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M9 4v4M15 4v4M9 16v4M15 16v4M4 9h4M4 15h4M16 9h4M16 15h4" /></svg>);
-export const BackIcon = (p: P) => (<svg {...base} {...p}><path d="m15 18-6-6 6-6" /></svg>);
+export const BackIcon = (p: P) => (<svg {...base} {...p} className={`rtl:-scale-x-100 ${p.className ?? ""}`}><path d="m15 18-6-6 6-6" /></svg>);
 export const CheckIcon = (p: P) => (<svg {...base} {...p}><path d="m5 12 5 5L20 7" /></svg>);
 export const XIcon = (p: P) => (<svg {...base} {...p}><path d="M6 6l12 12M18 6 6 18" /></svg>);
 export const GiftIcon = (p: P) => (<svg {...base} {...p}><rect x="3" y="8" width="18" height="13" rx="2" /><path d="M12 8v13M3 12h18M12 8S10 3 7.5 4.5 9 8 12 8s4.5-2 4.5-3.5S14 3 12 8Z" /></svg>);

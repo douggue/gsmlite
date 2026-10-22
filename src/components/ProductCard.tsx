@@ -21,7 +21,7 @@ export async function ProductCard({ product }: { product: ProductWithVariants })
         {onSale && <span className="badge absolute left-2 top-2 bg-danger text-white">−%</span>}
       </div>
       <div className="flex flex-1 flex-col px-1 pb-1 pt-3">
-        <h3 className="line-clamp-2 font-semibold leading-snug">{name}</h3>
+        <h3 dir="auto" className="line-clamp-2 font-semibold leading-snug">{name}</h3>
         <p className="mt-1 flex items-center gap-1 text-xs text-muted">
           {product.fulfillmentType === "CODE_INVENTORY" ? (
             <><BoltIcon width={13} height={13} className="text-success" /> {tp("instant")}</>

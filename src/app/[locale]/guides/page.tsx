@@ -36,7 +36,7 @@ export default async function GuidesPage({ params }: { params: Promise<{ locale:
             const c = w.content as unknown as PageContent;
             const p = c[locale] ?? c.en ?? Object.values(c)[0];
             return p ? (
-              <li key={w.id}><Link href={`/guides/${w.slug}`} className="card block h-full p-4 hover:border-primary"><b className="block">{p.title}</b><span className="mt-1 block text-sm text-muted">{p.description}</span><span className="mt-2 block text-sm font-semibold text-primary">{gs("readGuide")} →</span></Link></li>
+              <li key={w.id}><Link href={`/guides/${w.slug}`} className="card block h-full p-4 hover:border-primary"><b className="block">{p.title}</b><span className="mt-1 block text-sm text-muted">{p.description}</span><span className="mt-2 block text-sm font-semibold text-primary">{gs("readGuide")} <span className="inline-block rtl:-scale-x-100">→</span></span></Link></li>
             ) : null;
           })}
         </ul>

@@ -224,7 +224,7 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
               )}
 
               {item.status !== "PENDING" && (
-                <Link href={`/products/${product.slug}`} className="self-start text-sm font-semibold text-primary">{to("buyAgain")} →</Link>
+                <Link href={`/products/${product.slug}`} className="self-start text-sm font-semibold text-primary">{to("buyAgain")} <span className="inline-block rtl:-scale-x-100">→</span></Link>
               )}
             </article>
           );
