@@ -1,5 +1,13 @@
 # Admin test, 2026-10-23 (to fix on Tuesday)
 
+> **Status: done on branch `preview/admin-v2`, waiting for "ship it".**
+> New shell (folding dark menu, search, supplier balances, to-do bell, phone bottom bar + menu sheet), 10 groups with tabs instead of 35 loose pages,
+> all money settings in USD (cents) with HTG shown at today's rate, Haiti Gaming wording gone (`CodeItem.costUsd` migration),
+> Dashboard / Orders / Order / Service editor / Customers / Reports redone, language tabs instead of 6 boxes per text,
+> save bar on long forms, Translations filter for missing texts, form builder fits a laptop, empty states that explain, tables become cards on phone.
+> Checked: 42 admin pages × phone + desktop with no errors or sideways scroll; 84 tests pass.
+> Supplier logs: the code logs every call; the demo suppliers only have a seeded "last sync" date, so their log is empty.
+
 I opened all 45 admin pages on desktop (1440 px) and iPhone size.
 - **Working:** no crashes, no errors in the browser, no broken requests, and no page that scrolls sideways on the phone.
 - **Not good:** the problems are design, structure and leftovers from Haiti Gaming.
