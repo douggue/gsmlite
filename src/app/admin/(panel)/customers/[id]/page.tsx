@@ -10,6 +10,7 @@ import { adjustCustomerWallet, createPasswordResetLink, setCustomerStatus } from
 import { ResetLinkButton } from "@/components/admin/ResetLinkButton";
 import { ActionButton, ActionForm } from "@/components/admin/ActionButton";
 import { PageTitle, Stat } from "@/components/admin/ui";
+import { METHOD, ORDER_STATUS, PAYMENT_STATUS, label } from "@/lib/admin-labels";
 import { StatusBadge } from "@/components/StatusBadge";
 import { linkedAccounts } from "@/lib/devices";
 import { formatPhone } from "@/lib/phone";
@@ -44,33 +45,36 @@ export default async function Customer({ params }: { params: Promise<{ id: strin
   const rate = done + failed ? Math.floor((done / (done + failed)) * 1000) / 10 : null;
   return (
     <>
-      <div className="mb-3 flex flex-wrap gap-2 text-xs font-semibold">
-        <span className="rounded-full bg-surface-2 px-2.5 py-1">{group ? `${group.name} group` : "Retail"}</span>
-        <span className={`rounded-full px-2.5 py-1 ${kycLevel ? "bg-primary-soft text-primary" : "bg-surface-2"}`}>KYC: {kycLevel ? (kycLevel.name as Record<string, string>).en : "none"}</span>
-        <span className={`rounded-full px-2.5 py-1 ${user.status === "ACTIVE" ? "bg-primary-soft text-primary" : "bg-warning-soft text-warning"}`}>{user.status.toLowerCase()}</span>
-        {linked.length > 0 && <span className="rounded-full bg-warning-soft px-2.5 py-1 text-warning">Same device as {linked.length} other account{linked.length > 1 ? "s" : ""}: check before giving bonuses</span>}
+      <Link href="/admin/customers" className="text-sm font-semibold text-primary">← Customers</Link>
+      <div className="mb-5 mt-2 flex flex-wrap items-center gap-4">
+        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-[#111418] text-lg font-black text-[#7ce0a8]">{user.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase()}</span>
+        <div className="min-w-0 flex-1">
+          <h1 className="display text-[28px] font-bold leading-tight tracking-tight">{user.name}</h1>
+          <p className="text-sm text-muted">{user.email}{user.phone ? ` · ${formatPhone(user.phone)}` : ""} · joined {user.createdAt.toLocaleDateString("en-US")} · {user.locale.toUpperCase()}</p>
+          <div className="mt-2 flex flex-wrap gap-2 text-xs font-semibold">
+            <span className="rounded-full bg-surface-2 px-2.5 py-1">{group ? `${group.name} prices` : "Retail prices"}</span>
+            <span className={`rounded-full px-2.5 py-1 ${kycLevel ? "bg-primary-soft text-primary" : "bg-surface-2"}`}>KYC: {kycLevel ? (kycLevel.name as Record<string, string>).en : "none"}</span>
+            <span className={`rounded-full px-2.5 py-1 ${user.status === "ACTIVE" ? "bg-primary-soft text-primary" : "bg-warning-soft text-warning"}`}>{user.status === "ACTIVE" ? "Active" : user.status.toLowerCase()}</span>
+            {linked.length > 0 && <span className="rounded-full bg-warning-soft px-2.5 py-1 text-warning">Same device as {linked.length} other account{linked.length > 1 ? "s" : ""}: check before giving bonuses</span>}
+          </div>
+        </div>
+        {can(staff, "customers.manage") && (
+          <ActionForm action={async (fd: FormData) => { "use server"; return setCustomerGroup(id, String(fd.get("groupId") ?? "")); }} className="flex flex-wrap items-end gap-2">
+            <label><span className="label">Price group</span>
+              <select name="groupId" defaultValue={user.priceGroupId ?? ""} className="input min-w-48">
+                <option value="">Retail</option>
+                {groups.map((g) => <option key={g.id} value={g.id}>{g.name} (−{g.discountBps / 100}%)</option>)}
+              </select>
+            </label>
+            <button className="btn-secondary min-h-11 px-4">Change</button>
+          </ActionForm>
+        )}
       </div>
-      <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-2">
-        <Stat label="Spent this month" value={`$${(Number(month[0]?.s ?? 0) / 100).toFixed(2)}`} />
-        <Stat label="Lines · success" value={`${done + failed} · ${rate == null ? "—" : `${rate}%`}`} />
-      </div>
-      {can(staff, "customers.manage") && (
-        <ActionForm action={async (fd: FormData) => { "use server"; return setCustomerGroup(id, String(fd.get("groupId") ?? "")); }} className="mb-4 flex flex-wrap items-end gap-2">
-          <label><span className="label">Price group</span>
-            <select name="groupId" defaultValue={user.priceGroupId ?? ""} className="input min-w-48">
-              <option value="">Retail</option>
-              {groups.map((g) => <option key={g.id} value={g.id}>{g.name} (−{g.discountBps / 100}%)</option>)}
-            </select>
-          </label>
-          <button className="btn-secondary min-h-11 px-4">Change price group</button>
-        </ActionForm>
-      )}
-      <PageTitle title={user.name} sub={`${user.email}${user.phone ? ` · ${formatPhone(user.phone)}` : ""} · joined ${user.createdAt.toLocaleDateString("en-US")} · ${user.locale.toUpperCase()}`} actions={<span className="badge bg-surface-2">{user.status}</span>} />
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Stat label="HTG available" value={formatMoney(balances.HTG.available, "HTG", "en")} />
-        <Stat label="HTG held" value={formatMoney(balances.HTG.held, "HTG", "en")} />
-        <Stat label="USD available" value={formatMoney(balances.USD.available, "USD", "en")} />
+        <Stat label="Wallet (USD)" value={formatMoney(balances.USD.available, "USD", "en")} note={balances.HTG.available || balances.HTG.held ? `+ ${formatMoney(balances.HTG.available, "HTG", "en")}${balances.HTG.held ? ` · ${formatMoney(balances.HTG.held, "HTG", "en")} held` : ""}` : undefined} />
+        <Stat label="Spent this month" value={`$${(Number(month[0]?.s ?? 0) / 100).toFixed(2)}`} />
         <Stat label="Orders" value={orders.length} />
+        <Stat label="Lines · success" value={`${done + failed}`} note={rate == null ? "No finished lines yet" : `${rate}% done, the rest refunded`} />
       </div>
       {can(staff, "customers.manage") && user.id !== staff.id && (
         <div className="mt-4 flex flex-wrap gap-2">
@@ -83,13 +87,13 @@ export default async function Customer({ params }: { params: Promise<{ id: strin
         <section className="card p-5">
           <h2 className="mb-3 font-semibold">Orders</h2>
           <ul className="divide-y divide-border text-sm">
-            {orders.map((o) => <li key={o.id} className="flex justify-between py-2"><Link href={`/admin/orders/${o.id}`} className="text-primary">#{o.number}</Link><span>{formatMoney(o.total, o.currency, "en")} · <StatusBadge status={o.status} label={o.status} /></span></li>)}
+            {orders.map((o) => <li key={o.id} className="flex justify-between py-2"><Link href={`/admin/orders/${o.id}`} className="text-primary">#{o.number}</Link><span>{formatMoney(o.total, o.currency, "en")} · <StatusBadge status={o.status} label={label(ORDER_STATUS, o.status)} /></span></li>)}
           </ul>
         </section>
         <section className="card p-5">
           <h2 className="mb-3 font-semibold">Payments</h2>
           <ul className="divide-y divide-border text-sm">
-            {payments.map((p) => <li key={p.id} className="flex justify-between py-2"><span>{p.provider} {p.providerRef && <span className="font-mono text-xs">{p.providerRef}</span>}</span><span>{formatMoney(p.amount, p.currency, "en")} · <StatusBadge status={p.status} label={p.status} /></span></li>)}
+            {payments.map((p) => <li key={p.id} className="flex justify-between py-2"><span>{label(METHOD, p.provider)} {p.providerRef && <span className="font-mono text-xs">{p.providerRef}</span>}</span><span>{formatMoney(p.amount, p.currency, "en")} · <StatusBadge status={p.status} label={label(PAYMENT_STATUS, p.status)} /></span></li>)}
           </ul>
         </section>
         {can(staff, "wallet.adjust") && (
@@ -100,7 +104,7 @@ export default async function Customer({ params }: { params: Promise<{ id: strin
             <input type="hidden" name="idempotencyKey" value={randomToken(16)} />
             <div className="grid grid-cols-3 gap-2">
               <select name="direction" className="input"><option value="credit">Credit +</option><option value="debit">Debit −</option></select>
-              <select name="currency" className="input"><option>HTG</option><option>USD</option></select>
+              <select name="currency" className="input"><option>USD</option><option>HTG</option></select>
               <input name="amount" placeholder="Amount" inputMode="decimal" className="input" required />
             </div>
             <input name="reason" placeholder="Reason (required)" className="input" required minLength={5} />

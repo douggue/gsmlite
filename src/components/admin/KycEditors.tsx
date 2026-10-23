@@ -1,11 +1,10 @@
 "use client";
-import { locales } from "@/i18n/routing";
+import { LocalizedField } from "./LocalizedInputs";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { deleteKycRule, saveKycLevel, saveKycRule } from "@/actions/kyc-admin";
 import { withStepUp } from "./ActionButton";
 
-const LANGS = ["en", ...locales.filter((l) => l !== "en")];
 const REQ_TYPES: Record<string, string> = {
   email: "Confirmed email", phone: "Phone number", id_doc: "ID / passport / licence", selfie: "Selfie", video_selfie: "Video selfie",
   address_proof: "Proof of address", business_doc: "Business paper", shop_photo: "Shop photo", receipt: "Phone purchase receipt", upload: "Other upload", question: "Question (text answer)",
@@ -34,12 +33,7 @@ function Msg({ msg }: { msg: { ok: boolean; text: string } | null }) {
 }
 
 function LangInputs({ value, onChange, label }: { value: Record<string, string>; onChange: (v: Record<string, string>) => void; label: string }) {
-  return (
-    <fieldset className="grid gap-2 sm:grid-cols-4">
-      <legend className="label">{label}</legend>
-      {LANGS.map((l) => <input key={l} aria-label={`${label} ${l}`} placeholder={l.toUpperCase()} value={value[l] ?? ""} onChange={(e) => onChange({ ...value, [l]: e.target.value })} className="input" />)}
-    </fieldset>
-  );
+  return <LocalizedField label={label} value={value} onChange={onChange} />;
 }
 
 function LevelCard({ level, groups }: { level: Level; groups: { id: string; name: string }[] }) {

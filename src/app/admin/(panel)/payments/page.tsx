@@ -1,3 +1,4 @@
+import { METHOD, PAYMENT_STATUS, label } from "@/lib/admin-labels";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { requireStaff } from "@/lib/session";
@@ -95,10 +96,10 @@ export default async function AdminPayments() {
         {recent.map((p) => (
           <tr key={p.id}>
             <td className="px-4 py-3">{p.user.name}</td>
-            <td className="px-4 py-3">{p.provider}</td>
+            <td className="px-4 py-3">{label(METHOD, p.provider)}</td>
             <td className="px-4 py-3">{formatMoney(p.amount, p.currency, "en")}</td>
             <td className="px-4 py-3 font-mono text-xs">{p.providerRef ?? "—"}</td>
-            <td className="px-4 py-3"><StatusBadge status={p.status} label={p.status} /></td>
+            <td className="px-4 py-3"><StatusBadge status={p.status} label={label(PAYMENT_STATUS, p.status)} /></td>
             <td className="px-4 py-3">{p.reviewedBy?.name ?? (p.provider === "MONCASH" ? "Automatic" : "—")}</td>
             <td className="px-4 py-3 text-muted">{p.updatedAt.toLocaleString("en-US", { dateStyle: "short", timeStyle: "short" })}</td>
           </tr>

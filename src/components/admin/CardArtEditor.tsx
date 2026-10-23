@@ -1,10 +1,9 @@
 "use client";
-import { locales } from "@/i18n/routing";
+import { LocalizedField } from "./LocalizedInputs";
 import { useState } from "react";
 import { ProductArt } from "../ProductArt";
 import { ImageField } from "./ImageField";
 
-const LANGS = ["en", ...locales.filter((l) => l !== "en")];
 
 /** Product image (mockup): the generated card art with its title, ribbon and color, or an uploaded image instead. */
 export function CardArtEditor({ name, category, title: t0, tag: g0, style: s0, image }: { name: string; category: string; title: Record<string, string>; tag: Record<string, string>; style: string; image: string | null }) {
@@ -32,14 +31,8 @@ export function CardArtEditor({ name, category, title: t0, tag: g0, style: s0, i
                 className={`h-8 w-8 rounded-lg border-2 ${style === s ? "border-primary" : "border-transparent"} ${{ ink: "bg-[#111418]", green: "bg-[#1f7a4d]", mint: "bg-[#e4f3ea]", slate: "bg-[#262b2f]" }[s]}`} />
             ))}
           </div>
-          <fieldset className="space-y-1.5">
-            <legend className="text-xs text-muted">Short title (2 lines; empty = the name)</legend>
-            {LANGS.map((l) => <input key={l} name={`cardTitle_${l}`} value={title[l] ?? ""} onChange={(e) => setTitle({ ...title, [l]: e.target.value })} placeholder={l.toUpperCase()} className="input" />)}
-          </fieldset>
-          <fieldset className="space-y-1.5">
-            <legend className="text-xs text-muted">Ribbon (e.g. CLEAN IMEI, 12 MONTHS; empty = delivery time)</legend>
-            {LANGS.map((l) => <input key={l} name={`cardTag_${l}`} value={tag[l] ?? ""} onChange={(e) => setTag({ ...tag, [l]: e.target.value })} placeholder={l.toUpperCase()} className="input" />)}
-          </fieldset>
+          <LocalizedField label="Short title on the card" hint="2 lines at most; empty = the service name" name="cardTitle" value={title} onChange={setTitle} />
+          <LocalizedField label="Ribbon" hint="e.g. CLEAN IMEI, 12 MONTHS; empty = delivery time" name="cardTag" value={tag} onChange={setTag} />
         </>
       )}
     </div>

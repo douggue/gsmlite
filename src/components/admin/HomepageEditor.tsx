@@ -1,10 +1,10 @@
 "use client";
+import { LocalizedField } from "./LocalizedInputs";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { restoreHomepage, saveHomepage } from "@/actions/content";
 import { HOME_SECTION_LABELS, type HomepageConfig } from "@/lib/homepage";
 
-const LOCALES = [["ht", "Kreyòl"], ["fr", "Français"], ["en", "English"], ["es", "Español"]] as const;
 const FIELDS = [["eyebrow", "Small label above the title"], ["title", "Headline"], ["subtitle", "Sub-headline"]] as const;
 
 export function HomepageEditor({ initial, unpublishedChanges, history }: { initial: HomepageConfig; unpublishedChanges: boolean; history: { at: string; by: string }[] }) {
@@ -61,22 +61,7 @@ export function HomepageEditor({ initial, unpublishedChanges, history }: { initi
           <p className="text-xs text-muted">Leave a box empty to keep the standard wording for that language.</p>
         </div>
         {FIELDS.map(([key, label]) => (
-          <fieldset key={key} className="space-y-2">
-            <legend className="label">{label}</legend>
-            <div className="grid gap-2 sm:grid-cols-2">
-              {LOCALES.map(([l, name]) => (
-                <label key={l}>
-                  <span className="mb-1 block text-xs text-muted">{name}</span>
-                  <input
-                    className="input"
-                    value={cfg.hero[key][l] ?? ""}
-                    maxLength={key === "subtitle" ? 300 : 120}
-                    onChange={(e) => setCfg((c) => ({ ...c, hero: { ...c.hero, [key]: { ...c.hero[key], [l]: e.target.value } } }))}
-                  />
-                </label>
-              ))}
-            </div>
-          </fieldset>
+          <LocalizedField key={key} label={label} value={cfg.hero[key] as Record<string, string>} onChange={(v) => setCfg((c) => ({ ...c, hero: { ...c.hero, [key]: v } }))} />
         ))}
         <div className="flex flex-wrap gap-2">
           <button type="button" className="btn-secondary" disabled={pending} onClick={() => run(false)}>Save draft</button>

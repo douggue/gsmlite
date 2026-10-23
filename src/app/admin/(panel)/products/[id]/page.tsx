@@ -8,6 +8,7 @@ import { ActionForm } from "@/components/admin/ActionButton";
 import { LocalizedInputs } from "@/components/admin/LocalizedInputs";
 import { ProductForm } from "@/components/admin/ProductForm";
 import { PageTitle } from "@/components/admin/ui";
+import { EditorTabs } from "@/components/admin/EditorTabs";
 import { FIELD_TYPES, type FieldDef } from "@/lib/order-form";
 
 export const metadata = { title: "Edit service" };
@@ -45,118 +46,156 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
   const qtyFields = product.serviceType === "SERVER";
   const money = (n: number | null) => (n == null ? "" : (n / 100).toFixed(2));
   const supplierName = (sid: string | null) => suppliers.find((x) => x.id === sid)?.name;
+  const losing = product.variants.some((v) => {
+    const cost = linkedName(v)?.credit ?? v.costUsd;
+    return v.isActive && cost != null && (v.salePriceUsd ?? v.priceUsd) <= cost;
+  });
   return (
     <>
-      <PageTitle title={`Edit service · ${t(product.name, "en")}`} sub={`/${product.slug} · ${product.variants.some((v) => v.supplierId) ? "from a supplier" : "your own service"}`} actions={<Link href="/admin/products/new" className="btn-secondary min-h-10 px-4">+ New service</Link>} />
-      <ProductForm
-        categories={cats}
-        kycLevels={levels}
-        fieldsSummary={summarize(product.fields as FieldDef[])}
-        product={{
-          id: product.id, slug: product.slug, categoryId: product.categoryId, accent: product.accent ?? "#1F7A4D",
-          fulfillmentType: product.fulfillmentType, isPublished: product.isPublished, isFeatured: product.isFeatured, sortOrder: product.sortOrder,
-          name: product.name as Record<string, string>, description: product.description as Record<string, string>,
-          delivery: (product.deliveryEstimate ?? {}) as Record<string, string>, instructions: (product.instructions ?? {}) as Record<string, string>, seoTitle: (product.seoTitle ?? {}) as Record<string, string>,
-          seoDescription: (product.seoDescription ?? {}) as Record<string, string>, fields: JSON.stringify(product.fields, null, 2),
-          image: product.image, gallery: (product.gallery ?? []) as string[], tags: product.tags,
-          serviceType: product.serviceType, identifierLabel: (product.identifierLabel ?? {}) as Record<string, string>,
-          identifierFormat: product.identifierFormat, allowBulk: product.allowBulk,
-          countryMode: product.countryMode, countries: product.countries, hideFromGoogle: product.hideFromGoogle, offerCheck: product.offerCheck,
-          seoPage: product.seoPage, kycLevelKey: product.kycLevelKey,
-          cardTitle: (product.cardTitle ?? {}) as Record<string, string>, cardTag: (product.cardTag ?? {}) as Record<string, string>, cardStyle: product.cardStyle,
-        }}
-      />
-
-      <section className="card mt-6 overflow-x-auto">
-        <h2 className="border-b border-border px-4 py-3 font-semibold">Options and prices</h2>
-        <table className="w-full min-w-[680px] text-left text-sm">
-          <thead className="text-xs uppercase tracking-wide text-muted"><tr><th className="px-4 py-2.5">Option</th><th className="px-4 py-2.5">Supplier · ID</th><th className="px-4 py-2.5">Cost</th><th className="px-4 py-2.5">Price</th><th className="px-4 py-2.5">Margin</th></tr></thead>
-          <tbody>
-            {product.variants.map((v) => {
-              const l = linkedName(v);
-              const cost = l?.credit ?? v.costUsd;
-              const price = v.salePriceUsd ?? v.priceUsd;
-              const margin = cost != null ? price - cost : null;
-              const rose = l?.previousCredit != null && l.credit > l.previousCredit && l.priceChangedAt && Date.now() - l.priceChangedAt.getTime() < 30 * 86_400_000;
-              return (
-                <tr key={v.id} className="border-t border-border">
-                  <td className="px-4 py-3">{t(v.name, "en")}{v.soldOut && <span className="ml-1.5 text-xs text-danger">out of stock</span>}</td>
-                  <td className="px-4 py-3">{v.supplierId ? `${supplierName(v.supplierId) ?? "?"} · ${v.supplierServiceId}` : <span className="text-muted">— your own</span>}</td>
-                  <td className="px-4 py-3 tabular-nums">{cost != null ? `$${money(cost)}` : "—"}</td>
-                  <td className="px-4 py-3 tabular-nums">${money(price)}{v.salePriceUsd != null && <span className="ml-1 text-xs text-muted line-through">${money(v.priceUsd)}</span>}</td>
-                  <td className={`px-4 py-3 font-semibold tabular-nums ${margin == null ? "text-muted" : margin <= 0 ? "text-danger" : "text-primary"}`}>
-                    {margin == null ? "—" : margin <= 0 ? `Loss!${rose ? " cost went up" : ""}` : `$${money(margin)} · ${cost ? Math.round((margin / cost) * 100) : 100}%`}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </section>
-
-      <div className="mb-3 mt-10 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">Edit options (prices in USD; HTG is converted at the store rate)</h2>
-        <div className="flex flex-wrap gap-2">
-          <ActionForm action={setProductSoldOut}>
-            <input type="hidden" name="productId" value={product.id} />
-            <input type="hidden" name="soldOut" value="1" />
-            <button className="btn-secondary min-h-9 px-3 text-xs text-danger">Mark all out of stock</button>
-          </ActionForm>
-          <ActionForm action={setProductSoldOut}>
-            <input type="hidden" name="productId" value={product.id} />
-            <input type="hidden" name="soldOut" value="0" />
-            <button className="btn-secondary min-h-9 px-3 text-xs">All back in stock</button>
-          </ActionForm>
-        </div>
-      </div>
-      <div className="grid gap-4 xl:grid-cols-2">
-        {product.variants.map((v) => (
-          <ActionForm key={v.id} action={saveVariant} className="card space-y-3 p-4">
-            <input type="hidden" name="id" value={v.id} />
-            <input type="hidden" name="productId" value={product.id} />
-            <LocalizedInputs prefix="vname" label="Name" value={v.name as Record<string, string>} />
-            <div className="grid grid-cols-3 gap-2">
-              <label><span className="mb-1 block text-xs text-muted">Price USD</span><input name="price" defaultValue={money(v.priceUsd)} className="input" inputMode="decimal" /></label>
-              <label><span className="mb-1 block text-xs text-muted">Sale price</span><input name="salePrice" defaultValue={money(v.salePriceUsd)} className="input" inputMode="decimal" /></label>
-              <label><span className="mb-1 block text-xs text-muted">Order</span><input name="sortOrder" type="number" defaultValue={v.sortOrder} className="input" /></label>
-            </div>
-            {qtyFields ? (
-              <div className="grid grid-cols-3 gap-2">
-                <label><span className="mb-1 block text-xs text-muted">Credits per unit sold</span><input name="packSize" type="number" min={1} defaultValue={v.packSize} className="input" title="1 = sold one by one. 1000 = the price is for 1000 credits (sub-cent supplier prices)." /></label>
-                <label><span className="mb-1 block text-xs text-muted">Min quantity</span><input name="minQty" type="number" min={1} defaultValue={v.minQty} className="input" /></label>
-                <label><span className="mb-1 block text-xs text-muted">Max quantity</span><input name="maxQty" type="number" min={1} defaultValue={v.maxQty} className="input" /></label>
+      <PageTitle title={t(product.name, "en")} sub={<>/{product.slug} · {product.variants.some((v) => v.supplierId) ? "from a supplier" : "your own service"} · {product.isPublished ? <span className="font-semibold text-primary">on the site</span> : <span className="font-semibold text-warning">hidden</span>}</>}
+        actions={<><Link href="/admin/products" className="btn-secondary min-h-10 px-4">← All services</Link><a href={`/en/products/${product.slug}`} target="_blank" className="btn-secondary min-h-10 px-4">View on site ↗</a></>} />
+      <EditorTabs
+        tabs={[
+          {
+            key: "options",
+            label: "Options & prices",
+            badge: losing ? "loss" : undefined,
+            content: (
+              <>
+      <section className="card overflow-x-auto">
+                <h2 className="border-b border-border px-4 py-3 font-semibold">Options and prices</h2>
+                <table className="w-full min-w-[680px] text-left text-sm">
+                  <thead className="text-xs uppercase tracking-wide text-muted"><tr><th className="px-4 py-2.5">Option</th><th className="px-4 py-2.5">Supplier · ID</th><th className="px-4 py-2.5">Cost</th><th className="px-4 py-2.5">Price</th><th className="px-4 py-2.5">Margin</th></tr></thead>
+                  <tbody>
+                    {product.variants.map((v) => {
+                      const l = linkedName(v);
+                      const cost = l?.credit ?? v.costUsd;
+                      const price = v.salePriceUsd ?? v.priceUsd;
+                      const margin = cost != null ? price - cost : null;
+                      const rose = l?.previousCredit != null && l.credit > l.previousCredit && l.priceChangedAt && Date.now() - l.priceChangedAt.getTime() < 30 * 86_400_000;
+                      return (
+                        <tr key={v.id} className="border-t border-border">
+                          <td className="px-4 py-3">{t(v.name, "en")}{v.soldOut && <span className="ml-1.5 text-xs text-danger">out of stock</span>}</td>
+                          <td className="px-4 py-3">{v.supplierId ? `${supplierName(v.supplierId) ?? "?"} · ${v.supplierServiceId}` : <span className="text-muted">— your own</span>}</td>
+                          <td className="px-4 py-3 tabular-nums">{cost != null ? `$${money(cost)}` : "—"}</td>
+                          <td className="px-4 py-3 tabular-nums">${money(price)}{v.salePriceUsd != null && <span className="ml-1 text-xs text-muted line-through">${money(v.priceUsd)}</span>}</td>
+                          <td className={`px-4 py-3 font-semibold tabular-nums ${margin == null ? "text-muted" : margin <= 0 ? "text-danger" : "text-primary"}`}>
+                            {margin == null ? "—" : margin <= 0 ? `Loss!${rose ? " cost went up" : ""}` : `$${money(margin)} · ${cost ? Math.round((margin / cost) * 100) : 100}%`}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </section>
+        
+              <div className="mb-3 mt-10 flex flex-wrap items-center justify-between gap-3">
+                <h2 className="text-lg font-semibold">Edit options <span className="text-sm font-normal text-muted">· prices in USD</span></h2>
+                <div className="flex flex-wrap gap-2">
+                  <ActionForm action={setProductSoldOut}>
+                    <input type="hidden" name="productId" value={product.id} />
+                    <input type="hidden" name="soldOut" value="1" />
+                    <button className="btn-secondary min-h-9 px-3 text-xs text-danger">Mark all out of stock</button>
+                  </ActionForm>
+                  <ActionForm action={setProductSoldOut}>
+                    <input type="hidden" name="productId" value={product.id} />
+                    <input type="hidden" name="soldOut" value="0" />
+                    <button className="btn-secondary min-h-9 px-3 text-xs">All back in stock</button>
+                  </ActionForm>
+                </div>
               </div>
-            ) : (
-              <><input type="hidden" name="minQty" value="1" /><input type="hidden" name="maxQty" value="1" /></>
-            )}
-            <SupplierLink suppliers={suppliers} supplierId={v.supplierId} serviceId={v.supplierServiceId} cost={money(v.costUsd)} linked={linkedName(v)} price={v.salePriceUsd ?? v.priceUsd} />
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                <label className="flex items-center gap-2"><input type="checkbox" name="isActive" defaultChecked={v.isActive} /> Active</label>
-                <label className={`flex items-center gap-2 ${v.soldOut ? "font-semibold text-danger" : ""}`}><input type="checkbox" name="soldOut" defaultChecked={v.soldOut} /> Out of stock</label>
-              </span>
-              {product.fulfillmentType === "CODE_INVENTORY" && <Link href={`/admin/codes?variant=${v.id}`} className="text-primary">{v._count.codes} codes in stock</Link>}
-              <button className="btn-secondary min-h-9 px-3 text-xs">Save</button>
-            </div>
-          </ActionForm>
-        ))}
-        <ActionForm action={saveVariant} className="card space-y-3 border-dashed p-4" resetOnSuccess>
-          <p className="font-semibold">New variant</p>
-          <input type="hidden" name="productId" value={product.id} />
-          <LocalizedInputs prefix="vname" label="Name" />
-          <div className="grid grid-cols-3 gap-2">
-            <input name="price" placeholder="Price USD" className="input" inputMode="decimal" required />
-            <input name="salePrice" placeholder="Sale (optional)" className="input" inputMode="decimal" />
-            <input name="sortOrder" type="number" defaultValue={product.variants.length} className="input" />
-          </div>
-          <SupplierLink suppliers={suppliers} supplierId={product.variants[0]?.supplierId ?? null} serviceId={null} cost="" price={0} />
-          <div className="flex items-center gap-4 text-sm">
-            <label className="flex items-center gap-2"><input type="checkbox" name="isActive" defaultChecked /> Active</label>
-            <label className="flex items-center gap-2"><input type="checkbox" name="soldOut" /> Out of stock</label>
-          </div>
-          <button className="btn-primary min-h-9 px-3 text-xs">Add variant</button>
-        </ActionForm>
-      </div>
+              <div className="grid gap-4 xl:grid-cols-2">
+                {product.variants.map((v) => (
+                  <ActionForm key={v.id} action={saveVariant} className="card space-y-3 p-4">
+                    <input type="hidden" name="id" value={v.id} />
+                    <input type="hidden" name="productId" value={product.id} />
+                    <LocalizedInputs prefix="vname" label="Name" value={v.name as Record<string, string>} />
+                    <div className="grid grid-cols-3 gap-2">
+                      <label><span className="mb-1 block text-xs text-muted">Price USD</span><input name="price" defaultValue={money(v.priceUsd)} className="input" inputMode="decimal" /></label>
+                      <label><span className="mb-1 block text-xs text-muted">Sale price</span><input name="salePrice" defaultValue={money(v.salePriceUsd)} className="input" inputMode="decimal" /></label>
+                      <label><span className="mb-1 block text-xs text-muted">Order</span><input name="sortOrder" type="number" defaultValue={v.sortOrder} className="input" /></label>
+                    </div>
+                    {qtyFields ? (
+                      <div className="grid grid-cols-3 gap-2">
+                        <label><span className="mb-1 block text-xs text-muted">Credits per unit sold</span><input name="packSize" type="number" min={1} defaultValue={v.packSize} className="input" title="1 = sold one by one. 1000 = the price is for 1000 credits (sub-cent supplier prices)." /></label>
+                        <label><span className="mb-1 block text-xs text-muted">Min quantity</span><input name="minQty" type="number" min={1} defaultValue={v.minQty} className="input" /></label>
+                        <label><span className="mb-1 block text-xs text-muted">Max quantity</span><input name="maxQty" type="number" min={1} defaultValue={v.maxQty} className="input" /></label>
+                      </div>
+                    ) : (
+                      <><input type="hidden" name="minQty" value="1" /><input type="hidden" name="maxQty" value="1" /></>
+                    )}
+                    <SupplierLink suppliers={suppliers} supplierId={v.supplierId} serviceId={v.supplierServiceId} cost={money(v.costUsd)} linked={linkedName(v)} price={v.salePriceUsd ?? v.priceUsd} />
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                        <label className="flex items-center gap-2"><input type="checkbox" name="isActive" defaultChecked={v.isActive} /> Active</label>
+                        <label className={`flex items-center gap-2 ${v.soldOut ? "font-semibold text-danger" : ""}`}><input type="checkbox" name="soldOut" defaultChecked={v.soldOut} /> Out of stock</label>
+                      </span>
+                      {product.fulfillmentType === "CODE_INVENTORY" && <Link href={`/admin/codes?variant=${v.id}`} className="text-primary">{v._count.codes} codes in stock</Link>}
+                      <button className="btn-secondary min-h-9 px-3 text-xs">Save</button>
+                    </div>
+                  </ActionForm>
+                ))}
+                <ActionForm action={saveVariant} className="card space-y-3 border-dashed p-4" resetOnSuccess>
+                  <p className="font-semibold">+ New option</p>
+                  <input type="hidden" name="productId" value={product.id} />
+                  <LocalizedInputs prefix="vname" label="Name" />
+                  <div className="grid grid-cols-3 gap-2">
+                    <input name="price" placeholder="Price USD" className="input" inputMode="decimal" required />
+                    <input name="salePrice" placeholder="Sale (optional)" className="input" inputMode="decimal" />
+                    <input name="sortOrder" type="number" defaultValue={product.variants.length} className="input" />
+                  </div>
+                  <SupplierLink suppliers={suppliers} supplierId={product.variants[0]?.supplierId ?? null} serviceId={null} cost="" price={0} />
+                  <div className="flex items-center gap-4 text-sm">
+                    <label className="flex items-center gap-2"><input type="checkbox" name="isActive" defaultChecked /> Active</label>
+                    <label className="flex items-center gap-2"><input type="checkbox" name="soldOut" /> Out of stock</label>
+                  </div>
+                  <button className="btn-primary min-h-9 px-3 text-xs">Add option</button>
+                </ActionForm>
+              </div>
+        
+              </>
+            ),
+          },
+          {
+            key: "details",
+            label: "Details, texts & visibility",
+            content: (
+              <>
+      <ProductForm
+                categories={cats}
+                kycLevels={levels}
+                fieldsSummary={summarize(product.fields as FieldDef[])}
+                product={{
+                  id: product.id, slug: product.slug, categoryId: product.categoryId, accent: product.accent ?? "#1F7A4D",
+                  fulfillmentType: product.fulfillmentType, isPublished: product.isPublished, isFeatured: product.isFeatured, sortOrder: product.sortOrder,
+                  name: product.name as Record<string, string>, description: product.description as Record<string, string>,
+                  delivery: (product.deliveryEstimate ?? {}) as Record<string, string>, instructions: (product.instructions ?? {}) as Record<string, string>, seoTitle: (product.seoTitle ?? {}) as Record<string, string>,
+                  seoDescription: (product.seoDescription ?? {}) as Record<string, string>, fields: JSON.stringify(product.fields, null, 2),
+                  image: product.image, gallery: (product.gallery ?? []) as string[], tags: product.tags,
+                  serviceType: product.serviceType, identifierLabel: (product.identifierLabel ?? {}) as Record<string, string>,
+                  identifierFormat: product.identifierFormat, allowBulk: product.allowBulk,
+                  countryMode: product.countryMode, countries: product.countries, hideFromGoogle: product.hideFromGoogle, offerCheck: product.offerCheck,
+                  seoPage: product.seoPage, kycLevelKey: product.kycLevelKey,
+                  cardTitle: (product.cardTitle ?? {}) as Record<string, string>, cardTag: (product.cardTag ?? {}) as Record<string, string>, cardStyle: product.cardStyle,
+                }}
+              />
+        
+        
+              </>
+            ),
+          },
+          {
+            key: "form",
+            label: "What the customer fills in",
+            content: (
+              <div className="card space-y-3 p-5">
+                <ul className="space-y-1 text-sm">{summarize(product.fields as FieldDef[]).map((f) => <li key={f}>{f}</li>)}{(product.fields as FieldDef[]).length === 0 && <li className="text-muted">{product.serviceType === "IMEI" ? "Only the IMEI box (set in Details)." : "No fields yet."}</li>}</ul>
+                <Link href={`/admin/products/${product.id}/form`} className="btn-primary inline-flex min-h-10 px-4">Open the form builder</Link>
+              </div>
+            ),
+          },
+        ]}
+      />
     </>
   );
 }
