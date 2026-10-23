@@ -283,6 +283,18 @@ Files on the server stay on disk (uploads volume) with nightly backups; Vercel B
   (account info, service list, place order, check order, file orders). Needs each protocol's real API docs, or a test
   account with the supplier, to build and test against; never guess an API.
 
+## Layout the owner likes: GSMVPro customer dashboard (2026-10-23; inspiration only, never copy; NOT its yellow colors)
+Keep GSMLite's own colors (ink #111418, green #1F7A4D / #7ce0a8, light and dark modes). What to take from it:
+- App-style shell: fixed left sidebar (logo, big "Place order" button on top, then sections STORE: Dashboard, Services,
+  Products, My orders, Subscriptions, API; WALLET: Add credit, Withdrawals; ACCOUNT; user menu at the bottom); the sidebar
+  folds away with a button. Top bar: search (services, products, IDs), My orders, Express order, wallet balance.
+- Dashboard: welcome card ("Welcome back, <name>") with "Place express order" + "Browse catalog"; side card promoting API /
+  bulk ordering; 3 stat cards (awaiting processing, completed, services available); store-credit card (balance, Add credit,
+  Reseller rates); shop catalog tiles (IMEI, Server, File, Hardware & boxes, Store credits, API tools); totals row (spent,
+  catalog size, orders, in process); Completed / In process / Failed counts; recent orders table; Telegram alerts card with
+  a link code; floating help button.
+- To decide on Tuesday: use this shell for the signed-in customer area (desktop), the admin, or both; phones keep the bottom bar.
+
 ## Sign-in / accounts (auth) — DECIDED 2026-10-22: email/password + Google only
 (Google needs an OAuth client ID/secret from Google Cloud, set only in hosting env vars.) Passkeys/Apple/phone sign-in: not now.
 Already in the code (Better Auth): email + password (Argon2id, breached-password check), email verification, forgot/reset
