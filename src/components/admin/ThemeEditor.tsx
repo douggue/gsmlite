@@ -156,7 +156,7 @@ export function ThemeEditor({ initial, defaults, history }: { initial: ThemeConf
             <p className="mb-3 text-xs uppercase tracking-wide opacity-70">{mode} mode {th.defaultMode === mode && "· default"}</p>
             <div className="p-4" style={{ background: mode === "light" ? "#fff" : th.navy, borderRadius: th.radius, border: `1px solid ${mode === "light" ? "#dbe3f1" : "#1f2f57"}` }}>
               <p className="font-bold" style={{ fontFamily: displayFont }}>Debloke iPhone AT&amp;T</p>
-              <p className="text-sm opacity-70">310 dyaman · 450 HTG</p>
+              <p className="text-sm opacity-70">1–3 days · $25.00</p>
               <div className="mt-3 flex gap-2">
                 <span className="inline-flex min-h-10 items-center rounded-xl px-4 text-sm font-semibold text-white" style={{ background: mode === "light" ? th.primary : th.primaryDark }}>Chwazi</span>
                 <span className="inline-flex min-h-10 items-center px-2 text-sm font-semibold" style={{ color: mode === "light" ? th.primary : th.primaryDark }}>Wè tout</span>

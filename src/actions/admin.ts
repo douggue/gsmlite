@@ -297,14 +297,14 @@ export async function importCodes(form: FormData): Promise<R> {
     const variantId = String(form.get("variantId"));
     const batchLabel = String(form.get("batchLabel") ?? "").slice(0, 60) || null;
     const cost = String(form.get("cost") ?? "").trim();
-    const costHtg = cost ? parseAmount(cost) : null;
+    const costUsd = cost ? parseAmount(cost) : null;
     const lines = String(form.get("codes") ?? "").split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
     if (lines.length === 0) return { ok: false, error: "Paste at least one code" };
     if (lines.length > 2000) return { ok: false, error: "Import at most 2000 codes at a time" };
     const variant = await prisma.productVariant.findUniqueOrThrow({ where: { id: variantId } });
     const unique = [...new Set(lines)];
     const res = await prisma.codeItem.createMany({
-      data: unique.map((c) => ({ variantId: variant.id, codeEncrypted: encrypt(c), codeHash: hmac(c), batchLabel, costHtg })),
+      data: unique.map((c) => ({ variantId: variant.id, codeEncrypted: encrypt(c), codeHash: hmac(c), batchLabel, costUsd })),
       skipDuplicates: true,
     });
     await audit(staff.id, "codes.import", "ProductVariant", variant.id, { imported: res.count, submitted: lines.length, batchLabel });

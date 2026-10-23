@@ -41,7 +41,7 @@ export default async function Security() {
   const serviceRows: [string, boolean | string, string][] = [
     ["Database", db.ok, db.ok ? `${db.ms} ms` : db.error ?? "down"],
     ["Auth secret", services.authSecret, "BETTER_AUTH_SECRET"],
-    ["Encryption key", services.encryptionKey, "ENCRYPTION_KEY — back it up; codes cannot be read without it"],
+    ["Encryption key", services.encryptionKey, "ENCRYPTION_KEY — back it up: license keys, supplier keys, KYC files and order passwords cannot be read without it"],
     ["Image & screenshot storage", services.blobStorage, "Vercel Blob"],
     ["MonCash", services.moncash, services.moncash === "mock" ? "mock mode (no keys)" : services.moncash],
     ["Email", services.email, "Resend"],

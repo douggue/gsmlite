@@ -30,7 +30,7 @@ export default async function CodesPage({ searchParams }: { searchParams: Promis
           </label>
           <div className="grid grid-cols-2 gap-3">
             <label><span className="label">Batch label</span><input name="batchLabel" className="input" placeholder="Supplier invoice #" /></label>
-            <label><span className="label">Cost per code (HTG)</span><input name="cost" className="input" inputMode="decimal" /></label>
+            <label><span className="label">Cost per key (USD)</span><input name="cost" className="input" inputMode="decimal" /></label>
           </div>
           <label className="block"><span className="label">Codes (one per line)</span><textarea name="codes" rows={8} className="input py-2 font-mono text-xs" required autoComplete="off" spellCheck={false} /></label>
           <button className="btn-primary">Import</button>

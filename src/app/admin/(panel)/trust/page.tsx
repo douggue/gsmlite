@@ -11,7 +11,7 @@ import { PageTitle, Table } from "@/components/admin/ui";
 export const metadata = { title: "Trust" };
 
 type Tab = "reviews" | "stock";
-const TABS: [Tab, string][] = [["reviews", "Customer reviews"], ["stock", "Low stock alert"]];
+const TABS: [Tab, string][] = [["reviews", "Customer reviews"], ["stock", "Stock is low (license keys)"]];
 const day = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
 function CitySelect({ name = "city", required = false }: { name?: string; required?: boolean }) {

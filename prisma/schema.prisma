@@ -318,7 +318,8 @@ model CodeItem {
   /// HMAC of the code; prevents importing the same code twice
   codeHash      String         @unique
   batchLabel    String?
-  costHtg       Int?
+  /// What one key cost us, in USD cents
+  costUsd       Int?
   status        CodeStatus     @default(AVAILABLE)
   orderItemId   String?
   orderItem     OrderItem?     @relation(fields: [orderItemId], references: [id])

@@ -53,11 +53,11 @@ export default async function AdminOrder({ params }: { params: Promise<{ id: str
                   <p className="font-semibold">{itemTitle(i, "en")} × {i.quantity}</p>
                   <StatusBadge status={i.status} label={i.status} />
                 </div>
-                <p className="text-xs text-muted">{i.variant.product.fulfillmentType} · {formatMoney(i.unitPrice, order.currency, "en")} each · {i._count.codes} code(s) assigned</p>
+                <p className="text-xs text-muted">{i.variant.product.fulfillmentType === "SUPPLIER_API" ? "Supplier" : i.variant.product.fulfillmentType === "CODE_INVENTORY" ? "License keys from stock" : "Delivered by hand"} · {formatMoney(i.unitPrice, order.currency, "en")} each{i._count.codes > 0 ? ` · ${i._count.codes} key(s) delivered` : ""}</p>
                 <FieldAnswers itemId={i.id} values={i.fieldValues as Record<string, string>} defs={i.variant.product.fields as FieldDef[]} />
                 {i.deliveryNote && <p className="rounded-lg bg-surface-2 p-3 text-sm">{i.deliveryNote}</p>}
                 {manage && i.status === "PENDING" && ["PAID", "PROCESSING"].includes(order.status) && (
-                  <ActionButton label="Mark delivered…" className="btn-primary min-h-9 px-3 text-xs" prompt="Delivery note shown to the customer (e.g. 'Diamonds sent to ID 12345')" action={deliverItem.bind(null, i.id)} />
+                  <ActionButton label="Mark delivered…" className="btn-primary min-h-9 px-3 text-xs" prompt="Result shown to the customer (unlock code, report, license…)" action={deliverItem.bind(null, i.id)} />
                 )}
               </div>
             ))}
