@@ -1,12 +1,23 @@
 import { Children, Fragment, cloneElement, isValidElement } from "react";
-export function PageTitle({ title, sub, actions }: { title: string; sub?: string; actions?: React.ReactNode }) {
+export function PageTitle({ title, sub, actions }: { title: string; sub?: React.ReactNode; actions?: React.ReactNode }) {
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-      <div>
-        <h1 className="display text-2xl font-bold sm:text-3xl">{title}</h1>
-        {sub && <p className="mt-1 text-sm text-muted">{sub}</p>}
+      <div className="min-w-0">
+        <h1 className="display text-[26px] font-bold leading-tight tracking-tight sm:text-[30px]">{title}</h1>
+        {sub && <p className="mt-1 max-w-3xl text-sm text-muted">{sub}</p>}
       </div>
-      {actions}
+      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+    </div>
+  );
+}
+
+/** What an empty list is for, and how to fill it. */
+export function Empty({ title, hint, action }: { title: string; hint?: React.ReactNode; action?: React.ReactNode }) {
+  return (
+    <div className="px-6 py-10 text-center">
+      <p className="font-semibold">{title}</p>
+      {hint && <p className="mx-auto mt-1 max-w-md text-sm text-muted">{hint}</p>}
+      {action && <div className="mt-4 flex justify-center">{action}</div>}
     </div>
   );
 }
@@ -27,7 +38,7 @@ function labelCells(children: React.ReactNode, head: string[]): React.ReactNode 
 }
 
 /** Table on wide screens; on phones each row becomes a card with "Label · value" lines. */
-export function Table({ head, children, empty }: { head: string[]; children: React.ReactNode; empty?: boolean }) {
+export function Table({ head, children, empty, emptyText }: { head: string[]; children: React.ReactNode; empty?: boolean; emptyText?: React.ReactNode }) {
   return (
     <div className="card rtable overflow-x-auto">
       <table className="w-full text-left text-sm sm:min-w-[640px]">
@@ -36,19 +47,24 @@ export function Table({ head, children, empty }: { head: string[]; children: Rea
         </thead>
         <tbody className="divide-y divide-border">{labelCells(children, head)}</tbody>
       </table>
-      {empty && <p className="p-8 text-center text-sm text-muted">Nothing here.</p>}
+      {empty && (emptyText ? <div className="p-8 text-center text-sm text-muted">{emptyText}</div> : <p className="p-8 text-center text-sm text-muted">Nothing here yet.</p>)}
     </div>
   );
 }
 
-export function Stat({ label, value, tone, delta }: { label: string; value: React.ReactNode; tone?: "warn" | "danger"; delta?: { text: string; good: boolean } }) {
-  return (
-    <div className="card flex flex-col gap-3 p-4">
-      <p className="text-sm font-semibold text-muted">{label}</p>
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-surface-2 px-3.5 py-3">
-        <p className={`min-w-0 break-words text-2xl font-bold tracking-tight tabular-nums ${tone === "warn" ? "text-warning" : tone === "danger" ? "text-danger" : ""}`}>{value}</p>
-        {delta && <span className={`badge shrink-0 ${delta.good ? "bg-success-soft text-success" : "bg-danger-soft text-danger"}`}>{delta.text}</span>}
-      </div>
-    </div>
+/** Number card (same style everywhere): label, big number, optional note and link. */
+export function Stat({ label, value, tone, delta, note, href }: { label: string; value: React.ReactNode; tone?: "warn" | "danger" | "good"; delta?: { text: string; good: boolean }; note?: React.ReactNode; href?: string }) {
+  const body = (
+    <>
+      <p className="text-[13px] font-semibold text-muted">{label}</p>
+      <p className={`display mt-1.5 min-w-0 break-words text-[28px] font-bold leading-none tracking-tight tabular-nums ${tone === "warn" ? "text-warning" : tone === "danger" ? "text-danger" : tone === "good" ? "text-primary" : ""}`}>{value}</p>
+      {(note || delta) && (
+        <p className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted">
+          {delta && <span className={`badge ${delta.good ? "bg-success-soft text-success" : "bg-danger-soft text-danger"}`}>{delta.text}</span>}
+          {note}
+        </p>
+      )}
+    </>
   );
+  return href ? <a href={href} className="card block p-4 transition-colors hover:border-primary">{body}</a> : <div className="card p-4">{body}</div>;
 }

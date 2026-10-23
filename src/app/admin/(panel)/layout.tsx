@@ -1,16 +1,15 @@
 import { prisma } from "@/lib/db";
 import { requireStaff } from "@/lib/session";
-import { can, type Permission } from "@/lib/permissions";
-import { AdminNav } from "@/components/admin/AdminNav";
-import { getSettings } from "@/lib/settings";
+import { can } from "@/lib/permissions";
+import { ADMIN_MENU, type BadgeKey } from "@/lib/admin-menu";
 import { supplierAttentionCount } from "@/lib/suppliers/attention";
+import { AdminShell, type ShellGroup, type ShellTodo } from "@/components/admin/AdminShell";
 
 export const dynamic = "force-dynamic";
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   const user = await requireStaff();
-  const [settings, reviews, risks, processing, approvals, tickets, newReviews, supplierIssues, kycWaiting, contentDrafts] = await Promise.all([
-    getSettings(),
+  const [payments, risks, processing, approvals, tickets, reviews, supplierIssues, kyc, drafts, suppliers] = await Promise.all([
     prisma.paymentIntent.count({ where: { status: "REVIEW" } }),
     prisma.riskFlag.count({ where: { status: "OPEN" } }),
     prisma.order.count({ where: { status: "PROCESSING" } }),
@@ -20,49 +19,44 @@ export default async function PanelLayout({ children }: { children: React.ReactN
     supplierAttentionCount(),
     prisma.kycSubmission.count({ where: { status: "PENDING" } }),
     prisma.contentPage.count({ where: { status: "DRAFT" } }),
+    can(user, "suppliers.manage") ? prisma.supplier.findMany({ where: { isEnabled: true }, select: { name: true, balance: true, currency: true, lowBalanceAlert: true }, orderBy: { name: "asc" } }) : Promise.resolve([]),
   ]);
-  const all: { href: string; label: string; group: string; perm: Permission; badge?: number; alert?: boolean }[] = [
-    { href: "/admin", label: "Dashboard", group: "", perm: "dashboard.view" },
-    { href: "/admin/orders", label: "Orders", group: "Operations", perm: "orders.view", badge: processing },
-    { href: "/admin/suppliers", label: "Suppliers", group: "Operations", perm: "suppliers.manage", badge: supplierIssues, alert: true },
-    { href: "/admin/payments", label: "Payments", group: "Operations", perm: "payments.review", badge: reviews },
-    { href: "/admin/kyc", label: "KYC review", group: "Operations", perm: "kyc.review", badge: kycWaiting },
-    { href: "/admin/support", label: "Support", group: "Operations", perm: "support.manage", badge: tickets },
-    { href: "/admin/risk", label: "Risk queue", group: "Operations", perm: "risk.manage", badge: risks, alert: true },
-    { href: "/admin/approvals", label: "Approvals", group: "Operations", perm: "approvals.decide", badge: approvals },
-    { href: "/admin/reconciliation", label: "Reconciliation", group: "Operations", perm: "payments.review" },
-    { href: "/admin/products", label: "Services & prices", group: "Catalog", perm: "catalog.manage" },
-    { href: "/admin/price-groups", label: "Price groups", group: "Catalog", perm: "catalog.manage" },
-    { href: "/admin/codes", label: "Code inventory", group: "Catalog", perm: "codes.manage" },
-    { href: "/admin/media", label: "Media", group: "Catalog", perm: "catalog.manage" },
-    { href: "/admin/trust", label: "Reviews", group: "Catalog", perm: "catalog.manage", badge: newReviews },
-    { href: "/admin/customers", label: "Customers", group: "Customers", perm: "customers.view" },
-    { href: "/admin/wallet", label: "Ledger", group: "Customers", perm: "wallet.view" },
-    { href: "/admin/referrals", label: "Referrals", group: "Customers", perm: "referrals.manage" },
-    { href: "/admin/analytics", label: "Reports", group: "Customers", perm: "analytics.view" },
-    { href: "/admin/marketing", label: "Marketing", group: "Growth", perm: "content.manage" },
-    { href: "/admin/content", label: "Content machine", group: "Growth", perm: "content.manage", badge: contentDrafts },
-    { href: "/admin/content", label: "Content machine", group: "Growth", perm: "seo.manage" },
-    { href: "/admin/news", label: "News & tool updates", group: "Growth", perm: "content.manage" },
-    { href: "/admin/homepage", label: "Homepage", group: "Growth", perm: "content.manage" },
-    { href: "/admin/pages", label: "Pages", group: "Growth", perm: "content.manage" },
-    { href: "/admin/navigation", label: "Menus", group: "Growth", perm: "content.manage" },
-    { href: "/admin/newsletter", label: "Newsletter", group: "Growth", perm: "content.manage" },
-    { href: "/admin/seo", label: "SEO & redirects", group: "Growth", perm: "seo.manage" },
-    { href: "/admin/settings", label: "Settings", group: "Settings & staff", perm: "settings.manage" },
-    { href: "/admin/payment-methods", label: "Payment methods", group: "Settings & staff", perm: "settings.manage" },
-    { href: "/admin/appearance", label: "Appearance", group: "Settings & staff", perm: "content.manage" },
-    { href: "/admin/translations", label: "Translations", group: "Settings & staff", perm: "content.manage" },
-    { href: "/admin/exchange", label: "Money exchange", group: "Settings & staff", perm: "settings.manage" },
-    { href: "/admin/email", label: "Email", group: "Settings & staff", perm: "settings.manage" },
-    { href: "/admin/staff", label: "Staff & roles", group: "Settings & staff", perm: "staff.manage" },
-    { href: "/admin/security", label: "Security", group: "Settings & staff", perm: "staff.manage" },
-    { href: "/admin/audit", label: "Audit log", group: "Settings & staff", perm: "audit.view" },
+  const counts: Record<BadgeKey, number> = { processing, suppliers: supplierIssues, payments, kyc, tickets, risks, approvals, reviews, drafts };
+
+  const groups: ShellGroup[] = ADMIN_MENU.map((g) => ({
+    ...g,
+    items: g.items.filter((i) => can(user, i.perm)).map((i) => ({ ...i, badge: i.badgeKey ? counts[i.badgeKey] : undefined })),
+  })).filter((g) => g.items.length > 0);
+
+  const todo: ShellTodo[] = [
+    { label: "Payments to check", href: "/admin/payments", count: can(user, "payments.review") ? payments : 0 },
+    { label: "Supplier orders needing a decision", href: "/admin/suppliers", count: can(user, "suppliers.manage") ? supplierIssues : 0, alert: true },
+    { label: "KYC requests", href: "/admin/kyc", count: can(user, "kyc.review") ? kyc : 0 },
+    { label: "Orders held for a risk check", href: "/admin/risk", count: can(user, "risk.manage") ? risks : 0, alert: true },
+    { label: "Approvals waiting", href: "/admin/approvals", count: can(user, "approvals.decide") ? approvals : 0 },
+    { label: "Open support requests", href: "/admin/support", count: can(user, "support.manage") ? tickets : 0 },
+    { label: "Content drafts to review", href: "/admin/content", count: can(user, "content.manage") ? drafts : 0 },
+    { label: "Reviews to approve", href: "/admin/trust", count: can(user, "catalog.manage") ? reviews : 0 },
   ];
+
+  const quick = [
+    can(user, "catalog.manage") && { label: "New service", href: "/admin/products/new" },
+    can(user, "suppliers.manage") && { label: "Import from a supplier", href: "/admin/suppliers" },
+    can(user, "orders.view") && { label: "Orders to handle", href: "/admin/orders?show=decision" },
+    can(user, "content.manage") && { label: "Post a tool update", href: "/admin/news/new?kind=tool" },
+    can(user, "customers.view") && { label: "Find a customer", href: "/admin/customers" },
+    can(user, "content.manage") && { label: "Start a deal", href: "/admin/marketing#deal" },
+  ].filter(Boolean) as { label: string; href: string }[];
+
   return (
-    <div className="lg:flex">
-      <AdminNav items={all.filter((i) => can(user, i.perm))} user={{ name: user.name, role: user.role }} logo={settings.logoDarkUrl || settings.logoUrl} />
-      <main className="admin-main min-w-0 flex-1 p-4 pb-28 sm:p-6 sm:pb-28 lg:p-8">{children}</main>
-    </div>
+    <AdminShell
+      groups={groups}
+      user={{ name: user.name, role: user.role }}
+      todo={todo}
+      suppliers={suppliers.map((s) => ({ name: s.name, balance: s.balance, currency: s.currency, low: s.balance != null && s.lowBalanceAlert > 0 && s.balance < s.lowBalanceAlert }))}
+      quick={quick}
+    >
+      {children}
+    </AdminShell>
   );
 }
