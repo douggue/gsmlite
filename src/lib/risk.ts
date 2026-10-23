@@ -31,7 +31,7 @@ export async function assertWithinNewAccountLimit(
   const ageDays = (Date.now() - user.createdAt.getTime()) / 86_400_000;
   if (ageDays >= s.newAccountDays) return;
   const used = await todaysVolumeHtg(tx, user.id, s.htgPerUsd);
-  if (used + addHtg > s.newAccountDailyLimitHtg) throw new LimitExceededError("new_account_limit");
+  if (used + addHtg > Math.round(s.newAccountDailyLimitUsd * s.htgPerUsd)) throw new LimitExceededError("new_account_limit");
 }
 
 export async function flag(

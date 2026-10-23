@@ -136,8 +136,8 @@ export default async function MarketingPage() {
               <label><span className="label">Welcome credit after 1st top-up (USD)</span><input name="welcome" defaultValue={(s.welcomeCreditUsd / 100).toFixed(2)} inputMode="decimal" className="input" /></label>
               <span />
               <label className="flex items-center gap-2 text-sm sm:col-span-2"><input type="checkbox" name="referralEnabled" defaultChecked={s.referralEnabled} /> Referral rewards on</label>
-              <label><span className="label">Reward for the inviter (HTG)</span><input name="refReward" defaultValue={(s.referralRewardHtg / 100).toFixed(2)} inputMode="decimal" className="input" /></label>
-              <label><span className="label">Reward for the friend (HTG, 0 = none)</span><input name="refFriend" defaultValue={(s.referralFriendRewardHtg / 100).toFixed(2)} inputMode="decimal" className="input" /></label>
+              <label><span className="label">Reward for the inviter (USD)</span><input name="refReward" defaultValue={(s.referralRewardUsd / 100).toFixed(2)} inputMode="decimal" className="input" /></label>
+              <label><span className="label">Reward for the friend (USD, 0 = none)</span><input name="refFriend" defaultValue={(s.referralFriendRewardUsd / 100).toFixed(2)} inputMode="decimal" className="input" /></label>
             </div>
             <div className="space-y-2.5 text-sm">
               <b>Automatic messages</b>

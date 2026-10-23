@@ -36,8 +36,8 @@ export default async function DepositPage({ params, searchParams }: { params: Pr
         natcashPhone={s.natcashRecipientPhone}
         natcashQr={s.natcashQrUrl}
         manual={manual}
-        minHtg={s.minDepositHtg}
-        maxHtg={s.maxDepositHtg}
+        minHtg={Math.round(s.minDepositUsd * s.htgPerUsd)}
+        maxHtg={Math.round(s.maxDepositUsd * s.htgPerUsd)}
         htgPerUsd={s.htgPerUsd}
       />
       <p className="text-sm text-muted">{tw("storeCredit")}</p>

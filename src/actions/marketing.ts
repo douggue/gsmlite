@@ -102,8 +102,8 @@ export async function saveOffers(form: FormData): Promise<R> {
     await setSetting("topupBonus", { firstPct: n("firstPct", 50), pct: n("pct", 50), minUsd: parseAmount(String(form.get("minUsd") ?? "0") || "0") ?? 0 });
     await setSetting("freeChecksPerDay", Math.round(n("freeChecks", 50)));
     await setSetting("welcomeCreditUsd", parseAmount(String(form.get("welcome") ?? "0") || "0") ?? 0);
-    await setSetting("referralRewardHtg", parseAmount(String(form.get("refReward") ?? "0") || "0") ?? 0);
-    await setSetting("referralFriendRewardHtg", parseAmount(String(form.get("refFriend") ?? "0") || "0") ?? 0);
+    await setSetting("referralRewardUsd", parseAmount(String(form.get("refReward") ?? "0") || "0") ?? 0);
+    await setSetting("referralFriendRewardUsd", parseAmount(String(form.get("refFriend") ?? "0") || "0") ?? 0);
     await setSetting("referralEnabled", form.get("referralEnabled") === "on");
     await setSetting("autoMessages", {
       ...s.autoMessages,

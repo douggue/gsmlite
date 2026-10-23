@@ -13,16 +13,17 @@ export type Settings = {
   /** Flat exchange fee in basis points of the source amount */
   exchangeFeeBps: number;
   exchangeQuoteSeconds: number;
-  minDepositHtg: number;
-  maxDepositHtg: number;
+  /** Money limits are in USD cents; HTG amounts are compared at today's rate (htgOf). */
+  minDepositUsd: number;
+  maxDepositUsd: number;
   /** Manual deposits at or above this amount are held before becoming spendable */
-  holdThresholdHtg: number;
+  holdThresholdUsd: number;
   holdHours: number;
   /** Accounts younger than this many days get lower limits */
   newAccountDays: number;
-  newAccountDailyLimitHtg: number;
-  /** Orders at or above this total go to manual review before codes are released */
-  reviewOrderThresholdHtg: number;
+  newAccountDailyLimitUsd: number;
+  /** Orders at or above this total go to manual review before anything is delivered */
+  reviewOrderThresholdUsd: number;
   natcashRecipientName: string;
   natcashRecipientPhone: string;
   natcashInstructions: Record<string, string>;
@@ -48,15 +49,16 @@ export type Settings = {
   /** Brand images (URLs). Empty = built-in logo / default artwork. */
   logoUrl: string;
   logoDarkUrl: string;
-  /** Wallet adjustments at or above this HTG-equivalent amount need a second staff approval */
-  approvalThresholdHtg: number;
+  /** Wallet adjustments at or above this amount (USD equivalent) need a second staff approval */
+  approvalThresholdUsd: number;
   /** Paid orders not delivered after this many hours are refunded to the wallet automatically (0 = off) */
   autoRefundHours: number;
   referralEnabled: boolean;
-  referralRewardHtg: number;
-  referralMinOrderHtg: number;
-  /** Reward for the invited friend too (HTG centimes, 0 = only the person who invited is rewarded) */
-  referralFriendRewardHtg: number;
+  /** Referral rewards are store credit in USD cents */
+  referralRewardUsd: number;
+  referralMinOrderUsd: number;
+  /** Reward for the invited friend too (0 = only the person who invited is rewarded) */
+  referralFriendRewardUsd: number;
   heroImageUrl: string;
   ogImageUrl: string;
   homepage: unknown;
@@ -187,13 +189,13 @@ export const DEFAULT_SETTINGS: Settings = {
   exchangeSpreadBps: 150,
   exchangeFeeBps: 0,
   exchangeQuoteSeconds: 120,
-  minDepositHtg: 10_000,
-  maxDepositHtg: 10_000_000,
-  holdThresholdHtg: 2_500_000,
+  minDepositUsd: 100,
+  maxDepositUsd: 100_000,
+  holdThresholdUsd: 20_000,
   holdHours: 24,
   newAccountDays: 3,
-  newAccountDailyLimitHtg: 1_500_000,
-  reviewOrderThresholdHtg: 2_000_000,
+  newAccountDailyLimitUsd: 10_000,
+  reviewOrderThresholdUsd: 15_000,
   natcashRecipientName: "GSMLite",
   natcashRecipientPhone: "+509 0000 0000",
   natcashInstructions: {},
@@ -210,12 +212,12 @@ export const DEFAULT_SETTINGS: Settings = {
   announcement: { enabled: false, text: {}, link: "" },
   logoUrl: "",
   logoDarkUrl: "",
-  approvalThresholdHtg: 1_000_000,
+  approvalThresholdUsd: 10_000,
   autoRefundHours: 24,
   referralEnabled: false,
-  referralRewardHtg: 10_000,
-  referralMinOrderHtg: 50_000,
-  referralFriendRewardHtg: 0,
+  referralRewardUsd: 100,
+  referralMinOrderUsd: 500,
+  referralFriendRewardUsd: 0,
   heroImageUrl: "",
   ogImageUrl: "",
   homepage: null,
@@ -284,3 +286,8 @@ export async function setSetting<K extends keyof Settings>(key: K, value: Settin
  */
 const cachedSettings = unstable_cache(getSettings, ["site-settings"], { tags: ["settings"], revalidate: 60 });
 export const getDisplaySettings = cache(() => cachedSettings());
+
+/** A USD-cent setting expressed in HTG centimes at today's rate (limits are compared in HTG internally). */
+export function htgOf(usdCents: number, s: Pick<Settings, "htgPerUsd">): number {
+  return Math.round(usdCents * s.htgPerUsd);
+}

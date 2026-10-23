@@ -209,7 +209,7 @@ export async function createOrder(input: {
     await addEvent(tx, created.id, "AWAITING_PAYMENT", `Payment method: ${input.method}`);
     await linkOrderFiles(tx, created.id, input.userId);
 
-    if (totalHtg >= settings.reviewOrderThresholdHtg) {
+    if (totalHtg >= Math.round(settings.reviewOrderThresholdUsd * settings.htgPerUsd)) {
       await flag(tx, "High-value order: review before release", { userId: input.userId, orderId: created.id });
     }
     if (kyc.review) await flag(tx, `KYC rule: ${kyc.rule ?? "review"}`, { userId: input.userId, orderId: created.id });

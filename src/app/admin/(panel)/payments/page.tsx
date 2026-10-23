@@ -80,7 +80,7 @@ export default async function AdminPayments() {
                 </p>
                 <p className="text-muted">{p.order ? <>For order <Link className="text-primary" href={`/admin/orders/${p.orderId}`}>#{p.order.number}</Link></> : "Wallet deposit"} · submitted {p.createdAt.toLocaleString("en-US")}</p>
                 {p.evidencePath && <a href={`/api/admin/evidence/${p.id}`} target="_blank" className="font-semibold text-primary">View screenshot ↗</a>}
-                {!p.orderId && (p.currency === "USD" ? Math.round(p.amount * settings.htgPerUsd) : p.amount) >= settings.holdThresholdHtg && <p className="text-warning">Above hold threshold: funds will be held {settings.holdHours}h after approval.</p>}
+                {!p.orderId && (p.currency === "USD" ? Math.round(p.amount * settings.htgPerUsd) : p.amount) >= Math.round(settings.holdThresholdUsd * settings.htgPerUsd) && <p className="text-warning">Above hold threshold: funds will be held {settings.holdHours}h after approval.</p>}
               </div>
               <div className="flex gap-2">
                 <ActionButton label="Approve" className="btn-primary min-h-9 px-4 text-xs" confirm={`Approve ${formatMoney(p.amount, p.currency, "en")} for ${p.user.name}? Only approve if the money is really there (statement or blockchain).`} action={approvePayment.bind(null, p.id)} />

@@ -6,7 +6,7 @@ import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { assertUser } from "@/lib/session";
-import { getSettings } from "@/lib/settings";
+import { htgOf, getSettings } from "@/lib/settings";
 import { parseAmount, usdToHtg } from "@/lib/money";
 import { createMoncashPayment, moncashAvailable } from "@/lib/payments/moncash";
 import { assertWithinNewAccountLimit, LimitExceededError } from "@/lib/risk";
@@ -68,7 +68,7 @@ export async function createDeposit(form: FormData): Promise<ActionResult<{ redi
   const manual = method === "MANUAL" ? await prisma.manualMethod.findUnique({ where: { id: String(form.get("manualMethodId") ?? "") } }) : null;
   const currency = method === "CARD" ? "USD" : manual?.currency ?? "HTG";
   const amountHtg = amount ? (currency === "USD" ? usdToHtg(amount, settings.htgPerUsd) : amount) : 0;
-  if (!amount || amountHtg < settings.minDepositHtg || amountHtg > settings.maxDepositHtg) return { ok: false, error: "amount" };
+  if (!amount || amountHtg < htgOf(settings.minDepositUsd, settings) || amountHtg > htgOf(settings.maxDepositUsd, settings)) return { ok: false, error: "amount" };
 
   const dbUser = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
   const kyc = await evaluateKyc(user.id, { action: "topup", amountUsd: currency === "USD" ? amount : Math.round(amount / settings.htgPerUsd), method: methodId, country: await shopperCountry(user) }, dbUser.locale);

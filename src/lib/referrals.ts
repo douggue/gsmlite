@@ -42,8 +42,8 @@ export async function maybeRewardReferral(referredId: string) {
   if (!settings.referralEnabled) return;
   const order = await prisma.order.findFirst({ where: { userId: referredId, status: "FULFILLED" }, orderBy: { fulfilledAt: "asc" } });
   if (!order) return;
-  const totalHtg = order.currency === "HTG" ? order.total : Math.round(order.total * settings.htgPerUsd);
-  if (totalHtg < settings.referralMinOrderHtg) return; // wait for a qualifying order
+  const totalUsd = order.currency === "USD" ? order.total : Math.round(order.total / settings.htgPerUsd);
+  if (totalUsd < settings.referralMinOrderUsd) return; // wait for a qualifying order
 
   const referrerIps = (await prisma.session.findMany({ where: { userId: ref.referrerId }, select: { ipAddress: true } })).map((s) => s.ipAddress).filter(Boolean);
   const referredIps = [ref.signupIp, ...(await prisma.session.findMany({ where: { userId: referredId }, select: { ipAddress: true } })).map((s) => s.ipAddress)].filter(Boolean);
@@ -56,12 +56,13 @@ export async function maybeRewardReferral(referredId: string) {
 
 export async function payReferral(referralId: string, actorId: string | null) {
   const settings = await getSettings();
-  const amount = settings.referralRewardHtg;
+  const amount = settings.referralRewardUsd;
   const ref = await prisma.$transaction(async (tx) => {
     const r = await tx.referral.findUniqueOrThrow({ where: { id: referralId } });
     if (r.status === "REWARDED") return null;
-    const wallet = await walletAccount(tx, r.referrerId, "HTG");
-    const source = await systemAccount(tx, "adjustment", "HTG", "referral");
+    // Store credit in USD (prices are in USD).
+    const wallet = await walletAccount(tx, r.referrerId, "USD");
+    const source = await systemAccount(tx, "adjustment", "USD", "referral");
     await post(tx, {
       type: "ADJUSTMENT",
       idempotencyKey: `referral:${r.id}`,
@@ -69,14 +70,14 @@ export async function payReferral(referralId: string, actorId: string | null) {
       createdById: actorId,
       metadata: { referralId: r.id },
       entries: [
-        { accountId: source.id, currency: "HTG", amount: -amount },
-        { accountId: wallet.id, currency: "HTG", amount },
+        { accountId: source.id, currency: "USD", amount: -amount },
+        { accountId: wallet.id, currency: "USD", amount },
       ],
     });
     // Optional: the invited friend gets a reward too ("both get …").
-    const friend = settings.referralFriendRewardHtg ?? 0;
+    const friend = settings.referralFriendRewardUsd ?? 0;
     if (friend > 0) {
-      const fw = await walletAccount(tx, r.referredId, "HTG");
+      const fw = await walletAccount(tx, r.referredId, "USD");
       await post(tx, {
         type: "BONUS",
         idempotencyKey: `referral-friend:${r.id}`,
@@ -84,12 +85,12 @@ export async function payReferral(referralId: string, actorId: string | null) {
         createdById: actorId,
         metadata: { referralId: r.id },
         entries: [
-          { accountId: source.id, currency: "HTG", amount: -friend },
-          { accountId: fw.id, currency: "HTG", amount: friend },
+          { accountId: source.id, currency: "USD", amount: -friend },
+          { accountId: fw.id, currency: "USD", amount: friend },
         ],
       });
     }
     return tx.referral.update({ where: { id: r.id }, data: { status: "REWARDED", rewardAmount: amount, rewardedAt: new Date() } });
   });
-  if (ref) await notify(ref.referrerId, "referral_rewarded", { amount, currency: "HTG" }, "/account/referrals");
+  if (ref) await notify(ref.referrerId, "referral_rewarded", { amount, currency: "USD" }, "/account/referrals");
 }

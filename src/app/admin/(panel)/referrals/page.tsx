@@ -17,7 +17,7 @@ export default async function ReferralsAdmin() {
   ]);
   return (
     <>
-      <PageTitle title="Referrals" sub={`${s.referralEnabled ? "Program on" : "Program off (Settings → Referral program)"} · reward ${formatMoney(s.referralRewardHtg, "HTG", "en")} after the friend's first delivered order of ${formatMoney(s.referralMinOrderHtg, "HTG", "en")}+. Same-network signups are rejected automatically.`} />
+      <PageTitle title="Referrals" sub={`${s.referralEnabled ? "Program on" : "Program off (Settings → Referral program)"} · reward ${formatMoney(s.referralRewardUsd, "USD", "en")} after the friend's first delivered order of ${formatMoney(s.referralMinOrderUsd, "USD", "en")}+. Same-network signups are rejected automatically.`} />
       <Table head={["Referrer", "Friend", "Status", "Note", "Date", ""]} empty={list.length === 0}>
         {list.map((r) => (
           <tr key={r.id}>

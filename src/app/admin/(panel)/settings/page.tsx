@@ -97,19 +97,19 @@ export default async function SettingsPage() {
               <Field name="exchangeSpreadBps" label="Exchange spread (basis points)" value={s.exchangeSpreadBps} type="number" hint="150 = 1.5% against the customer." />
               <Field name="exchangeFeeBps" label="Exchange fee (basis points)" value={s.exchangeFeeBps} type="number" />
               <Field name="exchangeQuoteSeconds" label="Quote valid for (seconds)" value={s.exchangeQuoteSeconds} type="number" />
-              <Field name="minDepositHtg" label="Smallest top-up (HTG)" value={m(s.minDepositHtg)} />
-              <Field name="maxDepositHtg" label="Largest top-up (HTG)" value={m(s.maxDepositHtg)} />
+              <Field name="minDepositUsd" label="Smallest top-up (USD)" value={m(s.minDepositUsd)} />
+              <Field name="maxDepositUsd" label="Largest top-up (USD)" value={m(s.maxDepositUsd)} />
             </div>
           </Section>
 
           <Section id="fraud" title="Fraud & holds">
             <div className={grid}>
-              <Field name="holdThresholdHtg" label="Hold deposits above (HTG)" value={m(s.holdThresholdHtg)} />
+              <Field name="holdThresholdUsd" label="Hold top-ups above (USD)" value={m(s.holdThresholdUsd)} />
               <Field name="holdHours" label="for (hours)" value={s.holdHours} type="number" />
-              <Field name="reviewOrderThresholdHtg" label="Review orders above (HTG)" value={m(s.reviewOrderThresholdHtg)} hint="Staff check before anything is delivered." />
-              <Field name="approvalThresholdHtg" label="Second approval for wallet changes above (HTG)" value={m(s.approvalThresholdHtg)} />
+              <Field name="reviewOrderThresholdUsd" label="Review orders above (USD)" value={m(s.reviewOrderThresholdUsd)} hint="Staff check before anything is delivered." />
+              <Field name="approvalThresholdUsd" label="Second approval for wallet changes above (USD)" value={m(s.approvalThresholdUsd)} />
               <Field name="newAccountDays" label="New account period (days)" value={s.newAccountDays} type="number" />
-              <Field name="newAccountDailyLimitHtg" label="New account daily limit (HTG)" value={m(s.newAccountDailyLimitHtg)} />
+              <Field name="newAccountDailyLimitUsd" label="New account daily limit (USD)" value={m(s.newAccountDailyLimitUsd)} />
               <Field name="maxAccountsPerDevice" label="Flag a browser used by more accounts than" value={s.maxAccountsPerDevice} type="number" />
               <Field name="autoRefundHours" label="Refund undelivered orders after (hours)" value={s.autoRefundHours} type="number" hint="0 = off." />
             </div>
@@ -191,8 +191,8 @@ export default async function SettingsPage() {
             <label className="flex items-start gap-2 text-sm"><input type="checkbox" name="requireEmailVerification" defaultChecked={s.requireEmailVerification} className="mt-1" /> <span>Confirm email before buying or topping up <span className="text-muted">(turns itself off while email sending is off)</span></span></label>
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="newsletterEnabled" defaultChecked={s.newsletterEnabled} /> Newsletter sign-up in the footer</label>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field name="referralRewardHtg" label="Reward to the person who invited (HTG)" value={m(s.referralRewardHtg)} />
-              <Field name="referralMinOrderHtg" label="Friend's first order at least (HTG)" value={m(s.referralMinOrderHtg)} />
+              <Field name="referralRewardUsd" label="Reward to the person who invited (USD)" value={m(s.referralRewardUsd)} />
+              <Field name="referralMinOrderUsd" label="Friend's first order at least (USD)" value={m(s.referralMinOrderUsd)} />
             </div>
           </Section>
 

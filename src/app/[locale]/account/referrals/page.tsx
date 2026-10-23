@@ -32,7 +32,7 @@ export default async function ReferralsPage({ params }: { params: Promise<{ loca
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t("title")}</h1>
-        <p className="mt-1 max-w-xl text-sm text-muted">{t("intro", { reward: formatMoney(settings.referralRewardHtg, "HTG", locale), min: formatMoney(settings.referralMinOrderHtg, "HTG", locale) })}</p>
+        <p className="mt-1 max-w-xl text-sm text-muted">{t("intro", { reward: formatMoney(settings.referralRewardUsd, "USD", locale), min: formatMoney(settings.referralMinOrderUsd, "USD", locale) })}</p>
       </div>
       <section className="card space-y-3 p-5">
         <p className="label">{t("yourLink")}</p>

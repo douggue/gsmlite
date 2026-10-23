@@ -335,7 +335,7 @@ export async function adjustCustomerWallet(form: FormData): Promise<R> {
     await assertStepUp();
     const settings = await (await import("@/lib/settings")).getSettings();
     const htgEquivalent = currency === "HTG" ? amount : Math.round(amount * settings.htgPerUsd);
-    if (htgEquivalent >= settings.approvalThresholdHtg) {
+    if (htgEquivalent >= Math.round(settings.approvalThresholdUsd * settings.htgPerUsd)) {
       await prisma.pendingApproval.create({
         data: {
           kind: "wallet.adjust",
@@ -415,21 +415,21 @@ export async function saveSettings(form: FormData): Promise<R> {
       exchangeSpreadBps: Math.max(0, Math.min(2000, Math.round(num("exchangeSpreadBps")))),
       exchangeFeeBps: Math.max(0, Math.min(2000, Math.round(num("exchangeFeeBps")))),
       exchangeQuoteSeconds: Math.max(30, Math.min(900, Math.round(num("exchangeQuoteSeconds")))),
-      minDepositHtg: money("minDepositHtg"),
-      maxDepositHtg: money("maxDepositHtg"),
-      holdThresholdHtg: money("holdThresholdHtg"),
+      minDepositUsd: money("minDepositUsd"),
+      maxDepositUsd: money("maxDepositUsd"),
+      holdThresholdUsd: money("holdThresholdUsd"),
       holdHours: Math.max(0, Math.min(168, Math.round(num("holdHours")))),
       newAccountDays: Math.max(0, Math.min(90, Math.round(num("newAccountDays")))),
-      newAccountDailyLimitHtg: money("newAccountDailyLimitHtg"),
-      reviewOrderThresholdHtg: money("reviewOrderThresholdHtg"),
-      approvalThresholdHtg: money("approvalThresholdHtg"),
+      newAccountDailyLimitUsd: money("newAccountDailyLimitUsd"),
+      reviewOrderThresholdUsd: money("reviewOrderThresholdUsd"),
+      approvalThresholdUsd: money("approvalThresholdUsd"),
       autoRefundHours: Math.max(0, Math.min(720, Math.round(num("autoRefundHours")))),
       referralEnabled: form.get("referralEnabled") === "on",
       newsletterEnabled: form.get("newsletterEnabled") === "on",
       requireEmailVerification: form.get("requireEmailVerification") === "on",
       maxAccountsPerDevice: Math.max(1, Math.min(50, Math.round(num("maxAccountsPerDevice")) || 3)),
-      referralRewardHtg: money("referralRewardHtg"),
-      referralMinOrderHtg: money("referralMinOrderHtg"),
+      referralRewardUsd: money("referralRewardUsd"),
+      referralMinOrderUsd: money("referralMinOrderUsd"),
       natcashRecipientName: str("natcashRecipientName"),
       natcashRecipientPhone: str("natcashRecipientPhone"),
       moncashEnabled: form.get("moncashEnabled") === "on",

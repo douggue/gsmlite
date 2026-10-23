@@ -92,9 +92,9 @@ export default async function WalletPage({ params }: { params: Promise<{ locale:
       {code && (
         <section className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-4">
           <b className="text-[15px]">
-            {settings.referralFriendRewardHtg > 0
-              ? g("inviteBoth", { amount: money(settings.referralRewardHtg, "HTG") })
-              : g("invite", { amount: money(settings.referralRewardHtg, "HTG") })}
+            {settings.referralFriendRewardUsd > 0
+              ? g("inviteBoth", { amount: money(settings.referralRewardUsd, "USD") })
+              : g("invite", { amount: money(settings.referralRewardUsd, "USD") })}
           </b>
           <span className="text-[13px] text-muted">{g("inviteSub")}</span>
           <div className="flex gap-2">
