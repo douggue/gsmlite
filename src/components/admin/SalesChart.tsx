@@ -1,13 +1,13 @@
 "use client";
 import { useState } from "react";
 
-type Row = { date: string; htg: number; orders: number };
+type Row = { date: string; usd: number; orders: number };
 
 /** Single-series bar chart (one hue, no legend needed), with a hover tooltip per bar. */
 export function SalesChart({ rows }: { rows: Row[] }) {
   const [hover, setHover] = useState<number | null>(null);
   const W = 720, H = 220, left = 56, bottom = 24, top = 12;
-  const max = Math.max(1, ...rows.map((r) => r.htg));
+  const max = Math.max(1, ...rows.map((r) => r.usd));
   const step = niceStep(max / 4);
   const yMax = Math.ceil(max / step) * step;
   const ticks = Array.from({ length: Math.round(yMax / step) + 1 }, (_, i) => i * step);
@@ -29,11 +29,11 @@ export function SalesChart({ rows }: { rows: Row[] }) {
         ))}
         {rows.map((r, i) => {
           const x = left + i * bw + 1;
-          const bh = H - bottom - y(r.htg);
+          const bh = H - bottom - y(r.usd);
           return (
             <g key={r.date} onMouseEnter={() => setHover(i)} onFocus={() => setHover(i)} tabIndex={0}>
               <rect x={left + i * bw} y={top} width={bw} height={H - top - bottom} fill="transparent" />
-              {r.htg > 0 && (
+              {r.usd > 0 && (
                 <path
                   d={`M${x},${H - bottom} v${-Math.max(0, bh - 4)} q0,-4 4,-4 h${barW - 8} q4,0 4,4 v${Math.max(0, bh - 4)} z`}
                   fill="var(--primary)"
@@ -50,7 +50,7 @@ export function SalesChart({ rows }: { rows: Row[] }) {
       {h && (
         <div className="pointer-events-none absolute right-2 top-0 rounded-lg border border-border bg-surface px-3 py-2 text-xs shadow">
           <p className="font-semibold">{h.date}</p>
-          <p>{(h.htg / 100).toLocaleString("en-US")} HTG · {h.orders} order{h.orders === 1 ? "" : "s"}</p>
+          <p>${(h.usd / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} · {h.orders} order{h.orders === 1 ? "" : "s"}</p>
         </div>
       )}
     </div>
