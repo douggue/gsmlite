@@ -263,6 +263,7 @@ Files on the server stay on disk (uploads volume) with nightly backups; Vercel B
 
 ## For Tuesday (owner, 2026-10-23): "the admin isn't good at all"
 - Owner's feedback on the admin goes here: screens and what's wrong with each (to collect at the start of the session).
+- Full admin test done 2026-10-23: docs/ADMIN-AUDIT.md (structure, Haiti Gaming leftovers, page-by-page problems, plan).
 - Supplier protocols to support. Today only Dhru Fusion is built. The owner wants this list (seen on another panel):
   | Protocol | Connects to | Service types |
   |---|---|---|
