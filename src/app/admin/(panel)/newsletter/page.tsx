@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { requireStaff } from "@/lib/session";
 import { getSettings } from "@/lib/settings";
 import { emailEnabled } from "@/lib/email";
-import { PageTitle, Stat, Table } from "@/components/admin/ui";
+import { PageTitle, Stat, Table, Empty } from "@/components/admin/ui";
 
 export const metadata = { title: "Newsletter" };
 
@@ -22,7 +22,7 @@ export default async function NewsletterAdmin() {
         actions={<a className="btn-secondary" href="/api/admin/export?type=newsletter">Export CSV</a>}
       />
       <div className="mb-4 grid grid-cols-2 gap-3 sm:max-w-md"><Stat label="Subscribed" value={active} /><Stat label="Unsubscribed" value={subs.filter((x) => x.unsubscribedAt).length} /></div>
-      <Table head={["Email", "Language", "Consent", "Status"]} empty={subs.length === 0}>
+      <Table head={["Email", "Language", "Consent", "Status"]} empty={subs.length === 0} emptyText={<Empty title="No subscribers yet" hint="People who tick “send me news” at sign-up or in the footer show here." />}>
         {subs.map((x) => (
           <tr key={x.id}>
             <td className="px-4 py-2.5">{x.email}</td>

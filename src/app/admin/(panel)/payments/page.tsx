@@ -6,7 +6,7 @@ import { formatMoney } from "@/lib/money";
 import { getSettings } from "@/lib/settings";
 import { approvePayment, rejectPaymentAction } from "@/actions/admin";
 import { ActionButton } from "@/components/admin/ActionButton";
-import { PageTitle, Table } from "@/components/admin/ui";
+import { PageTitle, Table, Empty } from "@/components/admin/ui";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatPhone } from "@/lib/phone";
 import { moncashAvailable } from "@/lib/payments/moncash";
@@ -65,7 +65,7 @@ export default async function AdminPayments() {
       </div>
       <h2 className="mb-3 font-semibold">Review queue ({queue.length})</h2>
       <div className="space-y-3">
-        {queue.length === 0 && <p className="card p-8 text-center text-sm text-muted">No payments waiting for review.</p>}
+        {queue.length === 0 && <div className="card"><Empty title="No payments to check" hint="Manual payments (MonCash, bank, crypto receipts) wait here until someone confirms the money arrived." /></div>}
         {queue.map((p) => {
           const ageDays = Math.floor((Date.now() - p.user.createdAt.getTime()) / 86_400_000);
           return (
@@ -92,7 +92,7 @@ export default async function AdminPayments() {
         })}
       </div>
       <h2 className="mb-3 mt-8 font-semibold">Recent payments</h2>
-      <Table head={["Customer", "Provider", "Amount", "Reference", "Status", "Reviewed by", "Updated"]} empty={recent.length === 0}>
+      <Table head={["Customer", "Provider", "Amount", "Reference", "Status", "Reviewed by", "Updated"]} empty={recent.length === 0} emptyText={<Empty title="No payments yet" hint="Top-ups and order payments show here with their status." />}>
         {recent.map((p) => (
           <tr key={p.id}>
             <td className="px-4 py-3">{p.user.name}</td>

@@ -6,7 +6,7 @@ import { formatMoney } from "@/lib/money";
 import { t } from "@/lib/text";
 import { saveCategory } from "@/actions/admin";
 import { ActionForm } from "@/components/admin/ActionButton";
-import { PageTitle, Table } from "@/components/admin/ui";
+import { PageTitle, Table, Empty } from "@/components/admin/ui";
 import { LocalizedInputs } from "@/components/admin/LocalizedInputs";
 import { ImageField } from "@/components/admin/ImageField";
 
@@ -63,7 +63,7 @@ export default async function AdminProducts({ searchParams }: { searchParams: Pr
           </Link>
         ))}
       </nav>
-      <Table head={["Service", "Category", "Type", "Options", "Cost", "Price", "Margin", "Status"]} empty={products.length === 0}>
+      <Table head={["Service", "Category", "Type", "Options", "Cost", "Price", "Margin", "Status"]} empty={products.length === 0} emptyText={<Empty title="No services here" hint="Add a service by hand, or import a list from a supplier." />}>
         {products.map((p) => {
           const active = p.variants.filter((v) => v.isActive);
           const cheapest = active.length ? active.reduce((a, b) => ((a.salePriceUsd ?? a.priceUsd) <= (b.salePriceUsd ?? b.priceUsd) ? a : b)) : null;

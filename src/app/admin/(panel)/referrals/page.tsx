@@ -5,7 +5,7 @@ import { getSettings } from "@/lib/settings";
 import { formatMoney } from "@/lib/money";
 import { decideReferral } from "@/actions/admin";
 import { ActionButton } from "@/components/admin/ActionButton";
-import { PageTitle, Table } from "@/components/admin/ui";
+import { PageTitle, Table, Empty } from "@/components/admin/ui";
 
 export const metadata = { title: "Referrals" };
 
@@ -18,7 +18,7 @@ export default async function ReferralsAdmin() {
   return (
     <>
       <PageTitle title="Referrals" sub={`${s.referralEnabled ? "Program on" : "Program off (Settings → Referral program)"} · reward ${formatMoney(s.referralRewardUsd, "USD", "en")} after the friend's first delivered order of ${formatMoney(s.referralMinOrderUsd, "USD", "en")}+. Same-network signups are rejected automatically.`} />
-      <Table head={["Referrer", "Friend", "Status", "Note", "Date", ""]} empty={list.length === 0}>
+      <Table head={["Referrer", "Friend", "Status", "Note", "Date", ""]} empty={list.length === 0} emptyText={<Empty title="No referrals yet" hint="When a customer shares their link and a friend orders, it shows here." />}>
         {list.map((r) => (
           <tr key={r.id}>
             <td className="px-4 py-3"><Link href={`/admin/customers/${r.referrer.id}`} className="text-primary">{r.referrer.name}</Link></td>

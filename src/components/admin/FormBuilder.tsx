@@ -79,25 +79,31 @@ export function FormBuilder({ productId, initial, fromSupplier, serviceType }: {
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[200px_minmax(0,0.8fr)_minmax(0,1.2fr)] 2xl:grid-cols-[200px_minmax(0,0.8fr)_minmax(0,1.3fr)_300px]">
-        <aside className="card h-fit space-y-1 p-3">
-          <p className="px-2 pb-1 text-xs font-semibold uppercase tracking-wide text-muted">Add a field</p>
+      <section className="card space-y-3 p-4" aria-label="Add a field">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="mr-1 text-sm font-semibold">Add a field</span>
           {(Object.keys(FIELD_TYPES) as FieldType[]).map((type) => (
-            <button key={type} type="button" onClick={() => add(type)} className="block min-h-10 w-full rounded-lg px-2 text-left text-sm hover:bg-surface-2">+ {FIELD_TYPES[type]}</button>
+            <button key={type} type="button" onClick={() => add(type)} className="inline-flex min-h-10 items-center rounded-xl border border-border bg-surface px-3 text-sm font-medium hover:border-primary hover:text-primary">+ {FIELD_TYPES[type]}</button>
           ))}
-          <p className="px-2 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-muted">Start from a template</p>
-          {Object.entries(FORM_TEMPLATES).map(([k, tpl]) => (
-            <button key={k} type="button" className="block min-h-10 w-full rounded-lg px-2 text-left text-sm hover:bg-surface-2"
-              onClick={() => { if (!fields.length || window.confirm(`Replace this form with “${tpl.name}”?`)) { setFields(structuredClone(tpl.fields)); setSel(0); } }}>
-              {tpl.name}
-            </button>
-          ))}
-        </aside>
+        </div>
+        <label className="flex flex-wrap items-center gap-2 text-sm">
+          <span className="text-muted">or start from a template</span>
+          <select className="input min-h-10 w-auto" value="" onChange={(e) => {
+            const tpl = FORM_TEMPLATES[e.target.value as keyof typeof FORM_TEMPLATES];
+            if (tpl && (!fields.length || window.confirm(`Replace this form with “${tpl.name}”?`))) { setFields(structuredClone(tpl.fields)); setSel(0); }
+          }}>
+            <option value="">Choose…</option>
+            {Object.entries(FORM_TEMPLATES).map(([k, tpl]) => <option key={k} value={k}>{tpl.name}</option>)}
+          </select>
+        </label>
+      </section>
 
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)_340px]">
+        <div className="space-y-4 2xl:contents">
         <section className="card h-fit p-3">
           <h2 className="px-2 pb-2 font-semibold">Fields on this form</h2>
           {serviceType === "IMEI" && <p className="mx-2 mb-2 rounded-lg bg-surface-2 px-3 py-2 text-xs text-muted">The IMEI box is set on the service page (it is always first).</p>}
-          {!fields.length && <p className="px-2 py-6 text-center text-sm text-muted">No fields yet. Add one on the left or start from a template.</p>}
+          {!fields.length && <p className="px-2 py-6 text-center text-sm text-muted">No fields yet. Add one above or start from a template.</p>}
           <ol className="space-y-1.5">
             {fields.map((x, i) => (
               <li key={x.key + i} draggable onDragStart={() => setDrag(i)} onDragOver={(e) => e.preventDefault()} onDrop={() => { if (drag != null) move(drag, i); setDrag(null); }}
@@ -115,8 +121,15 @@ export function FormBuilder({ productId, initial, fromSupplier, serviceType }: {
             ))}
           </ol>
         </section>
+        <section className="card h-fit space-y-3.5 p-4 2xl:order-3">
+          <h2 className="font-semibold">Customer preview</h2>
+          <OrderFields defs={fields} values={preview} onChange={setPreview} locale="en" text={PREVIEW_TEXT} canUpload={false} idPrefix="pv" />
+          {fields.length > 0 && <p className={`text-xs ${problem ? "text-warning" : "text-success"}`}>{problem ? `Order button would say: check “${problem.def.label.en || problem.def.key}”` : "Ready to order"}</p>}
+        </section>
+        </div>
 
-        <section className="card h-fit space-y-3 p-4">
+
+        <section className="card h-fit space-y-3 p-4 2xl:order-2">
           {!f ? <p className="text-sm text-muted">Pick a field to edit it.</p> : (
             <>
               <div className="flex items-center justify-between gap-2">
@@ -208,11 +221,6 @@ export function FormBuilder({ productId, initial, fromSupplier, serviceType }: {
           )}
         </section>
 
-        <section className="card h-fit space-y-3.5 p-4 lg:col-span-2 lg:col-start-2 2xl:col-span-1 2xl:col-start-auto">
-          <h2 className="font-semibold">Customer preview</h2>
-          <OrderFields defs={fields} values={preview} onChange={setPreview} locale="en" text={PREVIEW_TEXT} canUpload={false} idPrefix="pv" />
-          {fields.length > 0 && <p className={`text-xs ${problem ? "text-warning" : "text-success"}`}>{problem ? `Order button would say: check “${problem.def.label.en || problem.def.key}”` : "Ready to order"}</p>}
-        </section>
       </div>
       <p className="text-sm text-muted">Templates save time: start from “Remote job”, “IMEI service”, “Tool account (username)” or “License key”, then change what you need. Suppliers&apos; services fill this form in automatically when imported.</p>
     </div>

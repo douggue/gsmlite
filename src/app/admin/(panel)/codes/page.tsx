@@ -3,7 +3,7 @@ import { requireStaff } from "@/lib/session";
 import { t } from "@/lib/text";
 import { importCodes } from "@/actions/admin";
 import { ActionForm } from "@/components/admin/ActionButton";
-import { PageTitle, Table } from "@/components/admin/ui";
+import { PageTitle, Table, Empty } from "@/components/admin/ui";
 
 export const metadata = { title: "Code inventory" };
 
@@ -35,7 +35,7 @@ export default async function CodesPage({ searchParams }: { searchParams: Promis
           <label className="block"><span className="label">Codes (one per line)</span><textarea name="codes" rows={8} className="input py-2 font-mono text-xs" required autoComplete="off" spellCheck={false} /></label>
           <button className="btn-primary">Import</button>
         </ActionForm>
-        <Table head={["Product / variant", "Available", "Assigned"]} empty={variants.length === 0}>
+        <Table head={["Product / variant", "Available", "Assigned"]} empty={variants.length === 0} emptyText={<Empty title="No license keys in stock" hint="Import keys for a service that is delivered from stock." />}>
           {variants.map((v) => {
             const a = count(v.id, "AVAILABLE");
             return (

@@ -3,7 +3,7 @@ import { requireStaff } from "@/lib/session";
 import { deleteRedirect, savePageSeo, saveRedirect } from "@/actions/content";
 import { ActionButton, ActionForm } from "@/components/admin/ActionButton";
 import { LocalizedInputs } from "@/components/admin/LocalizedInputs";
-import { PageTitle, Table } from "@/components/admin/ui";
+import { PageTitle, Table, Empty } from "@/components/admin/ui";
 
 export const metadata = { title: "SEO" };
 
@@ -29,7 +29,7 @@ export default async function SeoPage() {
         <label className="flex items-center gap-2 pb-3 text-sm"><input type="checkbox" name="permanent" defaultChecked /> Permanent (301)</label>
         <button className="btn-primary">Add redirect</button>
       </ActionForm>
-      <Table head={["From", "To", "Type", "Used", ""]} empty={redirects.length === 0}>
+      <Table head={["From", "To", "Type", "Used", ""]} empty={redirects.length === 0} emptyText={<Empty title="No redirects" hint="Add one when you rename a page so old links keep working." />}>
         {redirects.map((r) => (
           <tr key={r.id}>
             <td className="px-4 py-2.5 font-mono text-xs">{r.from}</td>

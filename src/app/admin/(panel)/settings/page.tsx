@@ -8,7 +8,7 @@ import { describeRule } from "@/lib/countries";
 import { saveSettings } from "@/actions/admin";
 import { connectTelegramBot, testTelegram } from "@/actions/marketing";
 import { ActionButton, ActionForm } from "@/components/admin/ActionButton";
-import { PageTitle } from "@/components/admin/ui";
+import { PageTitle, SaveBar } from "@/components/admin/ui";
 import { ImageField } from "@/components/admin/ImageField";
 
 export const metadata = { title: "Settings" };
@@ -236,9 +236,9 @@ export default async function SettingsPage() {
             </div>
           </Section>
 
-          <div className="sticky bottom-3 z-10 flex justify-end">
-            <button className="btn-primary min-h-12 px-6 shadow-lg">Save settings</button>
-          </div>
+          <SaveBar note="One button saves every section on this page.">
+            <button className="btn-primary min-h-11 px-6">Save settings</button>
+          </SaveBar>
         </ActionForm>
       </div>
     </>

@@ -47,7 +47,7 @@ export function Table({ head, children, empty, emptyText }: { head: string[]; ch
         </thead>
         <tbody className="divide-y divide-border">{labelCells(children, head)}</tbody>
       </table>
-      {empty && (emptyText ? <div className="p-8 text-center text-sm text-muted">{emptyText}</div> : <p className="p-8 text-center text-sm text-muted">Nothing here yet.</p>)}
+      {empty && (emptyText ? <div>{emptyText}</div> : <p className="p-8 text-center text-sm text-muted">Nothing here yet.</p>)}
     </div>
   );
 }
@@ -67,4 +67,14 @@ export function Stat({ label, value, tone, delta, note, href }: { label: string;
     </>
   );
   return href ? <a href={href} className="card block p-4 transition-colors hover:border-primary">{body}</a> : <div className="card p-4">{body}</div>;
+}
+
+/** Save row for long forms: stays in view while scrolling, above the phone bottom bar, on its own solid strip so it never covers a field. */
+export function SaveBar({ children, note }: { children: React.ReactNode; note?: React.ReactNode }) {
+  return (
+    <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 -mx-1 mt-6 flex flex-wrap items-center justify-end gap-3 rounded-2xl border border-border bg-surface/95 p-3 shadow-lg backdrop-blur lg:bottom-4">
+      {note && <p className="mr-auto text-xs text-muted">{note}</p>}
+      {children}
+    </div>
+  );
 }

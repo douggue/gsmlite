@@ -8,6 +8,7 @@ import { LocalizedInputs } from "./LocalizedInputs";
 import { GalleryField } from "./ImageField";
 import { CardArtEditor } from "./CardArtEditor";
 import { CountryRuleField } from "./CountryRuleField";
+import { SaveBar } from "./ui";
 
 type P = {
   id: string; slug: string; categoryId: string; accent: string; fulfillmentType: string; isPublished: boolean; isFeatured: boolean; sortOrder: number;
@@ -52,12 +53,6 @@ export function ProductForm({ product, categories, kycLevels = [], fieldsSummary
     >
       {product && <input type="hidden" name="id" value={product.id} />}
       <input type="hidden" name="accent" value={product?.accent ?? "#1F7A4D"} />
-      <div className="flex flex-wrap items-center justify-end gap-2">
-        {msg && <span className={`text-sm ${msg.ok ? "text-success" : "text-danger"}`} role="status">{msg.text}</span>}
-        {product && <a href={`/en/products/${product.slug}`} target="_blank" className="btn-secondary min-h-11 px-4">Preview</a>}
-        <button className="btn-secondary min-h-11 px-4" disabled={pending}>{pending ? "Saving…" : "Save"}</button>
-        <button name="go" value="publish" className="btn-primary min-h-11 px-4" disabled={pending}>Save &amp; publish</button>
-      </div>
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="card space-y-5 p-5">
@@ -162,6 +157,11 @@ export function ProductForm({ product, categories, kycLevels = [], fieldsSummary
           </div>
         </aside>
       </div>
+      <SaveBar note={msg ? <span className={msg.ok ? "text-success" : "text-danger"} role="status">{msg.text}</span> : "Save keeps it as it is; Save & publish also puts it on the site."}>
+        {product && <a href={`/en/products/${product.slug}`} target="_blank" className="btn-secondary min-h-11 px-4">Preview</a>}
+        <button className="btn-secondary min-h-11 px-4" disabled={pending}>{pending ? "Saving…" : "Save"}</button>
+        <button name="go" value="publish" className="btn-primary min-h-11 px-4" disabled={pending}>Save &amp; publish</button>
+      </SaveBar>
     </form>
   );
 }

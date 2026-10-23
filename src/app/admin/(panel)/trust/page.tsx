@@ -6,7 +6,7 @@ import { CITIES, cityFlag } from "@/lib/trust";
 import { t } from "@/lib/text";
 import { addReview, deleteReview, saveTrustSettings, setLowStock, updateReview } from "@/actions/trust-admin";
 import { ActionButton, ActionForm } from "@/components/admin/ActionButton";
-import { PageTitle, Table } from "@/components/admin/ui";
+import { PageTitle, Table, Empty } from "@/components/admin/ui";
 
 export const metadata = { title: "Trust" };
 
@@ -60,7 +60,7 @@ async function ReviewsTab({ sellable, pname }: { sellable: P[]; pname: (id: stri
       <section className="space-y-3">
         <h2 className="font-bold">Reviews {pending > 0 && <span className="ml-1 rounded-full bg-warning-soft px-2 py-0.5 text-xs text-warning">{pending} new</span>}</h2>
         <p className="text-sm text-muted">Customers are asked “How was it?” on their order once it&apos;s delivered. Approve the good ones and tick “Homepage” to show them in the reviews section (hidden until at least one is ticked).</p>
-        <Table head={["Rating", "Comment", "Customer", "Product", "Status", ""]} empty={reviews.length === 0}>
+        <Table head={["Rating", "Comment", "Customer", "Product", "Status", ""]} empty={reviews.length === 0} emptyText={<Empty title="No reviews yet" hint="Customers can leave a review after a delivered order. You approve them here before they show." />}>
           {reviews.map((r) => (
             <tr key={r.id} className={r.status === "hidden" ? "opacity-50" : ""}>
               <td className="whitespace-nowrap px-4 py-3 text-[#e0a400]">{"★".repeat(r.rating)}<span className="text-border">{"★".repeat(5 - r.rating)}</span></td>

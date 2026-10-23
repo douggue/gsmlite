@@ -6,7 +6,7 @@ import { ago } from "@/lib/ago";
 import { ensureKycDefaults, type Requirement } from "@/lib/kyc";
 import { approveKyc, decideKyc } from "@/actions/kyc-admin";
 import { ActionButton } from "@/components/admin/ActionButton";
-import { PageTitle } from "@/components/admin/ui";
+import { Empty, PageTitle } from "@/components/admin/ui";
 
 export const metadata = { title: "KYC review" };
 
@@ -57,7 +57,7 @@ export default async function KycPage({ searchParams }: { searchParams: Promise<
             <Link href="/admin/kyc" className={`rounded-lg px-3 py-1.5 font-semibold ${sp.show !== "done" ? "bg-[#111418] text-white" : ""}`}>Waiting</Link>
             <Link href="/admin/kyc?show=done" className={`rounded-lg px-3 py-1.5 font-semibold ${sp.show === "done" ? "bg-[#111418] text-white" : ""}`}>Decided</Link>
           </div>
-          {list.length === 0 && <p className="p-6 text-center text-sm text-muted">Nothing waiting.</p>}
+          {list.length === 0 && <Empty title="Nothing waiting" hint="Identity checks customers send show here." />}
           {list.map((x) => (
             <Link key={x.id} href={`/admin/kyc?id=${x.id}${sp.show ? `&show=${sp.show}` : ""}`} className={`block border-b border-border px-4 py-3 text-sm last:border-0 ${x.id === selected ? "bg-primary-soft" : "hover:bg-surface-2"}`}>
               <b className="block">{x.user.name}</b>

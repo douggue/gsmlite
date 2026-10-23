@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { TicketStatus } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { requireStaff } from "@/lib/session";
-import { PageTitle, Table } from "@/components/admin/ui";
+import { PageTitle, Table, Empty } from "@/components/admin/ui";
 
 export const metadata = { title: "Support" };
 
@@ -20,7 +20,7 @@ export default async function SupportAdmin({ searchParams }: { searchParams: Pro
           ))}
         </div>
       } />
-      <Table head={["Request", "Customer", "Messages", "Updated"]} empty={tickets.length === 0}>
+      <Table head={["Request", "Customer", "Messages", "Updated"]} empty={tickets.length === 0} emptyText={<Empty title="No support requests" hint="Messages customers send from their account show here." />}>
         {tickets.map((t) => (
           <tr key={t.id} className="hover:bg-surface-2">
             <td className="px-4 py-3"><Link href={`/admin/support/${t.id}`} className="font-semibold text-primary">#{t.number} {t.subject}</Link></td>

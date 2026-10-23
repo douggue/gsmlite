@@ -5,7 +5,7 @@ import { t } from "@/lib/text";
 import { keywordsReady } from "@/lib/content/dataforseo";
 import { draftFromKeyword, fetchIdeas, ignoreKeyword } from "@/actions/content-machine";
 import { ActionButton } from "@/components/admin/ActionButton";
-import { PageTitle, Table } from "@/components/admin/ui";
+import { PageTitle, Table, Empty } from "@/components/admin/ui";
 
 export const metadata = { title: "Keyword ideas" };
 
@@ -23,7 +23,7 @@ export default async function KeywordIdeas({ searchParams }: { searchParams: Pro
       <Link href="/admin/content" className="text-sm font-semibold text-primary">← Content machine</Link>
       <PageTitle title="Keyword ideas" sub="Real search numbers, refreshed weekly. Services marked “Hide from Google” are never targeted." actions={keywordsReady() ? <ActionButton label="Fetch ideas now" action={fetchIdeas} /> : <span className="text-sm text-warning">Add DATAFORSEO_LOGIN and DATAFORSEO_PASSWORD in the hosting environment</span>} />
       <nav className="mb-3 flex gap-2 text-sm">{["", "en", "fr", "es"].map((l) => <Link key={l} href={l ? `?locale=${l}` : "?"} className={`rounded-xl px-3 py-2 font-semibold ${(locale ?? "") === l ? "bg-[#111418] text-white" : "border border-border"}`}>{l ? l.toUpperCase() : "All"}</Link>)}</nav>
-      <Table head={["Keyword", "Market", "Searches / month", "Difficulty", "Score", "Becomes", ""]} empty={ideas.length === 0}>
+      <Table head={["Keyword", "Market", "Searches / month", "Difficulty", "Score", "Becomes", ""]} empty={ideas.length === 0} emptyText={<Empty title="No keyword ideas yet" hint="Run a search to get ideas for new service pages." />}>
         {ideas.map((k) => (
           <tr key={k.id}>
             <td className="px-4 py-2.5 font-medium">{k.keyword}</td>

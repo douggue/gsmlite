@@ -2,7 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { requireStaff } from "@/lib/session";
 import { t } from "@/lib/text";
-import { PageTitle, Table } from "@/components/admin/ui";
+import { PageTitle, Table, Empty } from "@/components/admin/ui";
 
 export const metadata = { title: "News" };
 
@@ -21,7 +21,7 @@ export default async function NewsAdmin({ searchParams }: { searchParams: Promis
         <Link href="/admin/news" className={`rounded-xl px-3 py-2 font-semibold ${!filter ? "bg-[#111418] text-white" : "border border-border"}`}>All</Link>
         {Object.entries(KINDS).map(([k, v]) => <Link key={k} href={`/admin/news?kind=${k}`} className={`rounded-xl px-3 py-2 font-semibold ${filter === k ? "bg-[#111418] text-white" : "border border-border"}`}>{v}</Link>)}
       </nav>
-      <Table head={["Title", "Kind", "Status", "Publish date"]} empty={articles.length === 0}>
+      <Table head={["Title", "Kind", "Status", "Publish date"]} empty={articles.length === 0} emptyText={<Empty title="No posts yet" hint="Post tool updates and service changes so customers know what is new." />}>
         {articles.map((a) => (
           <tr key={a.id} className="hover:bg-surface-2">
             <td className="px-4 py-3"><Link href={`/admin/news/${a.id}`} className="font-semibold text-primary">{t(a.title, "en") || t(a.title, "ht")}</Link><br /><span className="text-xs text-muted">/news/{a.slug}</span></td>

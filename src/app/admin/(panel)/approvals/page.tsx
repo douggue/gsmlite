@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db";
 import { requireStaff } from "@/lib/session";
 import { decideApproval } from "@/actions/admin";
 import { ActionButton } from "@/components/admin/ActionButton";
-import { PageTitle, Table } from "@/components/admin/ui";
+import { PageTitle, Table, Empty } from "@/components/admin/ui";
 
 export const metadata = { title: "Approvals" };
 
@@ -17,7 +17,7 @@ export default async function ApprovalsPage() {
   return (
     <>
       <PageTitle title="Approvals" sub="Large wallet adjustments need a second staff member. You can't approve your own request." />
-      <Table head={["Request", "Requested by", "When", ""]} empty={pending.length === 0}>
+      <Table head={["Request", "Requested by", "When", ""]} empty={pending.length === 0} emptyText={<Empty title="Nothing to approve" hint="Big refunds and wallet changes by staff wait here for a second person." />}>
         {pending.map((a) => (
           <tr key={a.id}>
             <td className="px-4 py-3 font-medium">{a.summary}</td>

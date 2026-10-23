@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { requireStaff } from "@/lib/session";
 import { resolveRisk } from "@/actions/admin";
 import { ActionButton } from "@/components/admin/ActionButton";
-import { PageTitle, Table } from "@/components/admin/ui";
+import { PageTitle, Table, Empty } from "@/components/admin/ui";
 
 export const metadata = { title: "Risk queue" };
 
@@ -17,7 +17,7 @@ export default async function RiskPage() {
   return (
     <>
       <PageTitle title="Risk queue" sub="High-value orders wait here before codes are released. Approving releases them; rejecting refunds the order to the wallet." />
-      <Table head={["Reason", "Customer", "Order", "Created", ""]} empty={flags.length === 0}>
+      <Table head={["Reason", "Customer", "Order", "Created", ""]} empty={flags.length === 0} emptyText={<Empty title="No orders held" hint="Orders that look risky (big amount, new account) wait here until someone approves them." />}>
         {flags.map((f) => (
           <tr key={f.id}>
             <td className="px-4 py-3 font-medium">{f.reason}</td>

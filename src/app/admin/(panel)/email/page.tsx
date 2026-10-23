@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { requireStaff } from "@/lib/session";
 import { emailEnabled, emailFrom, previewEmail, resendKey } from "@/lib/email";
 import { TestEmailForm } from "@/components/admin/TestEmailForm";
-import { PageTitle, Stat, Table } from "@/components/admin/ui";
+import { PageTitle, Stat, Table, Empty } from "@/components/admin/ui";
 
 export const metadata = { title: "Email" };
 
@@ -81,7 +81,7 @@ export default async function Email({ searchParams }: { searchParams: Promise<{ 
       </div>
 
       <h2 className="mb-3 mt-8 font-semibold">Recent messages</h2>
-      <Table head={["When", "To", "Subject", "Status"]} empty={logs.length === 0}>
+      <Table head={["When", "To", "Subject", "Status"]} empty={logs.length === 0} emptyText={<Empty title="No emails sent yet" hint="Every email the site sends (receipts, codes, password links) is listed here." />}>
         {logs.map((l) => (
           <tr key={l.id}>
             <td className="px-4 py-3 text-xs">{l.createdAt.toLocaleString("en-US")}</td>

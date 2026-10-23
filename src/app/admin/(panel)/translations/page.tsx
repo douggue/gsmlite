@@ -23,16 +23,9 @@ export default async function TranslationsPage() {
   const base = { en: flatten(en), ht: flatten(ht), fr: flatten(fr), es: flatten(es), pt: flatten(pt), ar: flatten(ar) };
   const overrides = await prisma.translationOverride.findMany();
   const keys = Object.keys(base.en).sort();
-  const coverage = (["ht", "fr", "es", "pt", "ar"] as const).map((l) => ({ l, missing: keys.filter((k) => !base[l][k]).length }));
   return (
     <>
-      <PageTitle title="Translations" sub={`Change any interface wording without a developer. ${keys.length} texts. Clearing a box restores the standard wording.`} />
-      <div className="mb-4 flex flex-wrap gap-2 text-xs">
-        {coverage.map((c) => (
-          <span key={c.l} className={`badge px-3 py-1.5 ${c.missing ? "bg-warning-soft text-warning" : "bg-success-soft text-success"}`}>{c.l.toUpperCase()}: {c.missing ? `${c.missing} missing (shows Kreyòl/English)` : "complete"}</span>
-        ))}
-        <span className="badge bg-surface-2 px-3 py-1.5">{overrides.length} custom edits</span>
-      </div>
+      <PageTitle title="Translations" sub={`Change any interface wording without a developer. ${overrides.length} custom edit${overrides.length === 1 ? "" : "s"}. Changes save when you leave a box; clearing a box restores the standard wording.`} />
       <TranslationEditor keys={keys} base={base} overrides={overrides.map((o) => ({ locale: o.locale, key: o.key, value: o.value }))} />
     </>
   );
