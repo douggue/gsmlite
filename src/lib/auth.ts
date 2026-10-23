@@ -10,7 +10,7 @@ import { isPasswordBreached } from "./password-check";
 import { recordReferral } from "./referrals";
 import { recordDevice } from "./devices";
 import { verifyTurnstile } from "./turnstile";
-import { CANONICAL_SITE, onSiteDomain, siteUrl } from "./site-url";
+import { canonicalSite, onSiteDomain, siteUrl } from "./site-url";
 
 export const googleEnabled = () => !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 
@@ -26,8 +26,7 @@ const trustedOrigins = [
   ...(process.env.VERCEL_BRANCH_URL ? [`https://${process.env.VERCEL_BRANCH_URL}`] : []),
   ...(process.env.VERCEL_PROJECT_PRODUCTION_URL ? [`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`] : []),
   ...(process.env.NEXT_PUBLIC_SITE_URL ? [process.env.NEXT_PUBLIC_SITE_URL] : []),
-  CANONICAL_SITE,
-  CANONICAL_SITE.replace("://www.", "://"),
+  ...(canonicalSite() ? [canonicalSite()!, canonicalSite()!.replace("://", "://www.")] : []),
   ...(process.env.TRUSTED_ORIGINS ?? "").split(",").map((s) => s.trim()).filter(Boolean),
 ];
 
@@ -68,7 +67,7 @@ export const auth = betterAuth({
     autoSignInAfterVerification: true,
     expiresIn: 60 * 60 * 24,
     sendVerificationEmail: async ({ user, url }) => {
-      // The link must open on gsmlite.com even if the customer signed up on the .vercel.app address.
+      // The link opens on your own domain (once set) even if the customer signed up on the .vercel.app address.
       await sendVerificationEmail(user as AuthUser, onSiteDomain(url));
     },
   },
