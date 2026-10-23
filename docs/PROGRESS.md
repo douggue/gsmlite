@@ -293,7 +293,8 @@ Keep GSMLite's own colors (ink #111418, green #1F7A4D / #7ce0a8, light and dark 
   Reseller rates); shop catalog tiles (IMEI, Server, File, Hardware & boxes, Store credits, API tools); totals row (spent,
   catalog size, orders, in process); Completed / In process / Failed counts; recent orders table; Telegram alerts card with
   a link code; floating help button.
-- To decide on Tuesday: use this shell for the signed-in customer area (desktop), the admin, or both; phones keep the bottom bar.
+- DECIDED (owner, 2026-10-23): both the signed-in customer area and the admin, as a hybrid: take this shell and dashboard
+  structure, keep whatever already looks better in GSMLite (our colors, cards, mockup pieces). Phones keep the bottom bar.
 
 ## Sign-in / accounts (auth) — DECIDED 2026-10-22: email/password + Google only
 (Google needs an OAuth client ID/secret from Google Cloud, set only in hosting env vars.) Passkeys/Apple/phone sign-in: not now.
