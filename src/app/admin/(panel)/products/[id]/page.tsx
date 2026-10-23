@@ -62,9 +62,9 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
             badge: losing ? "loss" : undefined,
             content: (
               <>
-      <section className="card overflow-x-auto">
+      <section className="card rtable overflow-x-auto">
                 <h2 className="border-b border-border px-4 py-3 font-semibold">Options and prices</h2>
-                <table className="w-full min-w-[680px] text-left text-sm">
+                <table className="w-full text-left text-sm sm:min-w-[680px]">
                   <thead className="text-xs uppercase tracking-wide text-muted"><tr><th className="px-4 py-2.5">Option</th><th className="px-4 py-2.5">Supplier · ID</th><th className="px-4 py-2.5">Cost</th><th className="px-4 py-2.5">Price</th><th className="px-4 py-2.5">Margin</th></tr></thead>
                   <tbody>
                     {product.variants.map((v) => {
@@ -75,11 +75,11 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
                       const rose = l?.previousCredit != null && l.credit > l.previousCredit && l.priceChangedAt && Date.now() - l.priceChangedAt.getTime() < 30 * 86_400_000;
                       return (
                         <tr key={v.id} className="border-t border-border">
-                          <td className="px-4 py-3">{t(v.name, "en")}{v.soldOut && <span className="ml-1.5 text-xs text-danger">out of stock</span>}</td>
-                          <td className="px-4 py-3">{v.supplierId ? `${supplierName(v.supplierId) ?? "?"} · ${v.supplierServiceId}` : <span className="text-muted">— your own</span>}</td>
-                          <td className="px-4 py-3 tabular-nums">{cost != null ? `$${money(cost)}` : "—"}</td>
-                          <td className="px-4 py-3 tabular-nums">${money(price)}{v.salePriceUsd != null && <span className="ml-1 text-xs text-muted line-through">${money(v.priceUsd)}</span>}</td>
-                          <td className={`px-4 py-3 font-semibold tabular-nums ${margin == null ? "text-muted" : margin <= 0 ? "text-danger" : "text-primary"}`}>
+                          <td data-label="Option" className="px-4 py-3">{t(v.name, "en")}{v.soldOut && <span className="ml-1.5 text-xs text-danger">out of stock</span>}</td>
+                          <td data-label="Supplier · ID" className="px-4 py-3">{v.supplierId ? `${supplierName(v.supplierId) ?? "?"} · ${v.supplierServiceId}` : <span className="text-muted">— your own</span>}</td>
+                          <td data-label="Cost" className="px-4 py-3 tabular-nums">{cost != null ? `$${money(cost)}` : "—"}</td>
+                          <td data-label="Price" className="px-4 py-3 tabular-nums">${money(price)}{v.salePriceUsd != null && <span className="ml-1 text-xs text-muted line-through">${money(v.priceUsd)}</span>}</td>
+                          <td data-label="Margin" className={`px-4 py-3 font-semibold tabular-nums ${margin == null ? "text-muted" : margin <= 0 ? "text-danger" : "text-primary"}`}>
                             {margin == null ? "—" : margin <= 0 ? `Loss!${rose ? " cost went up" : ""}` : `$${money(margin)} · ${cost ? Math.round((margin / cost) * 100) : 100}%`}
                           </td>
                         </tr>
@@ -212,8 +212,8 @@ function SupplierLink({ suppliers, supplierId, serviceId, cost, linked, price }:
   const margin = linked && price ? price - linked.credit : null;
   return (
     <div className="space-y-2 rounded-xl bg-surface-2 p-3">
-      <div className="grid grid-cols-[1fr_8rem_6rem] gap-2">
-        <label><span className="mb-1 block text-xs text-muted">Supplier</span>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-[1fr_8rem_6rem]">
+        <label className="col-span-2 sm:col-span-1"><span className="mb-1 block text-xs text-muted">Supplier</span>
           <select name="supplierId" defaultValue={supplierId ?? ""} className="input">
             <option value="">None (manual / stock)</option>
             {suppliers.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}

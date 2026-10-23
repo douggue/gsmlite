@@ -41,7 +41,7 @@ function labelCells(children: React.ReactNode, head: string[]): React.ReactNode 
 export function Table({ head, children, empty, emptyText }: { head: string[]; children: React.ReactNode; empty?: boolean; emptyText?: React.ReactNode }) {
   return (
     <div className="card rtable overflow-x-auto">
-      <table className="w-full text-left text-sm sm:min-w-[640px]">
+      <table className={`w-full text-left text-sm ${head.length > 4 ? "sm:min-w-[640px]" : ""}`}>
         <thead className="border-b border-border text-xs uppercase tracking-wide text-muted">
           <tr>{head.map((h) => <th key={h} className="px-4 py-3 font-semibold">{h}</th>)}</tr>
         </thead>

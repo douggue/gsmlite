@@ -1,3 +1,4 @@
+import { salesProfit } from "@/lib/reports";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { requireStaff } from "@/lib/session";
@@ -20,7 +21,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
   since.setDate(since.getDate() - (days - 1));
   const settings = await getSettings();
 
-  const [paidOrders, items, deposits, newCustomers] = await Promise.all([
+  const [paidOrders, items, deposits, newCustomers, totals] = await Promise.all([
     prisma.order.findMany({
       where: { paidAt: { gte: since }, status: { in: ["PAID", "PROCESSING", "FULFILLED"] } },
       select: { total: true, currency: true, paymentMethod: true, paidAt: true },
@@ -31,13 +32,14 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
     }),
     prisma.paymentIntent.groupBy({ by: ["provider", "currency"], where: { status: "SUCCEEDED", orderId: null, updatedAt: { gte: since } }, _sum: { amount: true }, _count: true }),
     prisma.user.count({ where: { createdAt: { gte: since }, role: "CUSTOMER" } }),
+    salesProfit(since, new Date()),
   ]);
 
   // Everything is shown in USD; gourde payments are converted at the current admin rate.
   const toUsd = (amount: number, cur: string) => (cur === "USD" ? amount : Math.round(amount / settings.htgPerUsd));
   const revenue = paidOrders.reduce((s, o) => s + toUsd(o.total, o.currency), 0);
-  // Profit from delivered lines: what the customer paid minus what the supplier charged.
-  const profit = items.filter((i) => i.status === "DELIVERED" && i.priceUsd != null && i.costUsd != null).reduce((s, i) => s + (i.priceUsd! - i.costUsd!) * i.quantity, 0);
+  // Same rule as the dashboard: paid lines that were not refunded, minus the supplier's cost (none for hand-delivered ones).
+  const profit = totals.profit;
   const avg = paidOrders.length ? Math.round(revenue / paidOrders.length) : 0;
 
   const daily = Array.from({ length: days }, (_, i) => {
@@ -86,7 +88,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
       />
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
         <Stat label="Sales" value={money(revenue)} note={`${paidOrders.length} paid order${paidOrders.length === 1 ? "" : "s"}`} />
-        <Stat label="Profit" value={money(profit)} tone="good" note="Delivered lines minus supplier cost" />
+        <Stat label="Profit" value={money(profit)} tone="good" note="Sales minus supplier cost (refunds left out)" />
         <Stat label="Average order" value={money(avg)} />
         <Stat label="Wallet top-ups" value={money(topups)} />
         <Stat label="New customers" value={newCustomers} />
@@ -104,7 +106,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
         </details>
       </section>
 
-      <div className="mt-6 grid gap-4 xl:grid-cols-2">
+      <div className="mt-6 grid gap-4 xl:grid-cols-2 [&>*]:min-w-0">
         <div>
           <h2 className="mb-3 font-semibold">Top services</h2>
           <Table head={["Service", "Units", "Sales"]} empty={top.length === 0}>
