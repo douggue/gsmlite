@@ -43,7 +43,7 @@ Add each one for **Production, Preview and Development**:
    - a `CNAME` record `www` → `cname.vercel-dns.com`
 3. Wait until Vercel shows **Valid Configuration**. This takes a few minutes to a few hours.
 
-> **No domain yet?** Skip this step. Without `NEXT_PUBLIC_SITE_URL` the site works on its `….vercel.app` address: use that address everywhere below instead of gsmlite.com. Once the domain is bought and connected, add `NEXT_PUBLIC_SITE_URL=https://gsmlite.com` and redeploy: from then on the `.vercel.app` address sends visitors to gsmlite.com.
+> **No domain yet?** Skip this step. Without `NEXT_PUBLIC_SITE_URL` the site works on its `….vercel.app` address: use that address everywhere below instead of gsmlite.com. Once the domain is bought and connected, add `NEXT_PUBLIC_SITE_URL=https://gsmlite.com` and redeploy: emails, links and Google then use gsmlite.com. The `.vercel.app` address keeps working too (it is never redirected).
 
 ## Step 5: Deploy again
 Deployments → the failed one → **⋯ → Redeploy**. The build takes 2–4 minutes.
@@ -115,7 +115,7 @@ Supplier keys are **not** set here. Add each supplier in **Admin → Suppliers**
 | Problem | Fix |
 |---|---|
 | Build says "No database connected" | Connect Neon for Production **and** Preview (step 2), then redeploy |
-| The `.vercel.app` address jumps to gsmlite.com, which doesn't load | Delete `NEXT_PUBLIC_SITE_URL` (or connect the domain, step 4), then redeploy |
+| The `.vercel.app` address jumps to gsmlite.com | An old redirect remembered by the browser: open it in a Private tab, or clear the site's data in Safari settings |
 | Setup page: "doesn't match CRON_SECRET" | Copy the value again with no spaces. After changing any variable you must **redeploy** |
 | Setup page: "ENCRYPTION_KEY is missing or wrong" | It must be the output of `openssl rand -base64 32` (44 characters ending in `=`) |
 | "Invalid origin" when signing in | `NEXT_PUBLIC_SITE_URL` must be exactly `https://gsmlite.com`. Then redeploy |
