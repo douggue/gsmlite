@@ -261,6 +261,28 @@ Everything below is built, typechecked, tested (83 tests) and pushed to preview/
   Guide: docs/DEPLOY-VPS.md. Every key to add: docs/CREDENTIALS.md (also .env.example).
 Files on the server stay on disk (uploads volume) with nightly backups; Vercel Blob still works on Vercel.
 
+## For Tuesday (owner, 2026-10-23): "the admin isn't good at all"
+- Owner's feedback on the admin goes here: screens and what's wrong with each (to collect at the start of the session).
+- Supplier protocols to support. Today only Dhru Fusion is built. The owner wants this list (seen on another panel):
+  | Protocol | Connects to | Service types |
+  |---|---|---|
+  | GSM Tool (default) | GSM Fusion-style XML API | IMEI, File, Server, Remote |
+  | GSM Fusion | GSM Fusion XML API | IMEI, File, Server, Remote |
+  | DHRU Fusion (built) | Standard DHRU Fusion API | IMEI, File, Server, Remote |
+  | DHRU Pro | Newer DHRU Pro variant with remote service sync | IMEI, File, Server, Remote |
+  | DHRU Reseller API | REST API with Bearer token | IMEI, File, Server, Remote |
+  | DHRU Reseller (Legacy) | Older Dhru reseller endpoints | IMEI, File, Server |
+  | GSM HUB | DHRU variant used by GSM HUB suppliers | IMEI, File, Server |
+  | Hot Fusion | Legacy DHRU-style protocol | IMEI, File, Server |
+  | GSM Theme | GSM Theme REST API | IMEI, File, Server |
+  | Unlock Base | UnlockBase XML API v3 | IMEI, Server |
+  | CodeskPro Server | CodeskPro API | IMEI, File, Server |
+  | Naksh Soft | Naksh Soft API | IMEI |
+  | UAT Pro | UAT Pro JSON API | Server |
+  Plan: a "protocol" choice per supplier (Admin → Suppliers) with one adapter per protocol behind the same interface
+  (account info, service list, place order, check order, file orders). Needs each protocol's real API docs, or a test
+  account with the supplier, to build and test against; never guess an API.
+
 ## Sign-in / accounts (auth) — DECIDED 2026-10-22: email/password + Google only
 (Google needs an OAuth client ID/secret from Google Cloud, set only in hosting env vars.) Passkeys/Apple/phone sign-in: not now.
 Already in the code (Better Auth): email + password (Argon2id, breached-password check), email verification, forgot/reset
