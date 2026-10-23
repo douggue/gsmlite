@@ -1,6 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requireUser } from "@/lib/session";
-import { AccountNav } from "@/components/AccountNav";
+import { AccountNav, type AccountNavGroup } from "@/components/AccountNav";
 import { getSettings } from "@/lib/settings";
 
 export const metadata = { robots: { index: false } };
@@ -8,25 +8,33 @@ export const metadata = { robots: { index: false } };
 export default async function AccountLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  await requireUser(locale, `/${locale}/account`);
   const [ta, tc, tn, tg] = await Promise.all([getTranslations("account"), getTranslations("common"), getTranslations("notifications"), getTranslations("gl.kyc")]);
   const settings = await getSettings();
-  const items = [
-    { href: "/account", label: ta("dashboard") },
-    { href: "/account/orders", label: tc("orders") },
-    { href: "/account/wallet", label: tc("wallet") },
-    { href: "/account/notifications", label: tn("title") },
-    { href: "/account/support", label: ta("support") },
-    ...(settings.referralEnabled ? [{ href: "/account/referrals", label: ta("referrals") }] : []),
-    { href: "/account/profile", label: ta("profile") },
-    { href: "/account/verification", label: tg("verification") },
-    { href: "/account/security", label: ta("security") },
-    { href: "/account/privacy", label: ta("privacy") },
+  const user = await requireUser(locale, `/${locale}/account`);
+  const groups: AccountNavGroup[] = [
+    { label: ta("groupStore"), items: [
+      { href: "/account", label: ta("dashboard"), icon: "home" },
+      { href: "/account/orders", label: ta("myOrders"), icon: "orders" },
+      { href: "/store", label: tc("store"), icon: "store" },
+    ] },
+    { label: ta("groupWallet"), items: [
+      { href: "/account/wallet", label: tc("wallet"), icon: "wallet" },
+      { href: "/account/wallet/deposit", label: ta("addCredit"), icon: "add" },
+      ...(settings.referralEnabled ? [{ href: "/account/referrals", label: ta("referrals"), icon: "gift" as const }] : []),
+    ] },
+    { label: ta("groupAccount"), items: [
+      { href: "/account/profile", label: ta("profile"), icon: "user" },
+      { href: "/account/verification", label: tg("verification"), icon: "kyc" },
+      { href: "/account/notifications", label: tn("title"), icon: "bell" },
+      { href: "/account/support", label: ta("support"), icon: "chat" },
+      { href: "/account/security", label: ta("security"), icon: "security" },
+      { href: "/account/privacy", label: ta("privacy"), icon: "privacy" },
+    ] },
   ];
   return (
-    <div className="container-page grid grid-cols-[minmax(0,1fr)] gap-6 py-6 sm:py-10 lg:grid-cols-[220px_minmax(0,1fr)]">
-      <AccountNav items={items} />
-      <div className="min-w-0">{children}</div>
+    <div className="container-page flex flex-col gap-5 lg:max-w-7xl py-5 sm:py-8 lg:flex-row lg:items-start lg:gap-6">
+      <AccountNav groups={groups} user={{ name: user.name, email: user.email }} placeOrder={ta("placeOrder")} foldLabel={ta("foldMenu")} />
+      <div className="min-w-0 flex-1">{children}</div>
     </div>
   );
 }

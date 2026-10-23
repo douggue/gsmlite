@@ -255,13 +255,15 @@ export function CartButton() {
   );
 }
 
-export function SignOutButton({ className = "btn-secondary" }: { className?: string }) {
+export function SignOutButton({ className = "btn-secondary", iconOnly = false }: { className?: string; iconOnly?: boolean }) {
   const t = useTranslations("common");
   const router = useRouter();
   return (
     <button
       type="button"
       className={className}
+      aria-label={iconOnly ? t("signOut") : undefined}
+      title={iconOnly ? t("signOut") : undefined}
       onClick={async () => {
         await authClient.signOut();
         router.push("/");
@@ -269,7 +271,7 @@ export function SignOutButton({ className = "btn-secondary" }: { className?: str
       }}
     >
       <LogoutIcon width={18} height={18} aria-hidden />
-      {t("signOut")}
+      {!iconOnly && t("signOut")}
     </button>
   );
 }
