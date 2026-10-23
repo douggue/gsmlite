@@ -96,7 +96,7 @@ export default async function AdminOrders({ searchParams }: { searchParams: Prom
 
   return (
     <div className="space-y-4">
-      <h1 className="display text-[32px] tracking-tight">Orders</h1>
+      <h1 className="display text-[30px] font-bold tracking-tight">Orders</h1>
       <form className="flex flex-wrap items-center gap-2">
         {show !== "all" && <input type="hidden" name="show" value={show} />}
         <label htmlFor="oq" className="sr-only">Search orders</label>
@@ -111,35 +111,42 @@ export default async function AdminOrders({ searchParams }: { searchParams: Prom
         </div>
       </form>
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_420px]">
-        <section className="card overflow-x-auto">
-          <table className="w-full min-w-[640px] text-left text-sm">
-            <thead className="text-xs uppercase tracking-wide text-muted"><tr><th className="px-4 py-2.5">Order</th><th className="px-4 py-2.5">Customer</th><th className="px-4 py-2.5">Service</th><th className="px-4 py-2.5">IMEIs</th><th className="px-4 py-2.5">Status</th><th className="px-4 py-2.5">Total</th></tr></thead>
-            <tbody>
-              {orders.length === 0 && <tr><td colSpan={6} className="px-4 py-10 text-center text-muted">No orders here.</td></tr>}
-              {orders.map((o) => {
-                const s = summary(o);
-                const names = [...new Set(o.items.map((i) => t(i.productName, "en")))];
-                return (
-                  <tr key={o.id} className={`border-t border-border ${o.id === sp.id ? "bg-primary-soft" : "hover:bg-surface-2"}`}>
-                    <td className="px-4 py-3 font-semibold"><Link href={href({ id: o.id })} className="text-primary">#{o.number}</Link></td>
-                    <td className="px-4 py-3">{o.user.name}{o.user.priceGroup && <span className="ml-1.5 rounded-md bg-surface-2 px-1.5 py-0.5 text-[11px] font-semibold">{o.user.priceGroup.name}</span>}</td>
-                    <td className="px-4 py-3">{names[0]}{names.length > 1 ? ` +${names.length - 1}` : ""}</td>
-                    <td className="px-4 py-3">{o.items.filter((i) => i.identifier).length || "—"}</td>
-                    <td className={`px-4 py-3 font-semibold ${s.cls}`}>{s.text}</td>
-                    <td className="px-4 py-3 tabular-nums">{formatMoney(o.total, o.currency, "en")}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+      <div className={`grid gap-4 ${selected ? "xl:grid-cols-[minmax(0,1fr)_420px]" : ""}`}>
+        <section className="card overflow-hidden">
+          <div className="hidden grid-cols-[80px_minmax(0,1fr)_minmax(0,1.4fr)_70px_minmax(0,1.1fr)_100px] gap-3 border-b border-border px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted md:grid">
+            <span>Order</span><span>Customer</span><span>Service</span><span>IMEIs</span><span>Status</span><span className="text-right">Total</span>
+          </div>
+          {orders.length === 0 && <div className="px-6 py-10 text-center"><p className="font-semibold">No orders here</p><p className="mt-1 text-sm text-muted">{show === "all" && !q ? "Orders appear as soon as a customer pays." : "Try another filter or search."}</p></div>}
+          <ul className="divide-y divide-border">
+            {orders.map((o) => {
+              const st = summary(o);
+              const names = [...new Set(o.items.map((i) => t(i.productName, "en")))];
+              const imeis = o.items.filter((i) => i.identifier).length;
+              return (
+                <li key={o.id}>
+                  <Link href={href({ id: o.id })} scroll={false}
+                    className={`grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 px-4 py-3 text-sm md:grid-cols-[80px_minmax(0,1fr)_minmax(0,1.4fr)_70px_minmax(0,1.1fr)_100px] ${o.id === sp.id ? "bg-primary-soft" : "hover:bg-surface-2"}`}>
+                    <b className="text-primary">#{o.number}</b>
+                    <span className="min-w-0 md:order-none">
+                      <span className="block truncate md:hidden">{names[0]}{names.length > 1 ? ` +${names.length - 1}` : ""}</span>
+                      <span className="block truncate text-xs text-muted md:text-sm md:text-text">{o.user.name}{o.user.priceGroup && <span className="ml-1.5 rounded-md bg-surface-2 px-1.5 py-0.5 text-[11px] font-semibold text-muted">{o.user.priceGroup.name}</span>}</span>
+                    </span>
+                    <span className="hidden truncate md:block">{names[0]}{names.length > 1 ? ` +${names.length - 1}` : ""}</span>
+                    <span className="hidden text-muted md:block">{imeis || "—"}</span>
+                    <span className={`col-span-2 text-xs font-semibold md:col-span-1 md:text-sm ${st.cls}`}>{st.text}{imeis > 1 ? <span className="font-normal text-muted md:hidden"> · {imeis} IMEIs</span> : null}</span>
+                    <span className="row-start-1 text-right tabular-nums md:row-auto">{formatMoney(o.total, o.currency, "en")}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         </section>
 
         {selected && (
           <aside className="card h-fit space-y-3 p-4 xl:sticky xl:top-6">
             <div className="flex items-baseline justify-between gap-2">
               <h2 className="text-lg font-semibold">Order #{selected.number}</h2>
-              <Link href={`/admin/orders/${selected.id}`} className="text-sm text-primary">Full page →</Link>
+              <span className="flex items-center gap-3 text-sm"><Link href={`/admin/orders/${selected.id}`} className="font-semibold text-primary">Full page →</Link><Link href={href({ id: undefined })} scroll={false} className="text-muted" aria-label="Close">✕</Link></span>
             </div>
             <p className="text-sm text-muted">
               <Link href={`/admin/customers/${selected.user.id}`} className="text-primary">{selected.user.name}</Link> · {selected.paymentMethod.toLowerCase()} · {selected.currency} · {formatMoney(selected.total, selected.currency, "en")}

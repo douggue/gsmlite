@@ -5,6 +5,19 @@ import { t } from "@/lib/text";
 import { salesProfit, dailySeries, topServices } from "@/lib/reports";
 import { supplierAttentionCount } from "@/lib/suppliers/attention";
 import { durationParts } from "@/lib/duration";
+import { formatMoney } from "@/lib/money";
+import { Stat } from "@/components/admin/ui";
+
+const ORDER_STATUS: Record<string, [string, string]> = {
+  AWAITING_PAYMENT: ["Awaiting payment", "bg-surface-2 text-muted"],
+  PAYMENT_REVIEW: ["Payment to check", "bg-warning-soft text-warning"],
+  PAID: ["Paid", "bg-primary-soft text-primary"],
+  PROCESSING: ["Working", "bg-[#e3eefb] text-[#154a80] dark:bg-[#15263b] dark:text-[#8bb8ea]"],
+  FULFILLED: ["Done", "bg-success-soft text-success"],
+  FAILED: ["Failed", "bg-danger-soft text-danger"],
+  REFUNDED: ["Refunded", "bg-warning-soft text-warning"],
+  CANCELED: ["Canceled", "bg-surface-2 text-muted"],
+};
 
 export const metadata = { title: "Dashboard" };
 
@@ -24,7 +37,8 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
   const now = new Date();
   const yStart = new Date(today.getTime() - 86_400_000);
   const yNow = new Date(now.getTime() - 86_400_000);
-  const [td, yd, series, top, payments, kyc, supplierIssues, withSupplier, manualWaiting, lowBalance, suppliersDown] = await Promise.all([
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const [td, yd, series, top, payments, kyc, supplierIssues, withSupplier, manualWaiting, lowBalance, suppliersDown, month, recent, suppliers, newCustomers] = await Promise.all([
     salesProfit(today, now),
     salesProfit(yStart, yNow),
     dailySeries(14),
@@ -36,6 +50,10 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
     prisma.orderItem.count({ where: { status: "PENDING", order: { status: { in: ["PAID", "PROCESSING"] } }, variant: { supplierId: null } } }),
     prisma.$queryRaw<{ name: string; balance: number }[]>`SELECT name, balance FROM "Supplier" WHERE "isEnabled" AND "lowBalanceAlert" > 0 AND balance < "lowBalanceAlert"`,
     prisma.supplier.count({ where: { isEnabled: true, lastError: { not: null } } }),
+    salesProfit(monthStart, now),
+    prisma.order.findMany({ orderBy: { createdAt: "desc" }, take: 8, include: { user: { select: { name: true } }, items: { select: { productName: true, identifier: true } } } }),
+    prisma.supplier.findMany({ where: { isEnabled: true }, select: { id: true, name: true, balance: true, lowBalanceAlert: true, lastError: true }, orderBy: { name: "asc" } }),
+    prisma.user.count({ where: { role: "CUSTOMER", createdAt: { gte: new Date(now.getTime() - 7 * 86_400_000) } } }),
   ]);
   const needs = payments + kyc + supplierIssues + manualWaiting;
   const change = yd.sales ? Math.round(((td.sales - yd.sales) / yd.sales) * 100) : null;
@@ -44,25 +62,54 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
   const hello = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
   const card = "rounded-2xl border border-border bg-surface p-4";
 
+  const first = staff.name.split(" ")[0];
+
   return (
     <div className="space-y-5">
       {sp.denied && <p className="rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger">Your role does not have access to that page.</p>}
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="display text-[32px] tracking-tight">{hello}, {staff.name.split(" ")[0]}</h1>
-          <p className="text-muted">Here is GSMLite today.</p>
-        </div>
-        <Link href="/admin/suppliers" className={`rounded-full px-3 py-1.5 text-[13px] font-semibold ${suppliersDown ? "bg-warning-soft text-warning" : "bg-primary-soft text-primary"}`}>
-          ● {suppliersDown ? `${suppliersDown} supplier${suppliersDown > 1 ? "s" : ""} with a problem` : "All suppliers online"}
-        </Link>
+
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <section className="relative overflow-hidden rounded-3xl bg-[#111418] p-6 text-white sm:p-8">
+          <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#1f7a4d]/40 blur-3xl" />
+          <p className="text-sm font-semibold text-[#7ce0a8]">{now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</p>
+          <h1 className="display mt-1 text-[32px] leading-tight tracking-tight sm:text-[40px]">{hello}, {first}</h1>
+          <p className="mt-2 max-w-xl text-[15px] text-[#c9cfc6]">
+            {withSupplier + manualWaiting > 0 ? `${withSupplier + manualWaiting} order line${withSupplier + manualWaiting > 1 ? "s" : ""} in progress` : "No orders in progress"}
+            {needs > 0 ? ` · ${needs} thing${needs > 1 ? "s" : ""} need${needs > 1 ? "" : "s"} you` : " · nothing needs you right now"}.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-2.5">
+            <Link href={needs ? "/admin/orders?show=decision" : "/admin/orders"} className="inline-flex min-h-11 items-center rounded-xl bg-[#7ce0a8] px-5 font-semibold text-[#0b2a1a]">{needs ? "Handle what needs me" : "Open orders"}</Link>
+            <Link href="/admin/suppliers" className="inline-flex min-h-11 items-center rounded-xl border border-white/20 px-5 font-semibold">Import services</Link>
+            <Link href="/admin/products/new" className="inline-flex min-h-11 items-center rounded-xl border border-white/20 px-5 font-semibold">+ New service</Link>
+          </div>
+        </section>
+        <section className="card p-5">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="font-semibold">Suppliers</h2>
+            <Link href="/admin/suppliers" className={`rounded-full px-2.5 py-1 text-xs font-semibold ${suppliersDown ? "bg-warning-soft text-warning" : "bg-primary-soft text-primary"}`}>{suppliersDown ? `${suppliersDown} with a problem` : "All online"}</Link>
+          </div>
+          {suppliers.length === 0 && <p className="mt-3 text-sm text-muted">No supplier yet. <Link href="/admin/suppliers" className="font-semibold text-primary">Add your first supplier</Link> to import services and send orders automatically.</p>}
+          <ul className="mt-3 divide-y divide-border">
+            {suppliers.map((s) => {
+              const low = s.balance != null && s.lowBalanceAlert > 0 && s.balance < s.lowBalanceAlert;
+              return (
+                <li key={s.id}>
+                  <Link href={`/admin/suppliers/${s.id}`} className="flex items-center justify-between gap-2 py-2.5 text-sm">
+                    <span className="flex min-w-0 items-center gap-2"><span className={`h-2 w-2 shrink-0 rounded-full ${s.lastError ? "bg-warning" : "bg-primary"}`} /><span className="truncate">{s.name}</span></span>
+                    <b className={`tabular-nums ${low ? "text-warning" : ""}`}>{s.balance == null ? "—" : usd(s.balance)}</b>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
       </div>
 
-      <div className="grid gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(190px,1fr))]">
-        <div className={card}><span className="text-[13px] text-muted">Sales today</span><b className="display block text-3xl tabular-nums">{usd(td.sales)}</b>
-          <span className={`text-[13px] ${change == null || change >= 0 ? "text-primary" : "text-danger"}`}>{change == null ? "No sales yesterday at this time" : `${change >= 0 ? "+" : ""}${change}% vs yesterday`}</span></div>
-        <div className={card}><span className="text-[13px] text-muted">Profit today</span><b className="display block text-3xl tabular-nums">{usd(td.profit)}</b><span className="text-[13px] text-muted">Sales minus supplier cost</span></div>
-        <div className={card}><span className="text-[13px] text-muted">Orders in progress</span><b className="display block text-3xl">{withSupplier + manualWaiting}</b><span className="text-[13px] text-muted">{withSupplier} with suppliers · {manualWaiting} manual</span></div>
-        <div className={`${card} ${needs ? "!border-[1.5px] !border-warning" : ""}`}><span className="text-[13px] text-muted">Needs you</span><b className={`display block text-3xl ${needs ? "text-warning" : ""}`}>{needs}</b><span className={`text-[13px] ${needs ? "text-warning" : "text-muted"}`}>Payments, KYC, supplier problems</span></div>
+      <div className="grid grid-cols-2 gap-3.5 lg:grid-cols-4">
+        <Stat label="Sales today" value={usd(td.sales)} note={change == null ? (yd.sales ? undefined : "No sales yesterday at this time") : undefined} delta={change == null ? undefined : { text: `${change >= 0 ? "+" : ""}${change}% vs yesterday`, good: change >= 0 }} />
+        <Stat label="Profit today" value={usd(td.profit)} note="Sales minus supplier cost" tone="good" />
+        <Stat label="This month" value={usd(month.sales)} note={`${usd(month.profit)} profit · ${newCustomers} new customer${newCustomers === 1 ? "" : "s"} this week`} />
+        <Stat label="Needs you" value={needs} tone={needs ? "warn" : undefined} note="Payments, KYC, supplier problems" href={needs ? "/admin/orders?show=decision" : undefined} />
       </div>
 
       <div className="flex flex-wrap gap-5">
@@ -101,6 +148,34 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
           ))}
         </section>
       </div>
+
+      <section aria-labelledby="recent" className="overflow-hidden rounded-2xl border border-border bg-surface">
+        <div className="flex items-center justify-between border-b border-border px-4 py-3.5">
+          <h2 id="recent" className="font-semibold">Recent orders</h2>
+          <Link href="/admin/orders" className="text-sm font-semibold text-primary">All orders →</Link>
+        </div>
+        {recent.length === 0 ? (
+          <p className="px-4 py-8 text-center text-sm text-muted">No orders yet. They appear here as soon as a customer orders.</p>
+        ) : (
+          <ul className="divide-y divide-border">
+            {recent.map((o) => {
+              const [label, cls] = ORDER_STATUS[o.status] ?? [o.status, "bg-surface-2"];
+              const names = [...new Set(o.items.map((i) => t(i.productName, "en")))];
+              return (
+                <li key={o.id}>
+                  <Link href={`/admin/orders?id=${o.id}`} className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-0.5 px-4 py-3 text-sm hover:bg-surface-2 sm:grid-cols-[70px_minmax(0,1.4fr)_minmax(0,1fr)_110px_90px]">
+                    <b className="text-primary">#{o.number}</b>
+                    <span className="truncate">{names[0]}{names.length > 1 ? ` +${names.length - 1}` : ""}<span className="block text-xs text-muted sm:hidden">{o.user.name}</span></span>
+                    <span className="hidden truncate text-muted sm:block">{o.user.name}</span>
+                    <span className={`hidden justify-self-start rounded-full px-2.5 py-0.5 text-xs font-semibold sm:inline ${cls}`}>{label}</span>
+                    <span className="text-right tabular-nums">{formatMoney(o.total, o.currency, "en")}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
 
       <section aria-labelledby="top" className="overflow-hidden rounded-2xl border border-border bg-surface">
         <h2 id="top" className="border-b border-border px-4 py-3.5 font-semibold">Top services this week</h2>
