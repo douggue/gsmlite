@@ -1,7 +1,7 @@
 # Full debug and security check, 2026-11-16 (branch preview/everything)
 
 ## Results
-- Type check clean; 19 test files, 92 tests pass (new: fake supplier end to end, search, JSON-LD escaping).
+- Type check clean; 19 test files, 90 tests pass (new: fake supplier end to end, search, JSON-LD escaping).
 - 77 pages × phone + laptop = 154 loads (storefront in 6 languages, account, admin): no errors, no broken pages, no sideways scroll.
 - Real order in the browser against the fake supplier (`npm run fake-supplier`): 2 IMEIs paid from the wallet, sent,
   one delivered with its unlock result, one refused ("IMEI is blacklisted") and refunded to the wallet; order settled.
