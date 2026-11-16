@@ -118,7 +118,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
           <div className="flex h-[200px] items-end gap-2 border-b border-border" role="img" aria-label={`Daily sales, highest ${usd(max)}`}>
             {series.map((d, i) => (
               <span key={i} className="group relative flex h-full flex-1 items-end" title={`${d.day.toLocaleDateString("en-US", { month: "short", day: "numeric" })}: ${usd(d.sales)} sales · ${usd(d.profit)} profit`}>
-                <span className={`relative w-full rounded-t ${i === series.length - 1 ? "bg-primary" : "bg-[#c7e6d3] dark:bg-primary/40"}`} style={{ height: `${Math.max(2, (d.sales / max) * 100)}%` }}>
+                <span className={`relative w-full rounded-t ${i === series.length - 1 ? "bg-primary" : "bg-[#c7d7fb] dark:bg-primary/40"}`} style={{ height: `${Math.max(2, (d.sales / max) * 100)}%` }}>
                   <span className="absolute inset-x-0 bottom-0 rounded-t bg-[#1e40af]/60" style={{ height: d.sales ? `${Math.max(0, Math.min(100, (d.profit / d.sales) * 100))}%` : 0 }} />
                 </span>
               </span>

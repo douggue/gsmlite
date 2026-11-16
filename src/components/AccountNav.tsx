@@ -55,7 +55,7 @@ export function AccountNav({ groups, user, placeOrder, foldLabel }: { groups: Ac
         </Link>
         {groups.map((g) => (
           <div key={g.label}>
-            {!folded && <p className="px-3 pb-1 pt-2 text-[11px] font-bold uppercase tracking-widest text-white/40">{g.label}</p>}
+            {!folded && <p className="px-3 pb-1 pt-2 text-[11px] font-bold uppercase tracking-widest text-white/60">{g.label}</p>}
             {folded && <hr className="mx-2 my-2 border-white/10" />}
             <ul className="space-y-0.5">
               {g.items.map((i) => {

@@ -57,7 +57,7 @@ export function Stat({ label, value, tone, delta, note, href }: { label: string;
   const body = (
     <>
       <p className="text-[13px] font-semibold text-muted">{label}</p>
-      <p className={`display mt-1.5 min-w-0 break-words text-[28px] font-bold leading-none tracking-tight tabular-nums ${tone === "warn" ? "text-warning" : tone === "danger" ? "text-danger" : tone === "good" ? "text-primary" : ""}`}>{value}</p>
+      <p className={`display mt-1.5 min-w-0 break-words text-[28px] font-bold leading-none tracking-tight tabular-nums ${tone === "warn" ? "text-warning" : tone === "danger" ? "text-danger" : tone === "good" ? "text-success" : ""}`}>{value}</p>
       {(note || delta) && (
         <p className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted">
           {delta && <span className={`badge ${delta.good ? "bg-success-soft text-success" : "bg-danger-soft text-danger"}`}>{delta.text}</span>}

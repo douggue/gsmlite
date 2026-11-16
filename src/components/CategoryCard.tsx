@@ -5,8 +5,8 @@ import { Link } from "@/i18n/navigation";
 const TINTS = [
   "linear-gradient(135deg,#fff4e0 0%,#ffd7a8 55%,#ffb36b 100%)",
   "linear-gradient(135deg,#e8f0fe 0%,#cddcff 55%,#a9c2ff 100%)",
-  "linear-gradient(135deg,#eef2e6 0%,#ddc6ff 55%,#bf98ff 100%)",
-  "linear-gradient(135deg,#eafff3 0%,#bff2d6 55%,#8be3b5 100%)",
+  "linear-gradient(135deg,#f3eefe 0%,#ddc6ff 55%,#bf98ff 100%)",
+  "linear-gradient(135deg,#e6f8fb 0%,#b8e6ef 55%,#86d2e2 100%)",
 ];
 
 /**
