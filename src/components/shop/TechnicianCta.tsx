@@ -19,13 +19,13 @@ export async function TechnicianCta({ userId }: { userId: string | null }) {
   const pct = Math.round(group.discountBps / 100);
   const href = `/account/verification?level=${level.key}`;
   return (
-    <aside className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#111418] p-4 text-white">
+    <aside className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#0F1B3D] p-4 text-white">
       <div className="min-w-0">
         <b className="block text-[15px]">{g("title", { pct })}</b>
         <span className="text-sm text-white/70">{waiting ? g("waiting") : g("sub")}</span>
       </div>
       {!waiting && (
-        <Link href={userId ? href : `/auth/register?next=${encodeURIComponent(href)}`} className="inline-flex min-h-11 items-center rounded-xl bg-white px-4 text-sm font-semibold text-[#111418]">
+        <Link href={userId ? href : `/auth/register?next=${encodeURIComponent(href)}`} className="inline-flex min-h-11 items-center rounded-xl bg-white px-4 text-sm font-semibold text-[#0F1B3D]">
           {g("cta")}
         </Link>
       )}

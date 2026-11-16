@@ -62,13 +62,13 @@ export default async function Dashboard({ params }: { params: Promise<{ locale: 
     <div className="space-y-5">
       {!user.emailVerified && emailEnabled() && <VerifyEmailBanner email={user.email} />}
       <div className="grid gap-4 xl:grid-cols-[1.35fr_1fr]">
-        <section className="relative overflow-hidden rounded-3xl bg-[#111418] p-6 text-white sm:p-7">
-          <div className="ds-hide pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[#1f7a4d]/50 blur-3xl" aria-hidden />
-          <p className="relative text-sm font-semibold text-[#7ce0a8]">{fmt.dateTime(new Date(), { weekday: "long", month: "long", day: "numeric" })}</p>
+        <section className="relative overflow-hidden rounded-3xl bg-[#0F1B3D] p-6 text-white sm:p-7">
+          <div className="ds-hide pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[#1d4ed8]/50 blur-3xl" aria-hidden />
+          <p className="relative text-sm font-semibold text-[#93c5fd]">{fmt.dateTime(new Date(), { weekday: "long", month: "long", day: "numeric" })}</p>
           <h1 className="relative mt-1 text-3xl font-bold tracking-tight sm:text-4xl">{ta("welcomeBack", { name: user.name.split(" ")[0] })}</h1>
           <p className="relative mt-2 text-white/70">{ta("welcomeSub", { working, done })}</p>
           <div className="relative mt-6 flex flex-wrap gap-2.5">
-            <Link href="/store" className="inline-flex min-h-12 items-center rounded-2xl bg-[#7ce0a8] px-5 font-bold text-[#0b2a1b] hover:bg-[#9aeabd]">{ta("placeOrder")}</Link>
+            <Link href="/store" className="inline-flex min-h-12 items-center rounded-2xl bg-[#93c5fd] px-5 font-bold text-[#0f1b3d] hover:bg-[#bfdbfe]">{ta("placeOrder")}</Link>
             <Link href="/prices" className="inline-flex min-h-12 items-center rounded-2xl border border-white/20 px-5 font-semibold hover:bg-white/10">{ta("browseServices")}</Link>
           </div>
         </section>

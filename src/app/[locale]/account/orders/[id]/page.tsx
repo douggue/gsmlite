@@ -30,7 +30,7 @@ function customerAnswers(values: Record<string, string>, defs: FieldDef[], local
 }
 
 const CHIP = {
-  green: "bg-[#e4f3ea] text-[#145c39]",
+  green: "bg-[#e8f0fe] text-[#1e40af]",
   blue: "bg-[#dcebfa] text-[#154a80]",
   orange: "bg-[#fcebdd] text-[#8a3607]",
   gray: "bg-surface-2 text-muted",
@@ -114,7 +114,7 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
         </p>
         {order.items.length > 1 && ["PAID", "PROCESSING", "FULFILLED", "REFUNDED"].includes(order.status) && (
           <div className="mt-3.5 grid grid-cols-3 gap-2 text-center">
-            <div className="rounded-xl bg-[#e4f3ea] px-1 py-2.5"><b className="block text-xl text-[#145c39]">{done}</b><span className="text-xs text-[#24302a]">{g("countDone")}</span></div>
+            <div className="rounded-xl bg-[#e8f0fe] px-1 py-2.5"><b className="block text-xl text-[#1e40af]">{done}</b><span className="text-xs text-[#24302a]">{g("countDone")}</span></div>
             <div className="rounded-xl bg-[#dcebfa] px-1 py-2.5"><b className="block text-xl text-[#154a80]">{working}</b><span className="text-xs text-[#1d2b3a]">{g("countWorking")}</span></div>
             <div className="rounded-xl bg-[#fcebdd] px-1 py-2.5"><b className="block text-xl text-[#8a3607]">{refunded}</b><span className="text-xs text-[#3a2414]">{g("countRefunded")}</span></div>
           </div>

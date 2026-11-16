@@ -14,19 +14,19 @@ export function WalletCard({ balances, initial }: { balances: { HTG: B; USD: B }
   const [cur, setCur] = useState<"HTG" | "USD">(initial);
   const b = balances[cur];
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-[linear-gradient(140deg,#2fa36a_0%,#1f7a4d_45%,#0f3d27_100%)] p-6 text-white shadow-[0_26px_50px_-24px_var(--glow)] sm:p-7">
-      <div className="ds-hide pointer-events-none absolute -right-16 -top-20 h-60 w-60 rounded-full bg-[#7ce0a8]/45 blur-3xl" aria-hidden />
+    <div className="relative overflow-hidden rounded-3xl bg-[linear-gradient(140deg,#2563eb_0%,#1d4ed8_45%,#172554_100%)] p-6 text-white shadow-[0_26px_50px_-24px_var(--glow)] sm:p-7">
+      <div className="ds-hide pointer-events-none absolute -right-16 -top-20 h-60 w-60 rounded-full bg-[#93c5fd]/45 blur-3xl" aria-hidden />
       <div className="relative flex items-center justify-between">
-        <span className="flex items-center gap-2 text-sm font-semibold text-[#d3eedd]"><WalletIcon width={18} height={18} /> {tc("wallet")}</span>
+        <span className="flex items-center gap-2 text-sm font-semibold text-[#dbeafe]"><WalletIcon width={18} height={18} /> {tc("wallet")}</span>
         <div className="inline-flex rounded-full bg-white/10 p-1 text-xs font-bold" role="tablist" aria-label={tc("currency")}>
           {(["HTG", "USD"] as const).map((c) => (
-            <button key={c} type="button" role="tab" aria-selected={cur === c} onClick={() => setCur(c)} className={`min-h-8 rounded-full px-3 py-1 ${cur === c ? "bg-white text-[#0f3d27]" : "text-white/85"}`}>
+            <button key={c} type="button" role="tab" aria-selected={cur === c} onClick={() => setCur(c)} className={`min-h-8 rounded-full px-3 py-1 ${cur === c ? "bg-white text-[#172554]" : "text-white/85"}`}>
               {c}
             </button>
           ))}
         </div>
       </div>
-      <p className="relative mt-6 text-xs font-bold uppercase tracking-widest text-[#d3eedd]">{ta("available")} · {cur}</p>
+      <p className="relative mt-6 text-xs font-bold uppercase tracking-widest text-[#dbeafe]">{ta("available")} · {cur}</p>
       <p className="relative text-4xl font-extrabold tracking-tight sm:text-5xl">{formatMoney(b.available, cur, locale)}</p>
       {b.held > 0 && <p className="relative mt-1 text-sm text-[#ffd48a]">{ta("held", { amount: formatMoney(b.held, cur, locale) })}</p>}
       <div className="relative mt-6 grid grid-cols-3 gap-2">

@@ -1,17 +1,17 @@
 import Image from "next/image";
 
 const STYLES: Record<string, { box: string; label: string; title: string; tag: string }> = {
-  ink: { box: "bg-[#111418]", label: "text-[#7ce0a8]", title: "text-white", tag: "bg-[#7ce0a8] text-[#0b2a1a]" },
-  green: { box: "bg-[#1f7a4d]", label: "text-[#d3eedd]", title: "text-white", tag: "bg-white text-[#145c39]" },
-  mint: { box: "bg-[#e4f3ea]", label: "text-[#145c39]", title: "text-[#111418]", tag: "bg-[#111418] text-white" },
-  slate: { box: "bg-[#262b2f]", label: "text-[#7ce0a8]", title: "text-white", tag: "bg-[#7ce0a8] text-[#0b2a1a]" },
+  ink: { box: "bg-[#0F1B3D]", label: "text-[#93c5fd]", title: "text-white", tag: "bg-[#93c5fd] text-[#0f1b3d]" },
+  green: { box: "bg-[#1d4ed8]", label: "text-[#dbeafe]", title: "text-white", tag: "bg-white text-[#1e40af]" },
+  mint: { box: "bg-[#e8f0fe]", label: "text-[#1e40af]", title: "text-[#0F1B3D]", tag: "bg-[#0F1B3D] text-white" },
+  slate: { box: "bg-[#262b2f]", label: "text-[#93c5fd]", title: "text-white", tag: "bg-[#93c5fd] text-[#0f1b3d]" },
 };
 
 /** Old products only have an accent color: pick the closest card style. */
 function styleFrom(accent?: string | null) {
   const a = (accent ?? "").toLowerCase();
-  if (a === "#1f7a4d") return "green";
-  if (a === "#e4f3ea") return "mint";
+  if (a === "#1d4ed8") return "green";
+  if (a === "#e8f0fe") return "mint";
   if (a === "#2b2f35" || a === "#262b2f") return "slate";
   return "ink";
 }

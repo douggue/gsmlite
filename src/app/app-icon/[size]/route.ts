@@ -29,7 +29,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ size: s
   if (source) {
     // Maskable icons need a safe zone: the logo sits in the middle 80 % on the theme colour.
     png = spec.maskable
-      ? await sharp({ create: { width: 512, height: 512, channels: 4, background: "#111418" } })
+      ? await sharp({ create: { width: 512, height: 512, channels: 4, background: "#0F1B3D" } })
           .composite([{ input: await sharp(source).resize(410, 410, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer(), gravity: "center" }])
           .png().toBuffer()
       : await sharp(source).resize(spec.px, spec.px, { fit: "cover" }).png().toBuffer();

@@ -69,16 +69,16 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
       {sp.denied && <p className="rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger">Your role does not have access to that page.</p>}
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
-        <section className="relative overflow-hidden rounded-3xl bg-[#111418] p-6 text-white sm:p-8">
-          <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#1f7a4d]/40 blur-3xl" />
-          <p className="text-sm font-semibold text-[#7ce0a8]">{now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</p>
+        <section className="relative overflow-hidden rounded-3xl bg-[#0F1B3D] p-6 text-white sm:p-8">
+          <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#1d4ed8]/40 blur-3xl" />
+          <p className="text-sm font-semibold text-[#93c5fd]">{now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</p>
           <h1 className="display mt-1 text-[32px] leading-tight tracking-tight sm:text-[40px]">{hello}, {first}</h1>
-          <p className="mt-2 max-w-xl text-[15px] text-[#c9cfc6]">
+          <p className="mt-2 max-w-xl text-[15px] text-[#c3cde3]">
             {withSupplier + manualWaiting > 0 ? `${withSupplier + manualWaiting} order line${withSupplier + manualWaiting > 1 ? "s" : ""} in progress` : "No orders in progress"}
             {needs > 0 ? ` · ${needs} thing${needs > 1 ? "s" : ""} need${needs > 1 ? "" : "s"} you` : " · nothing needs you right now"}.
           </p>
           <div className="mt-6 flex flex-wrap gap-2.5">
-            <Link href={needs ? "/admin/orders?show=decision" : "/admin/orders"} className="inline-flex min-h-11 items-center rounded-xl bg-[#7ce0a8] px-5 font-semibold text-[#0b2a1a]">{needs ? "Handle what needs me" : "Open orders"}</Link>
+            <Link href={needs ? "/admin/orders?show=decision" : "/admin/orders"} className="inline-flex min-h-11 items-center rounded-xl bg-[#93c5fd] px-5 font-semibold text-[#0f1b3d]">{needs ? "Handle what needs me" : "Open orders"}</Link>
             <Link href="/admin/suppliers" className="inline-flex min-h-11 items-center rounded-xl border border-white/20 px-5 font-semibold">Import services</Link>
             <Link href="/admin/products/new" className="inline-flex min-h-11 items-center rounded-xl border border-white/20 px-5 font-semibold">+ New service</Link>
           </div>
@@ -119,7 +119,7 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
             {series.map((d, i) => (
               <span key={i} className="group relative flex h-full flex-1 items-end" title={`${d.day.toLocaleDateString("en-US", { month: "short", day: "numeric" })}: ${usd(d.sales)} sales · ${usd(d.profit)} profit`}>
                 <span className={`relative w-full rounded-t ${i === series.length - 1 ? "bg-primary" : "bg-[#c7e6d3] dark:bg-primary/40"}`} style={{ height: `${Math.max(2, (d.sales / max) * 100)}%` }}>
-                  <span className="absolute inset-x-0 bottom-0 rounded-t bg-[#145c39]/60" style={{ height: d.sales ? `${Math.max(0, Math.min(100, (d.profit / d.sales) * 100))}%` : 0 }} />
+                  <span className="absolute inset-x-0 bottom-0 rounded-t bg-[#1e40af]/60" style={{ height: d.sales ? `${Math.max(0, Math.min(100, (d.profit / d.sales) * 100))}%` : 0 }} />
                 </span>
               </span>
             ))}

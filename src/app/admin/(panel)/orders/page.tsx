@@ -104,7 +104,7 @@ export default async function AdminOrders({ searchParams }: { searchParams: Prom
         <div className="-mx-1 flex gap-2 overflow-x-auto px-1">
           {(Object.keys(FILTERS) as Filter[]).map((f) => (
             <Link key={f} href={href({ show: f === "all" ? undefined : f, id: undefined })}
-              className={`inline-flex min-h-11 shrink-0 items-center rounded-xl px-3 text-sm font-semibold ${show === f ? "bg-[#111418] text-white dark:bg-primary" : `border bg-surface ${f === "decision" && count.decision ? "border-warning/50 text-warning" : "border-border"}`}`}>
+              className={`inline-flex min-h-11 shrink-0 items-center rounded-xl px-3 text-sm font-semibold ${show === f ? "bg-[#0F1B3D] text-white dark:bg-primary" : `border bg-surface ${f === "decision" && count.decision ? "border-warning/50 text-warning" : "border-border"}`}`}>
               {FILTERS[f]}{f in count ? ` ${count[f]}` : ""}
             </Link>
           ))}

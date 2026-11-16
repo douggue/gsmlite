@@ -18,8 +18,8 @@ export default async function NewsAdmin({ searchParams }: { searchParams: Promis
     <>
       <PageTitle title="News" sub="Articles appear on /news and in the homepage's latest-news section. A future publish date schedules the article." actions={<><Link href="/admin/news/new?kind=tool" className="btn-secondary">New tool update</Link><Link href={`/admin/news/new${filter ? `?kind=${filter}` : ""}`} className="btn-primary">New article</Link></>} />
       <nav className="mb-3 flex flex-wrap gap-2 text-sm">
-        <Link href="/admin/news" className={`rounded-xl px-3 py-2 font-semibold ${!filter ? "bg-[#111418] text-white" : "border border-border"}`}>All</Link>
-        {Object.entries(KINDS).map(([k, v]) => <Link key={k} href={`/admin/news?kind=${k}`} className={`rounded-xl px-3 py-2 font-semibold ${filter === k ? "bg-[#111418] text-white" : "border border-border"}`}>{v}</Link>)}
+        <Link href="/admin/news" className={`rounded-xl px-3 py-2 font-semibold ${!filter ? "bg-[#0F1B3D] text-white" : "border border-border"}`}>All</Link>
+        {Object.entries(KINDS).map(([k, v]) => <Link key={k} href={`/admin/news?kind=${k}`} className={`rounded-xl px-3 py-2 font-semibold ${filter === k ? "bg-[#0F1B3D] text-white" : "border border-border"}`}>{v}</Link>)}
       </nav>
       <Table head={["Title", "Kind", "Status", "Publish date"]} empty={articles.length === 0} emptyText={<Empty title="No posts yet" hint="Post tool updates and service changes so customers know what is new." />}>
         {articles.map((a) => (

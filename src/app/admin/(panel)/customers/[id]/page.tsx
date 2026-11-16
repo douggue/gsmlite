@@ -47,7 +47,7 @@ export default async function Customer({ params }: { params: Promise<{ id: strin
     <>
       <Link href="/admin/customers" className="text-sm font-semibold text-primary">← Customers</Link>
       <div className="mb-5 mt-2 flex flex-wrap items-center gap-4">
-        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-[#111418] text-lg font-black text-[#7ce0a8]">{user.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase()}</span>
+        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-[#0F1B3D] text-lg font-black text-[#93c5fd]">{user.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase()}</span>
         <div className="min-w-0 flex-1">
           <h1 className="display text-[28px] font-bold leading-tight tracking-tight">{user.name}</h1>
           <p className="text-sm text-muted">{user.email}{user.phone ? ` · ${formatPhone(user.phone)}` : ""} · joined {user.createdAt.toLocaleDateString("en-US")} · {user.locale.toUpperCase()}</p>

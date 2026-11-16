@@ -52,7 +52,7 @@ export function ProductForm({ product, categories, kycLevels = [], fieldsSummary
       }}
     >
       {product && <input type="hidden" name="id" value={product.id} />}
-      <input type="hidden" name="accent" value={product?.accent ?? "#1F7A4D"} />
+      <input type="hidden" name="accent" value={product?.accent ?? "#1D4ED8"} />
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="card space-y-5 p-5">

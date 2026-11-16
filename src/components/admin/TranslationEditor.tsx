@@ -29,7 +29,7 @@ export function TranslationEditor({ keys, base, overrides }: { keys: string[]; b
   const list = all.slice(0, limit);
   const chip = (key: string, text: string, warn = false) => (
     <button key={key} type="button" onClick={() => { setShow(key); setLimit(60); }} aria-pressed={show === key}
-      className={`inline-flex min-h-10 shrink-0 items-center rounded-xl px-3 text-sm font-semibold ${show === key ? "bg-[#111418] text-white dark:bg-primary" : warn ? "border border-warning/40 bg-warning-soft text-warning" : "border border-border bg-surface"}`}>{text}</button>
+      className={`inline-flex min-h-10 shrink-0 items-center rounded-xl px-3 text-sm font-semibold ${show === key ? "bg-[#0F1B3D] text-white dark:bg-primary" : warn ? "border border-warning/40 bg-warning-soft text-warning" : "border border-border bg-surface"}`}>{text}</button>
   );
 
   return (

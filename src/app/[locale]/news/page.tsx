@@ -29,8 +29,8 @@ export default async function NewsPage({ params, searchParams }: { params: Promi
   const shopper = await currentShopper();
   const [tn, g, fmt] = await Promise.all([getTranslations("news"), getTranslations("gl.news"), getFormatter()]);
   const allowed = shopper.signedIn ? CHANGES : PUBLIC_CHANGES;
-  const tabCls = (on: boolean) => `inline-flex min-h-11 items-center rounded-xl px-4 font-semibold ${on ? "bg-[#111418] text-white dark:bg-primary" : "border border-border bg-surface"}`;
-  const pill = (on: boolean) => `rounded-full px-3 py-1.5 text-[13px] font-semibold ${on ? "bg-[#111418] text-white dark:bg-primary" : "border border-border bg-surface"}`;
+  const tabCls = (on: boolean) => `inline-flex min-h-11 items-center rounded-xl px-4 font-semibold ${on ? "bg-[#0F1B3D] text-white dark:bg-primary" : "border border-border bg-surface"}`;
+  const pill = (on: boolean) => `rounded-full px-3 py-1.5 text-[13px] font-semibold ${on ? "bg-[#0F1B3D] text-white dark:bg-primary" : "border border-border bg-surface"}`;
 
   let body: React.ReactNode;
   if (tab === "posts") {
@@ -66,7 +66,7 @@ export default async function NewsPage({ params, searchParams }: { params: Promi
     const products = new Map((await prisma.product.findMany({ where: { id: { in: [...new Set(rows.map((r) => r.productId))] } }, select: { id: true, slug: true, name: true } })).map((p) => [p.id, p]));
     const n = new Map(counts.map((c) => [c.kind, c._count]));
     const badge: Record<ServiceChangeKind, string> = {
-      NEW: "bg-primary text-white", PRICE_DOWN: "bg-[#e4f3ea] text-[#145c39]", BACK: "bg-[#dcebfa] text-[#154a80]", PRICE_UP: "bg-[#fcebdd] text-[#8a3607]", REMOVED: "bg-surface-2 text-muted",
+      NEW: "bg-primary text-white", PRICE_DOWN: "bg-[#e8f0fe] text-[#1e40af]", BACK: "bg-[#dcebfa] text-[#154a80]", PRICE_UP: "bg-[#fcebdd] text-[#8a3607]", REMOVED: "bg-surface-2 text-muted",
     };
     body = (
       <>

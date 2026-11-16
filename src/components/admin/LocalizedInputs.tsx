@@ -31,7 +31,7 @@ export function LocalizedInputs({ prefix, label, value = {}, textarea = false, r
       <div role="tablist" aria-label={`${label}: language`} className="flex flex-wrap gap-1">
         {locales.map((l) => (
           <button key={l} type="button" role="tab" aria-selected={lang === l} title={localeNames[l]} onClick={() => pick(l)}
-            className={`inline-flex min-h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-bold ${lang === l ? "bg-[#111418] text-white dark:bg-primary" : "bg-surface-2 text-muted hover:text-text"}`}>
+            className={`inline-flex min-h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-bold ${lang === l ? "bg-[#0F1B3D] text-white dark:bg-primary" : "bg-surface-2 text-muted hover:text-text"}`}>
             {l.toUpperCase()}
             <span aria-hidden className={`h-1.5 w-1.5 rounded-full ${filled[l] ? "bg-[#3fbf7f]" : "bg-[#f59e3b]"}`} />
           </button>
@@ -81,7 +81,7 @@ export function LocalizedField({ label, value, onChange, name, hint }: { label: 
       <div role="tablist" aria-label={`${label}: language`} className="flex flex-wrap gap-1">
         {locales.map((l) => (
           <button key={l} type="button" role="tab" aria-selected={lang === l} title={localeNames[l]} onClick={() => pick(l)}
-            className={`inline-flex min-h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-bold ${lang === l ? "bg-[#111418] text-white dark:bg-primary" : "bg-surface-2 text-muted hover:text-text"}`}>
+            className={`inline-flex min-h-8 items-center gap-1 rounded-lg px-2.5 text-xs font-bold ${lang === l ? "bg-[#0F1B3D] text-white dark:bg-primary" : "bg-surface-2 text-muted hover:text-text"}`}>
             {l.toUpperCase()}
             <span aria-hidden className={`h-1.5 w-1.5 rounded-full ${value[l]?.trim() ? "bg-[#3fbf7f]" : "bg-[#f59e3b]"}`} />
           </button>

@@ -81,7 +81,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
         actions={
           <div className="flex flex-wrap gap-2">
             {RANGES.map((r) => (
-              <Link key={r} href={`/admin/analytics?days=${r}`} className={`inline-flex min-h-10 items-center rounded-xl px-3 text-sm font-semibold ${r === days ? "bg-[#111418] text-white dark:bg-primary" : "border border-border bg-surface"}`}>{r} days</Link>
+              <Link key={r} href={`/admin/analytics?days=${r}`} className={`inline-flex min-h-10 items-center rounded-xl px-3 text-sm font-semibold ${r === days ? "bg-[#0F1B3D] text-white dark:bg-primary" : "border border-border bg-surface"}`}>{r} days</Link>
             ))}
           </div>
         }

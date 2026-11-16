@@ -54,8 +54,8 @@ export default async function KycPage({ searchParams }: { searchParams: Promise<
       <div className="grid gap-4 xl:grid-cols-[320px_1fr]">
         <section className="card h-fit overflow-hidden">
           <div className="flex gap-1 border-b border-border p-2 text-sm">
-            <Link href="/admin/kyc" className={`rounded-lg px-3 py-1.5 font-semibold ${sp.show !== "done" ? "bg-[#111418] text-white" : ""}`}>Waiting</Link>
-            <Link href="/admin/kyc?show=done" className={`rounded-lg px-3 py-1.5 font-semibold ${sp.show === "done" ? "bg-[#111418] text-white" : ""}`}>Decided</Link>
+            <Link href="/admin/kyc" className={`rounded-lg px-3 py-1.5 font-semibold ${sp.show !== "done" ? "bg-[#0F1B3D] text-white" : ""}`}>Waiting</Link>
+            <Link href="/admin/kyc?show=done" className={`rounded-lg px-3 py-1.5 font-semibold ${sp.show === "done" ? "bg-[#0F1B3D] text-white" : ""}`}>Decided</Link>
           </div>
           {list.length === 0 && <Empty title="Nothing waiting" hint="Identity checks customers send show here." />}
           {list.map((x) => (

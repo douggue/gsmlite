@@ -107,7 +107,7 @@ export function FormBuilder({ productId, initial, fromSupplier, serviceType }: {
           <ol className="space-y-1.5">
             {fields.map((x, i) => (
               <li key={x.key + i} draggable onDragStart={() => setDrag(i)} onDragOver={(e) => e.preventDefault()} onDrop={() => { if (drag != null) move(drag, i); setDrag(null); }}
-                className={`flex items-center gap-2 rounded-xl border p-2.5 ${i === sel ? "border-[#111418] bg-surface-2 dark:border-primary" : "border-border"}`}>
+                className={`flex items-center gap-2 rounded-xl border p-2.5 ${i === sel ? "border-[#0F1B3D] bg-surface-2 dark:border-primary" : "border-border"}`}>
                 <span aria-hidden className="cursor-grab select-none text-muted">⋮⋮</span>
                 <button type="button" onClick={() => setSel(i)} className="min-w-0 flex-1 text-left">
                   <b className="block truncate text-sm">{x.label.en || x.label.ht || x.key}</b>

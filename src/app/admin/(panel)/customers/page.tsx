@@ -39,14 +39,14 @@ export default async function Customers({ searchParams }: { searchParams: Promis
       </form>
       <nav className="-mx-1 mb-4 flex gap-2 overflow-x-auto px-1">
         {(Object.keys(SHOW) as Show[]).map((f) => (
-          <Link key={f} href={href({ show: f === "all" ? undefined : f })} className={`inline-flex min-h-10 shrink-0 items-center rounded-xl px-3 text-sm font-semibold ${show === f ? "bg-[#111418] text-white dark:bg-primary" : "border border-border bg-surface"}`}>{SHOW[f]}</Link>
+          <Link key={f} href={href({ show: f === "all" ? undefined : f })} className={`inline-flex min-h-10 shrink-0 items-center rounded-xl px-3 text-sm font-semibold ${show === f ? "bg-[#0F1B3D] text-white dark:bg-primary" : "border border-border bg-surface"}`}>{SHOW[f]}</Link>
         ))}
       </nav>
       <Table head={["Customer", "Phone", "Prices", "Status", "Orders", "Joined"]} empty={users.length === 0}
         emptyText={<Empty title={q ? `No one matches “${q}”` : "No customers here yet"} hint={q ? "Try part of the email or the phone number." : "Accounts appear here as soon as people sign up."} />}>
         {users.map((u) => (
           <tr key={u.id} className="hover:bg-surface-2">
-            <td className="px-4 py-3"><Link href={`/admin/customers/${u.id}`} className="font-semibold text-primary">{u.name}</Link>{u.role !== "CUSTOMER" && <span className="ml-1.5 rounded-md bg-[#111418] px-1.5 py-0.5 text-[10px] font-bold text-white">STAFF</span>}<span className="block text-xs text-muted">{u.email}</span></td>
+            <td className="px-4 py-3"><Link href={`/admin/customers/${u.id}`} className="font-semibold text-primary">{u.name}</Link>{u.role !== "CUSTOMER" && <span className="ml-1.5 rounded-md bg-[#0F1B3D] px-1.5 py-0.5 text-[10px] font-bold text-white">STAFF</span>}<span className="block text-xs text-muted">{u.email}</span></td>
             <td className="px-4 py-3">{u.phone ? formatPhone(u.phone) : "—"}</td>
             <td className="px-4 py-3">{u.priceGroup ? <span className="rounded-md bg-primary-soft px-2 py-0.5 text-xs font-semibold text-primary">{u.priceGroup.name}</span> : <span className="text-muted">Retail</span>}</td>
             <td className="px-4 py-3">{u.status === "ACTIVE" ? "Active" : <span className="font-semibold text-warning">{u.status.charAt(0) + u.status.slice(1).toLowerCase()}</span>}</td>

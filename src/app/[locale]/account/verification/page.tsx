@@ -32,8 +32,8 @@ export default async function VerificationPage({ params, searchParams }: { param
         <h1 className="display text-2xl tracking-tight sm:text-3xl">{g("title")}</h1>
         <p className="mt-1 text-sm text-muted">{g("sub")}</p>
       </div>
-      <p className="rounded-2xl bg-[#111418] px-4 py-3 text-sm text-white">
-        {g("current")} <b className="text-[#7ce0a8]">{rank.levelKey ? t(levels.find((l) => l.key === rank.levelKey)?.name, locale) : g("none")}</b>
+      <p className="rounded-2xl bg-[#0F1B3D] px-4 py-3 text-sm text-white">
+        {g("current")} <b className="text-[#93c5fd]">{rank.levelKey ? t(levels.find((l) => l.key === rank.levelKey)?.name, locale) : g("none")}</b>
       </p>
 
       <ul className="space-y-3">

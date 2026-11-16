@@ -36,7 +36,7 @@ export function AccountNav({ groups, user, placeOrder, foldLabel }: { groups: Ac
           {all.map((i) => (
             <li key={i.href} className="shrink-0">
               <Link href={i.href} aria-current={current === i.href ? "page" : undefined}
-                className={`inline-flex min-h-10 items-center rounded-xl px-3.5 text-sm font-semibold ${current === i.href ? "bg-[#111418] text-white dark:bg-primary" : "border border-border bg-surface text-muted"}`}>
+                className={`inline-flex min-h-10 items-center rounded-xl px-3.5 text-sm font-semibold ${current === i.href ? "bg-[#0F1B3D] text-white dark:bg-primary" : "border border-border bg-surface text-muted"}`}>
                 {i.label}
               </Link>
             </li>
@@ -44,13 +44,13 @@ export function AccountNav({ groups, user, placeOrder, foldLabel }: { groups: Ac
         </ul>
       </nav>
 
-      <aside aria-label="Account" className={`sticky top-20 hidden h-[calc(100dvh-6rem)] shrink-0 flex-col gap-3 overflow-y-auto rounded-3xl bg-[#111418] p-3 text-white transition-[width] lg:flex ${folded ? "w-[72px]" : "w-60"}`}>
+      <aside aria-label="Account" className={`sticky top-20 hidden h-[calc(100dvh-6rem)] shrink-0 flex-col gap-3 overflow-y-auto rounded-3xl bg-[#0F1B3D] p-3 text-white transition-[width] lg:flex ${folded ? "w-[72px]" : "w-60"}`}>
         <div className={`flex items-center ${folded ? "justify-center" : "justify-end"}`}>
           <button type="button" onClick={fold} aria-label={foldLabel} aria-pressed={folded} title={foldLabel} className="grid h-9 w-9 place-items-center rounded-lg text-white/60 hover:bg-white/10 hover:text-white">
             <MenuIcon width={18} height={18} />
           </button>
         </div>
-        <Link href="/store" title={placeOrder} className={`flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#7ce0a8] font-bold text-[#0b2a1b] hover:bg-[#9aeabd] ${folded ? "px-0" : "px-4"}`}>
+        <Link href="/store" title={placeOrder} className={`flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#93c5fd] font-bold text-[#0f1b3d] hover:bg-[#bfdbfe] ${folded ? "px-0" : "px-4"}`}>
           <BagIcon width={18} height={18} />{!folded && placeOrder}
         </Link>
         {groups.map((g) => (
@@ -65,7 +65,7 @@ export function AccountNav({ groups, user, placeOrder, foldLabel }: { groups: Ac
                   <li key={i.href}>
                     <Link href={i.href} aria-current={on ? "page" : undefined} title={folded ? i.label : undefined}
                       className={`flex min-h-10 items-center gap-3 rounded-xl text-sm font-medium ${folded ? "justify-center" : "px-3"} ${on ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5 hover:text-white"}`}>
-                      <span className={on ? "text-[#7ce0a8]" : ""}><Icon width={18} height={18} /></span>
+                      <span className={on ? "text-[#93c5fd]" : ""}><Icon width={18} height={18} /></span>
                       {!folded && <span className="truncate">{i.label}</span>}
                     </Link>
                   </li>
@@ -75,7 +75,7 @@ export function AccountNav({ groups, user, placeOrder, foldLabel }: { groups: Ac
           </div>
         ))}
         <div className={`mt-auto flex items-center gap-2 rounded-2xl bg-white/5 p-2 ${folded ? "flex-col" : ""}`}>
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#7ce0a8]/20 text-sm font-bold text-[#7ce0a8]">{user.name.charAt(0).toUpperCase()}</span>
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#93c5fd]/20 text-sm font-bold text-[#93c5fd]">{user.name.charAt(0).toUpperCase()}</span>
           {!folded && <span className="min-w-0 flex-1"><b className="block truncate text-sm">{user.name}</b><span className="block truncate text-xs text-white/50">{user.email}</span></span>}
           <SignOutButton className="grid h-9 min-h-0 w-9 place-items-center rounded-lg p-0 text-white/60 hover:bg-white/10 hover:text-white" iconOnly />
         </div>

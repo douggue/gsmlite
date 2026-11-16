@@ -157,11 +157,11 @@ export type ThemeConfig = {
 };
 
 export const DEFAULT_THEME: ThemeConfig = {
-  primary: "#1F7A4D",
-  primaryDark: "#1F7A4D",
-  navy: "#15191C",
-  midnight: "#0B0E10",
-  lightBg: "#F4F5F2",
+  primary: "#1D4ED8",
+  primaryDark: "#1D4ED8",
+  navy: "#121A2E",
+  midnight: "#070D1F",
+  lightBg: "#F4F7FD",
   radius: 16,
   animations: true,
   defaultMode: "light",

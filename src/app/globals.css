@@ -2,51 +2,51 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* GSMLite palette: ink ground, one green accent. Admin → Appearance overrides these per store (theme-css.ts). */
+/* GSMLite palette: navy ink, one blue accent; green only means "done". Admin → Appearance overrides these per store (theme-css.ts). */
 :root {
   --gl-css: 1; /* checked by cssGuardScript: proves the stylesheet loaded */
-  --bg: #f4f5f2;
+  --bg: #f4f7fd;
   --surface: #ffffff;
-  --surface-2: #eceee9;
-  --text: #111418;
-  --muted: #4a5048;
-  --border: #dcdfd8;
-  --primary: #1f7a4d;
-  --primary-hover: #145c39;
-  --primary-soft: #e4f3ea;
-  --navy: #171b1f;
-  --midnight: #0b0e10;
-  --steel: #8a9187;
-  --cyan: #2266aa;
-  --success: #1f7a4d;
-  --success-soft: #e4f3ea;
-  --warning: #a35f00;
+  --surface-2: #eef2f9;
+  --text: #0f1b3d;
+  --muted: #475569;
+  --border: #dce3ef;
+  --primary: #1d4ed8;
+  --primary-hover: #1e40af;
+  --primary-soft: #e8f0fe;
+  --navy: #131c33;
+  --midnight: #070d1f;
+  --steel: #8a94a6;
+  --cyan: #0e7490;
+  --success: #15803d;
+  --success-soft: #e7f6ec;
+  --warning: #8f5300;
   --warning-soft: #fff1d6;
   --danger: #c62f3c;
   --danger-soft: #fde8ea;
-  --glow: rgba(31, 122, 77, 0.2);
+  --glow: rgba(29, 78, 216, 0.2);
   --glow-strength: 0.3;
   color-scheme: light;
 }
 
 .dark {
-  --bg: #0b0e10;
-  --surface: #15191c;
-  --surface-2: #1c2125;
-  --text: #eef1ec;
-  --muted: #a3aaa0;
-  --border: #2a3029;
-  --primary: #1f7a4d;
-  --primary-hover: #26905b;
-  --primary-soft: #12291c;
+  --bg: #070d1f;
+  --surface: #121a2e;
+  --surface-2: #1a2440;
+  --text: #eef2fa;
+  --muted: #a3adc2;
+  --border: #28324a;
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --primary-soft: #14224a;
   --cyan: #7cc4ff;
-  --success: #7ce0a8;
-  --success-soft: #12291c;
+  --success: #6ee7a0;
+  --success-soft: #0f2a1d;
   --warning: #ffb547;
   --warning-soft: #3a2a0c;
   --danger: #ff6b78;
   --danger-soft: #3d1419;
-  --glow: rgba(124, 224, 168, 0.2);
+  --glow: rgba(147, 197, 253, 0.2);
   color-scheme: dark;
 }
 
@@ -146,7 +146,7 @@ body {
 }
 /* The hero is always dark, in both modes, like the wallet card */
 .hero-dark {
-  color: #eef1ec;
+  color: #eef2fa;
   background:
     radial-gradient(900px 420px at 80% 8%, rgb(124 224 168 / calc(var(--glow-strength) * 0.35)), transparent 60%),
     linear-gradient(180deg, color-mix(in srgb, var(--midnight) 80%, #1a2a20), var(--midnight));
@@ -175,10 +175,10 @@ body {
 }
 /* Band: a slowly moving green gradient behind the scrolling words. */
 .marquee-color {
-  background: linear-gradient(90deg, #111418, #1f7a4d, #145c39, #111418, #1f7a4d, #111418);
+  background: linear-gradient(90deg, #0F1B3D, #1d4ed8, #1e40af, #0F1B3D, #1d4ed8, #0F1B3D);
   background-size: 300% 100%;
   animation: marquee-hue 14s linear infinite;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.25), 0 10px 30px -12px rgba(31, 122, 77, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.25), 0 10px 30px -12px rgba(29, 78, 216, 0.5);
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 @keyframes marquee-hue {
@@ -251,7 +251,7 @@ body {
     box-shadow: 0 0 0 1px var(--primary), 0 0 28px -6px var(--glow);
   }
   [data-motion="neon"] .neon-text {
-    background: linear-gradient(90deg, currentColor 30%, #7ce0a8 45%, #ffffff 50%, #7ce0a8 55%, currentColor 70%);
+    background: linear-gradient(90deg, currentColor 30%, #93c5fd 45%, #ffffff 50%, #93c5fd 55%, currentColor 70%);
     background-size: 200% 100%;
     -webkit-background-clip: text;
     background-clip: text;
@@ -387,7 +387,7 @@ html[data-switching] body::before {
   inset: 0 0 auto 0;
   height: 3px;
   z-index: 100;
-  background: linear-gradient(90deg, transparent, var(--primary), #7ce0a8, transparent);
+  background: linear-gradient(90deg, transparent, var(--primary), #93c5fd, transparent);
   background-size: 200% 100%;
   animation: lang-progress 0.9s linear infinite;
 }

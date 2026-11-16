@@ -40,7 +40,7 @@ export function OrderFields({ defs, values, onChange, locale, text, canUpload, i
           return (
             <div key={f.key}>
               <label className="flex min-h-11 cursor-pointer items-start gap-3 text-sm font-semibold">
-                <input {...common} type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 accent-[#111418] dark:accent-[var(--primary)]" checked={values[f.key] === "yes"} onChange={(e) => set(f.key, e.target.checked ? "yes" : "")} />
+                <input {...common} type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 accent-[#0F1B3D] dark:accent-[var(--primary)]" checked={values[f.key] === "yes"} onChange={(e) => set(f.key, e.target.checked ? "yes" : "")} />
                 <span>{label} {f.required && <span className="text-danger">*</span>}</span>
               </label>
               {helpLine}
@@ -55,7 +55,7 @@ export function OrderFields({ defs, values, onChange, locale, text, canUpload, i
                 {list.map((o) => {
                   const on = values[f.key] === o.value;
                   return (
-                    <label key={o.value} className={`inline-flex min-h-11 cursor-pointer items-center rounded-xl px-4 text-sm font-semibold ${on ? "bg-[#111418] text-white dark:bg-primary" : "border border-border bg-surface"}`}>
+                    <label key={o.value} className={`inline-flex min-h-11 cursor-pointer items-center rounded-xl px-4 text-sm font-semibold ${on ? "bg-[#0F1B3D] text-white dark:bg-primary" : "border border-border bg-surface"}`}>
                       <input type="radio" name={id} value={o.value} checked={on} onChange={() => set(f.key, o.value)} className="sr-only" />
                       {o.label}
                     </label>

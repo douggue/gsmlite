@@ -58,7 +58,7 @@ export default async function AdminProducts({ searchParams }: { searchParams: Pr
       <nav className="-mx-1 mb-4 flex gap-2 overflow-x-auto px-1">
         {(Object.keys(SHOW) as Show[]).map((f) => (
           <Link key={f} href={href({ show: f === "all" ? undefined : f })}
-            className={`inline-flex min-h-11 shrink-0 items-center rounded-xl px-3 text-sm font-semibold ${show === f ? "bg-[#111418] text-white dark:bg-primary" : `border bg-surface ${f === "loss" && lossCount ? "border-danger/50 text-danger" : "border-border"}`}`}>
+            className={`inline-flex min-h-11 shrink-0 items-center rounded-xl px-3 text-sm font-semibold ${show === f ? "bg-[#0F1B3D] text-white dark:bg-primary" : `border bg-surface ${f === "loss" && lossCount ? "border-danger/50 text-danger" : "border-border"}`}`}>
             {SHOW[f]}{f === "loss" ? ` ${lossCount}` : ""}
           </Link>
         ))}
@@ -74,7 +74,7 @@ export default async function AdminProducts({ searchParams }: { searchParams: Pr
           const suppliers = [...new Set(p.variants.map((v) => v.supplier?.name).filter(Boolean))];
           return (
             <tr key={p.id} className={loss ? "bg-danger-soft/40" : "hover:bg-surface-2"}>
-              <td className="px-4 py-3"><div className="flex items-center gap-3">{p.image ? <img src={p.image} alt="" className="h-10 w-10 rounded-lg object-cover" /> : <span className="h-10 w-10 rounded-lg" style={{ background: p.accent ?? "#1F7A4D" }} />}<div><Link href={`/admin/products/${p.id}`} className="font-semibold text-primary">{t(p.name, "en")}</Link><br /><span className="text-xs text-muted">{suppliers.length ? suppliers.join(", ") : p.fulfillmentType === "MANUAL" ? "Manual" : p.fulfillmentType === "CODE_INVENTORY" ? "Codes from stock" : "No supplier"}</span></div></div></td>
+              <td className="px-4 py-3"><div className="flex items-center gap-3">{p.image ? <img src={p.image} alt="" className="h-10 w-10 rounded-lg object-cover" /> : <span className="h-10 w-10 rounded-lg" style={{ background: p.accent ?? "#1D4ED8" }} />}<div><Link href={`/admin/products/${p.id}`} className="font-semibold text-primary">{t(p.name, "en")}</Link><br /><span className="text-xs text-muted">{suppliers.length ? suppliers.join(", ") : p.fulfillmentType === "MANUAL" ? "Manual" : p.fulfillmentType === "CODE_INVENTORY" ? "Codes from stock" : "No supplier"}</span></div></div></td>
               <td className="px-4 py-3">{t(p.category.name, "en")}</td>
               <td className="px-4 py-3 text-xs">{p.serviceType}</td>
               <td className="px-4 py-3">{p.variants.length}</td>

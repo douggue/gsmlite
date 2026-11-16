@@ -30,7 +30,7 @@ export default async function StatusPage({ params }: { params: Promise<{ locale:
   for (const p of products) counts[stats[p.id]?.status ?? "online"]++;
   const ids = new Map<string, string>();
   for (const c of categories) { ids.set(c.id, c.id); for (const ch of c.children) ids.set(ch.id, c.id); }
-  const cls = { online: "text-[#145c39] dark:text-success", slow: "text-[#8a3607] dark:text-warning", down: "text-danger" };
+  const cls = { online: "text-[#1e40af] dark:text-success", slow: "text-[#8a3607] dark:text-warning", down: "text-danger" };
   return (
     <div className="container-page max-w-[880px] pb-10 pt-4 lg:pt-8">
       <h1 className="display text-[32px] tracking-tight">{g("title")}</h1>

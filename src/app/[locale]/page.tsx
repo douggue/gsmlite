@@ -37,12 +37,12 @@ function tileIcon(slug: string, i: number) {
 
 function SectionHead({ title, sub, href, linkLabel }: { title: string; sub?: string; href?: string; linkLabel?: string }) {
   return (
-    <div className="flex items-center justify-between gap-4 bg-[#111418] px-5 py-3.5 text-white">
+    <div className="flex items-center justify-between gap-4 bg-[#0F1B3D] px-5 py-3.5 text-white">
       <span>
         <b className="display block text-xl">{title}</b>
-        {sub && <span className="text-[13px] text-[#c9cfc6]">{sub}</span>}
+        {sub && <span className="text-[13px] text-[#c3cde3]">{sub}</span>}
       </span>
-      {href && linkLabel && <Link href={href} className="inline-flex min-h-10 shrink-0 items-center rounded-xl bg-white px-3.5 text-sm font-semibold text-[#111418]">{linkLabel} <span className="inline-block rtl:-scale-x-100">→</span></Link>}
+      {href && linkLabel && <Link href={href} className="inline-flex min-h-10 shrink-0 items-center rounded-xl bg-white px-3.5 text-sm font-semibold text-[#0F1B3D]">{linkLabel} <span className="inline-block rtl:-scale-x-100">→</span></Link>}
     </div>
   );
 }
@@ -98,8 +98,8 @@ export default async function HomePage({ params, searchParams }: { params: Promi
     numbers.services > 0 && { v: String(numbers.services), l: g("home.statServices") },
   ].filter(Boolean) as { v: string; l: string }[];
   const status = (
-    <span className={`inline-flex items-center gap-1.5 text-[13px] font-semibold ${online ? "text-[#7ce0a8]" : "text-[#ffb547]"}`}>
-      <span className={`h-2 w-2 rounded-full ${online ? "bg-[#7ce0a8]" : "bg-[#ffb547]"}`} />
+    <span className={`inline-flex items-center gap-1.5 text-[13px] font-semibold ${online ? "text-[#93c5fd]" : "text-[#ffb547]"}`}>
+      <span className={`h-2 w-2 rounded-full ${online ? "bg-[#93c5fd]" : "bg-[#ffb547]"}`} />
       {online ? g("home.statusOnline") : g("home.statusIssues")}
     </span>
   );
@@ -129,11 +129,11 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 const first = i === 0;
                 return (
                   <Link key={c.id} href={`/categories/${c.slug}`}
-                    className={`flex min-h-28 flex-col justify-between gap-4 rounded-2xl p-3.5 ${first ? "bg-[#111418] text-white" : "border border-border bg-surface"}`}>
-                    <Icon width={26} height={26} className={first ? "text-[#7ce0a8]" : "text-primary"} />
+                    className={`flex min-h-28 flex-col justify-between gap-4 rounded-2xl p-3.5 ${first ? "bg-[#0F1B3D] text-white" : "border border-border bg-surface"}`}>
+                    <Icon width={26} height={26} className={first ? "text-[#93c5fd]" : "text-primary"} />
                     <span>
                       <b className="block text-base leading-tight">{t(c.name, locale)}</b>
-                      {t(c.description, locale) && <span className={`line-clamp-1 text-xs ${first ? "text-[#b9c0b6]" : "text-muted"}`}>{t(c.description, locale)}</span>}
+                      {t(c.description, locale) && <span className={`line-clamp-1 text-xs ${first ? "text-[#b4c0da]" : "text-muted"}`}>{t(c.description, locale)}</span>}
                     </span>
                   </Link>
                 );
@@ -192,7 +192,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
         {show("slider") && (
           <div className="grid grid-cols-[300px_1fr_300px] gap-5">
             <aside aria-labelledby="d-top" className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface">
-              <h2 id="d-top" className="bg-[#111418] px-4 py-3.5 font-semibold text-white">{g("home.topCategories")}</h2>
+              <h2 id="d-top" className="bg-[#0F1B3D] px-4 py-3.5 font-semibold text-white">{g("home.topCategories")}</h2>
               <ul className="flex-1 divide-y divide-border">
                 {data.categories.slice(0, 8).map((c) => (
                   <li key={c.id}>
@@ -276,21 +276,21 @@ export default async function HomePage({ params, searchParams }: { params: Promi
 
         {show("promos") && (
           <div className="grid grid-cols-2 gap-5">
-            <Link href={credits ? `/categories/${credits.slug}` : "/store?type=SERVER"} className="flex items-center justify-between gap-4 rounded-2xl bg-[#111418] p-6 text-white">
+            <Link href={credits ? `/categories/${credits.slug}` : "/store?type=SERVER"} className="flex items-center justify-between gap-4 rounded-2xl bg-[#0F1B3D] p-6 text-white">
               <span>
-                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7ce0a8]">{g("home.creditsTag")}</span>
+                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[#93c5fd]">{g("home.creditsTag")}</span>
                 <b className="mt-1 block text-xl">{g("home.creditsTitle")}</b>
-                <span className="text-sm text-[#b9c0b6]">{g("home.creditsSub")}</span>
+                <span className="text-sm text-[#b4c0da]">{g("home.creditsSub")}</span>
               </span>
-              <span className="inline-flex min-h-11 shrink-0 items-center rounded-xl bg-[#7ce0a8] px-4 font-semibold text-[#0b2a1a]">{g("home.creditsBtn")} <span className="inline-block rtl:-scale-x-100">→</span></span>
+              <span className="inline-flex min-h-11 shrink-0 items-center rounded-xl bg-[#93c5fd] px-4 font-semibold text-[#0f1b3d]">{g("home.creditsBtn")} <span className="inline-block rtl:-scale-x-100">→</span></span>
             </Link>
-            <Link href="/check" className="flex items-center justify-between gap-4 rounded-2xl border border-[#cfe7d8] bg-[#e4f3ea] p-6 text-[#111418]">
+            <Link href="/check" className="flex items-center justify-between gap-4 rounded-2xl border border-[#c7d7fb] bg-[#e8f0fe] p-6 text-[#0F1B3D]">
               <span>
-                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[#145c39]">{g("home.checkTag")}</span>
+                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[#1e40af]">{g("home.checkTag")}</span>
                 <b className="mt-1 block text-xl">{g("home.checkTitle")}</b>
-                <span className="text-sm text-[#4a5048]">{g("home.checkSub")}</span>
+                <span className="text-sm text-[#475569]">{g("home.checkSub")}</span>
               </span>
-              <span className="inline-flex min-h-11 shrink-0 items-center rounded-xl bg-[#111418] px-4 font-semibold text-white">{g("home.checkBtn")} <span className="inline-block rtl:-scale-x-100">→</span></span>
+              <span className="inline-flex min-h-11 shrink-0 items-center rounded-xl bg-[#0F1B3D] px-4 font-semibold text-white">{g("home.checkBtn")} <span className="inline-block rtl:-scale-x-100">→</span></span>
             </Link>
           </div>
         )}
@@ -311,7 +311,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                   {x.image
                     // eslint-disable-next-line @next/next/no-img-element
                     ? <img src={x.image} alt="" className="h-10 w-10 rounded-lg object-cover" />
-                    : <span className="grid h-10 w-10 place-items-center rounded-lg bg-[#111418] text-xs font-bold text-[#7ce0a8]">{x.code}</span>}
+                    : <span className="grid h-10 w-10 place-items-center rounded-lg bg-[#0F1B3D] text-xs font-bold text-[#93c5fd]">{x.code}</span>}
                   {x.name}
                 </Link>
               ))}
@@ -325,7 +325,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
             <div className="grid grid-cols-3 divide-x divide-border">
               {data.updates.map((u) => (
                 <article key={u.slug} className="flex items-center gap-3 p-4">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#111418] text-xs font-bold text-[#7ce0a8]">{u.code}</span>
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#0F1B3D] text-xs font-bold text-[#93c5fd]">{u.code}</span>
                   <span className="min-w-0 flex-1">
                     <span className="text-xs"><b className="text-primary">{g("home.newBadge")}</b>{u.version && <> · v{u.version}</>}</span>
                     <b className="block">{u.tool}</b>
@@ -339,21 +339,21 @@ export default async function HomePage({ params, searchParams }: { params: Promi
         )}
 
         {show("howItWorks") && (
-          <section className="rounded-[20px] bg-[#111418] p-9 text-white">
+          <section className="rounded-[20px] bg-[#0F1B3D] p-9 text-white">
             <div className="grid grid-cols-2 items-center gap-8">
               <div>
-                <span className="text-[13px] font-semibold uppercase tracking-[0.12em] text-[#7ce0a8]">{g("home.howEyebrow")}</span>
-                <h2 className="display mt-2 text-[40px] leading-[1.05]">{g("home.howHeadline1")} <span className="text-[#7ce0a8]">{g("home.howHeadline2")}</span></h2>
-                <p className="mt-3 text-[#dfe4dc]">{g("home.howText")}</p>
+                <span className="text-[13px] font-semibold uppercase tracking-[0.12em] text-[#93c5fd]">{g("home.howEyebrow")}</span>
+                <h2 className="display mt-2 text-[40px] leading-[1.05]">{g("home.howHeadline1")} <span className="text-[#93c5fd]">{g("home.howHeadline2")}</span></h2>
+                <p className="mt-3 text-[#dde5f5]">{g("home.howText")}</p>
                 <div className="mt-5 flex items-center gap-3">
-                  <Link href="/store" className="inline-flex min-h-12 items-center rounded-xl bg-[#7ce0a8] px-5 font-semibold text-[#0b2a1a]">{g("home.browse")} <span className="inline-block rtl:-scale-x-100">→</span></Link>
+                  <Link href="/store" className="inline-flex min-h-12 items-center rounded-xl bg-[#93c5fd] px-5 font-semibold text-[#0f1b3d]">{g("home.browse")} <span className="inline-block rtl:-scale-x-100">→</span></Link>
                   <span className="rounded-full bg-white/[0.06] px-3 py-1.5">{status}</span>
                 </div>
               </div>
-              <div className="grid grid-cols-3 rounded-2xl border border-white/10 p-6 text-center text-sm text-[#dfe4dc]">
+              <div className="grid grid-cols-3 rounded-2xl border border-white/10 p-6 text-center text-sm text-[#dde5f5]">
                 {[["1", g("home.step1"), false], ["2", g("home.step2"), true], ["✓", g("home.step3"), false]].map(([n, l, hi]) => (
                   <span key={String(l)} className="flex flex-col items-center gap-2.5">
-                    <span className={`grid h-14 w-14 place-items-center rounded-xl text-sm font-bold ${hi ? "bg-[#7ce0a8] text-[#0b2a1a]" : "border border-white/20"}`}>{n}</span>
+                    <span className={`grid h-14 w-14 place-items-center rounded-xl text-sm font-bold ${hi ? "bg-[#93c5fd] text-[#0f1b3d]" : "border border-white/20"}`}>{n}</span>
                     {l}
                   </span>
                 ))}
@@ -363,8 +363,8 @@ export default async function HomePage({ params, searchParams }: { params: Promi
               <div className="mt-8 grid gap-3" style={{ gridTemplateColumns: `repeat(${stats.length}, minmax(0, 1fr))` }}>
                 {stats.map((s) => (
                   <div key={s.l} className="rounded-2xl border border-white/10 p-5 text-center">
-                    <b className="display block text-3xl text-[#7ce0a8]">{s.v}</b>
-                    <span className="text-[13px] text-[#c9cfc6]">{s.l}</span>
+                    <b className="display block text-3xl text-[#93c5fd]">{s.v}</b>
+                    <span className="text-[13px] text-[#c3cde3]">{s.l}</span>
                   </div>
                 ))}
               </div>
@@ -390,7 +390,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
             <h2 className="display mt-1.5 text-2xl">{g("home.faqTitle")}</h2>
             <div className="mt-3 space-y-2.5">
               {faq.map((f, i) => (
-                <details key={i} open={i === 0} className="group rounded-xl border border-border px-4 py-3 open:border-[#cfe7d8] open:bg-primary-soft/50">
+                <details key={i} open={i === 0} className="group rounded-xl border border-border px-4 py-3 open:border-[#c7d7fb] open:bg-primary-soft/50">
                   <summary className="cursor-pointer font-semibold">{f.q}</summary>
                   <p className="mt-2 text-[15px] text-muted">{f.a}</p>
                 </details>
@@ -402,14 +402,14 @@ export default async function HomePage({ params, searchParams }: { params: Promi
 
       {show("support") && (
         <section className="container-page mt-6">
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[#111418] px-6 py-5 text-white">
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[#0F1B3D] px-6 py-5 text-white">
             <span>
-              <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7ce0a8]">● {g("home.supportOnline")}</span>
+              <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[#93c5fd]">● {g("home.supportOnline")}</span>
               <b className="block text-xl">{g("home.needHelp")}</b>
-              <span className="text-sm text-[#b9c0b6]">{g("home.needHelpSub")}</span>
+              <span className="text-sm text-[#b4c0da]">{g("home.needHelpSub")}</span>
             </span>
             <span className="flex gap-2.5">
-              <a href={`https://wa.me/${settings.whatsappNumber}`} target="_blank" rel="noopener" className="inline-flex min-h-12 items-center rounded-xl bg-[#7ce0a8] px-5 font-semibold text-[#0b2a1a]">{g("home.whatsapp")}</a>
+              <a href={`https://wa.me/${settings.whatsappNumber}`} target="_blank" rel="noopener" className="inline-flex min-h-12 items-center rounded-xl bg-[#93c5fd] px-5 font-semibold text-[#0f1b3d]">{g("home.whatsapp")}</a>
               {settings.telegramUrl && <a href={settings.telegramUrl} target="_blank" rel="noopener" className="inline-flex min-h-12 items-center rounded-xl border border-white/20 px-5 font-semibold">{g("home.telegram")}</a>}
             </span>
           </div>

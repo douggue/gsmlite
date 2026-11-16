@@ -4,7 +4,7 @@ import { Link } from "@/i18n/navigation";
 /** Bright backgrounds in turn (used when a category has no background picture yet). */
 const TINTS = [
   "linear-gradient(135deg,#fff4e0 0%,#ffd7a8 55%,#ffb36b 100%)",
-  "linear-gradient(135deg,#e4f3ea 0%,#cddcff 55%,#a9c2ff 100%)",
+  "linear-gradient(135deg,#e8f0fe 0%,#cddcff 55%,#a9c2ff 100%)",
   "linear-gradient(135deg,#eef2e6 0%,#ddc6ff 55%,#bf98ff 100%)",
   "linear-gradient(135deg,#eafff3 0%,#bff2d6 55%,#8be3b5 100%)",
 ];
@@ -21,7 +21,7 @@ export function CategoryCard({
   return (
     <Link
       href={href}
-      className="lift animate-rise group relative flex min-h-[8.25rem] flex-col sm:aspect-[16/10] sm:min-h-0 justify-between overflow-hidden rounded-[var(--radius-card,1rem)] p-3 text-[#111418] shadow-[0_14px_34px_-22px_rgba(10,20,50,.6)] ring-1 ring-black/5 sm:p-5"
+      className="lift animate-rise group relative flex min-h-[8.25rem] flex-col sm:aspect-[16/10] sm:min-h-0 justify-between overflow-hidden rounded-[var(--radius-card,1rem)] p-3 text-[#0F1B3D] shadow-[0_14px_34px_-22px_rgba(10,20,50,.6)] ring-1 ring-black/5 sm:p-5"
       style={{ background: TINTS[index % TINTS.length] }}
     >
       {cover && (

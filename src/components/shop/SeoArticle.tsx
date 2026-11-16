@@ -17,7 +17,7 @@ export function SeoArticle({ page, stepsTitle, faqTitle, showIntro = true }: { p
           <ol className="mt-3 space-y-2.5">
             {page.steps.map((s, i) => (
               <li key={i} className="flex gap-3">
-                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#111418] text-sm font-bold text-white dark:bg-primary">{i + 1}</span>
+                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#0F1B3D] text-sm font-bold text-white dark:bg-primary">{i + 1}</span>
                 <span className="pt-0.5">{s}</span>
               </li>
             ))}

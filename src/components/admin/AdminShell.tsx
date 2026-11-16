@@ -85,7 +85,7 @@ export function AdminShell({ groups, user, todo, suppliers, quick, children }: P
   const lowSupplier = suppliers.some((s) => s.low);
 
   const badge = (n: number, alert?: boolean) =>
-    n > 0 ? <span className={`ml-auto rounded-full px-2 py-px text-[11px] font-bold ${alert ? "bg-[#fcebdd] text-[#8a3607]" : "bg-[#7ce0a8] text-[#0b2a1a]"}`}>{n}</span> : null;
+    n > 0 ? <span className={`ml-auto rounded-full px-2 py-px text-[11px] font-bold ${alert ? "bg-[#fcebdd] text-[#8a3607]" : "bg-[#93c5fd] text-[#0f1b3d]"}`}>{n}</span> : null;
 
   const menu = (mode: "side" | "sheet") => (
     <nav aria-label="Admin" className="flex flex-col gap-0.5">
@@ -97,10 +97,10 @@ export function AdminShell({ groups, user, todo, suppliers, quick, children }: P
           <>
             <span className="grid h-8 w-8 shrink-0 place-items-center"><AdminIcon name={g.icon} width={19} height={19} /></span>
             {showLabels && <span className="min-w-0 flex-1 truncate text-left">{g.label}</span>}
-            {showLabels ? badge(groupBadge(g), groupAlert(g)) : groupBadge(g) > 0 && <span className={`absolute right-1.5 top-1.5 h-2 w-2 rounded-full ${groupAlert(g) ? "bg-[#f59e3b]" : "bg-[#7ce0a8]"}`} />}
+            {showLabels ? badge(groupBadge(g), groupAlert(g)) : groupBadge(g) > 0 && <span className={`absolute right-1.5 top-1.5 h-2 w-2 rounded-full ${groupAlert(g) ? "bg-[#f59e3b]" : "bg-[#93c5fd]"}`} />}
           </>
         );
-        const cls = `relative flex min-h-11 w-full items-center gap-2 rounded-xl px-2 text-[14px] font-semibold transition-colors ${active ? "bg-[#1f7a4d] text-white" : "text-[#c9cfc6] hover:bg-white/[0.07] hover:text-white"}`;
+        const cls = `relative flex min-h-11 w-full items-center gap-2 rounded-xl px-2 text-[14px] font-semibold transition-colors ${active ? "bg-[#1d4ed8] text-white" : "text-[#c3cde3] hover:bg-white/[0.07] hover:text-white"}`;
         return (
           <div key={g.key}>
             {single || (mode === "side" && folded) ? (
@@ -142,7 +142,7 @@ export function AdminShell({ groups, user, todo, suppliers, quick, children }: P
   const quickAdd = (
     <div ref={quickMenu.ref} className="relative">
       <button type="button" onClick={() => quickMenu.setOpen(!quickMenu.open)} aria-expanded={quickMenu.open}
-        className={`flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#7ce0a8] px-3 text-sm font-bold text-[#0b2a1a] hover:brightness-105 ${folded ? "w-11" : "w-full"}`} title="Quick add">
+        className={`flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#93c5fd] px-3 text-sm font-bold text-[#0f1b3d] hover:brightness-105 ${folded ? "w-11" : "w-full"}`} title="Quick add">
         <AdminIcon name="plus" width={18} height={18} />{!folded && "Quick add"}
       </button>
       {quickMenu.open && (
@@ -172,10 +172,10 @@ export function AdminShell({ groups, user, todo, suppliers, quick, children }: P
   return (
     <div className="min-h-dvh bg-bg lg:flex">
       {/* ─── Desktop menu ─── */}
-      <aside className={`sticky top-0 hidden h-dvh shrink-0 flex-col gap-3 overflow-y-auto bg-[#111418] p-3 text-white transition-[width] lg:flex ${folded ? "w-[76px]" : "w-64"}`}>
+      <aside className={`sticky top-0 hidden h-dvh shrink-0 flex-col gap-3 overflow-y-auto bg-[#0F1B3D] p-3 text-white transition-[width] lg:flex ${folded ? "w-[76px]" : "w-64"}`}>
         <div className={`flex items-center gap-2 px-1.5 pt-1 ${folded ? "justify-center" : ""}`}>
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#7ce0a8] text-[13px] font-black text-[#0b2a1a]">GL</span>
-          {!folded && <Link href="/admin" className="display text-[17px] font-extrabold leading-tight">GSM<span className="text-[#7ce0a8]">Lite</span><span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7d847a]">Admin</span></Link>}
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#93c5fd] text-[13px] font-black text-[#0f1b3d]">GL</span>
+          {!folded && <Link href="/admin" className="display text-[17px] font-extrabold leading-tight">GSM<span className="text-[#93c5fd]">Lite</span><span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-[#7d847a]">Admin</span></Link>}
         </div>
         {quickAdd}
         {menu("side")}
@@ -223,7 +223,7 @@ export function AdminShell({ groups, user, todo, suppliers, quick, children }: P
             <div ref={bell.ref} className="relative">
               <button type="button" onClick={() => bell.setOpen(!bell.open)} className="relative grid h-10 w-10 place-items-center rounded-xl text-muted hover:bg-surface-2" aria-label={`To do: ${todoTotal}`}>
                 <AdminIcon name="bell" width={19} height={19} />
-                {todoTotal > 0 && <span className="absolute right-1 top-1 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-warning px-1 text-[10px] font-bold text-[#0b0e10]">{todoTotal}</span>}
+                {todoTotal > 0 && <span className="absolute right-1 top-1 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-warning px-1 text-[10px] font-bold text-[#070d1f]">{todoTotal}</span>}
               </button>
               {bell.open && (
                 <div className={pop}>
@@ -271,7 +271,7 @@ export function AdminShell({ groups, user, todo, suppliers, quick, children }: P
                 <Link href={g.items[0].href} aria-current={on ? "page" : undefined} className={`flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-semibold ${on ? "text-primary" : "text-muted"}`}>
                   <span className={`relative grid h-7 w-11 place-items-center rounded-full ${on ? "bg-primary-soft" : ""}`}>
                     <AdminIcon name={g.icon} width={19} height={19} />
-                    {n > 0 && <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-warning px-1 text-[10px] font-bold text-[#0b0e10]">{n}</span>}
+                    {n > 0 && <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-warning px-1 text-[10px] font-bold text-[#070d1f]">{n}</span>}
                   </span>
                   <span className="max-w-full truncate px-1">{k === "home" ? "Home" : g.label}</span>
                 </Link>
@@ -289,7 +289,7 @@ export function AdminShell({ groups, user, todo, suppliers, quick, children }: P
       {sheet && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Admin menu">
           <button type="button" className="absolute inset-0 bg-black/50" aria-label="Close" onClick={() => setSheet(false)} />
-          <div className="absolute inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto rounded-t-3xl bg-[#111418] p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] text-white">
+          <div className="absolute inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto rounded-t-3xl bg-[#0F1B3D] p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] text-white">
             <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-white/20" />
             <div className="mb-3 grid grid-cols-2 gap-2">
               {quick.slice(0, 4).map((q) => <Link key={q.href} href={q.href} className="flex min-h-11 items-center justify-center rounded-xl bg-white/[0.08] px-2 text-center text-[13px] font-semibold">{q.label}</Link>)}

@@ -30,11 +30,11 @@ export function SearchBox({ placeholder, label, buttonLabel, variant = "light", 
           placeholder={placeholder}
           aria-label={label ? undefined : placeholder}
           className={dark
-            ? "h-12 min-w-0 flex-1 rounded-xl border border-white/15 bg-white/[0.06] px-4 text-[15px] text-white placeholder:text-[#9aa197] focus:border-[#7ce0a8] focus:outline-none"
-            : "h-12 min-w-0 flex-1 rounded-xl border-[1.5px] border-[#111418] bg-white px-3.5 text-base text-[#111418] placeholder:text-[#7a8077] focus:outline-none focus:ring-2 focus:ring-primary dark:border-border dark:bg-surface dark:text-text"}
+            ? "h-12 min-w-0 flex-1 rounded-xl border border-white/15 bg-white/[0.06] px-4 text-[15px] text-white placeholder:text-[#9aa197] focus:border-[#93c5fd] focus:outline-none"
+            : "h-12 min-w-0 flex-1 rounded-xl border-[1.5px] border-[#0F1B3D] bg-white px-3.5 text-base text-[#0F1B3D] placeholder:text-[#7a8077] focus:outline-none focus:ring-2 focus:ring-primary dark:border-border dark:bg-surface dark:text-text"}
         />
         {!dark && (
-          <button type="submit" aria-label={buttonLabel} className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-[#111418] text-white dark:bg-primary">
+          <button type="submit" aria-label={buttonLabel} className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-[#0F1B3D] text-white dark:bg-primary">
             <SearchIcon width={20} height={20} />
           </button>
         )}

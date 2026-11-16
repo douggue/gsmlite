@@ -364,7 +364,7 @@ function FavButton({ fav, onFav, small = false }: { fav: boolean; onFav: () => v
       }}
       aria-pressed={fav}
       aria-label={fav ? ts("unfavorite") : ts("favorite")}
-      className={`absolute left-1.5 top-1.5 grid place-items-center rounded-lg bg-[#0b0e10]/55 backdrop-blur transition-transform active:scale-90 ${small ? "h-8 w-8 text-base" : "h-9 w-9 text-lg"} ${fav ? "text-[#ffc53d]" : "text-white"}`}
+      className={`absolute left-1.5 top-1.5 grid place-items-center rounded-lg bg-[#070d1f]/55 backdrop-blur transition-transform active:scale-90 ${small ? "h-8 w-8 text-base" : "h-9 w-9 text-lg"} ${fav ? "text-[#ffc53d]" : "text-white"}`}
     >
       {fav ? "★" : "☆"}
     </button>

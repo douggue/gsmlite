@@ -16,7 +16,7 @@ export function Logo({ className = "", src, darkSrc, alt = "GSMLite" }: { classN
     <span className={`inline-flex items-center gap-2 ${className}`} role="img" aria-label={alt}>
       <LogoMark className="h-8 w-8 shrink-0" />
       <span aria-hidden className="font-display text-[1.35rem] font-extrabold leading-none tracking-tight max-[349px]:hidden">
-        GSM<span className="text-[#1F7A4D] dark:text-[#7CE0A8]">Lite</span>
+        GSM<span className="text-[#1D4ED8] dark:text-[#93C5FD]">Lite</span>
       </span>
     </span>
   );
@@ -26,11 +26,11 @@ export function Logo({ className = "", src, darkSrc, alt = "GSMLite" }: { classN
 export function LogoMark({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 100 100" className={className} aria-hidden="true">
-      <rect width="100" height="100" rx="24" fill="#111418" />
-      <path d="M36 46V36a14 14 0 0 1 26.5-6.3" fill="none" stroke="#7CE0A8" strokeWidth="8" strokeLinecap="round" />
-      <rect x="26" y="46" width="48" height="34" rx="8" fill="#7CE0A8" />
-      <circle cx="50" cy="60" r="5" fill="#111418" />
-      <rect x="47.5" y="61" width="5" height="10" rx="2.5" fill="#111418" />
+      <rect width="100" height="100" rx="24" fill="#0F1B3D" />
+      <path d="M36 46V36a14 14 0 0 1 26.5-6.3" fill="none" stroke="#93C5FD" strokeWidth="8" strokeLinecap="round" />
+      <rect x="26" y="46" width="48" height="34" rx="8" fill="#93C5FD" />
+      <circle cx="50" cy="60" r="5" fill="#0F1B3D" />
+      <rect x="47.5" y="61" width="5" height="10" rx="2.5" fill="#0F1B3D" />
     </svg>
   );
 }

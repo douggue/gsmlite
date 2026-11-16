@@ -19,7 +19,7 @@ export function HomeSlider({ slides, prevLabel, nextLabel }: { slides: Slide[]; 
   return (
     <section
       aria-roledescription="carousel"
-      className="relative flex min-h-[460px] flex-col justify-between overflow-hidden rounded-[20px] bg-[#111418] p-10 text-white"
+      className="relative flex min-h-[460px] flex-col justify-between overflow-hidden rounded-[20px] bg-[#0F1B3D] p-10 text-white"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -29,19 +29,19 @@ export function HomeSlider({ slides, prevLabel, nextLabel }: { slides: Slide[]; 
       )}
       <div key={s.id} className="animate-rise relative" aria-live="polite">
         <p className="flex flex-wrap items-center gap-2.5 text-[13px] font-semibold uppercase tracking-[0.12em]">
-          {s.tag && <span className="rounded-md bg-[#7ce0a8] px-2 py-0.5 text-[#0b2a1a]">{s.tag}</span>}
-          {s.label && <span className="text-[#7ce0a8]">{s.label}</span>}
+          {s.tag && <span className="rounded-md bg-[#93c5fd] px-2 py-0.5 text-[#0f1b3d]">{s.tag}</span>}
+          {s.label && <span className="text-[#93c5fd]">{s.label}</span>}
         </p>
         <h1 className="display mt-4 max-w-[15ch] text-5xl leading-[1.02] tracking-tight">{s.title}</h1>
         {s.bullets.length > 0 && (
-          <ul className="mt-5 space-y-1.5 text-base text-[#dfe4dc]">
+          <ul className="mt-5 space-y-1.5 text-base text-[#dde5f5]">
             {s.bullets.map((b) => <li key={b}>✓ {b}</li>)}
           </ul>
         )}
         <div className="mt-6 flex flex-wrap gap-2.5">
           {s.buttonText && (external(s.buttonHref)
-            ? <a href={s.buttonHref} className="inline-flex min-h-[50px] items-center rounded-xl bg-[#7ce0a8] px-5 font-semibold text-[#0b2a1a]">{s.buttonText} <span className="inline-block rtl:-scale-x-100">→</span></a>
-            : <Link href={s.buttonHref} className="inline-flex min-h-[50px] items-center rounded-xl bg-[#7ce0a8] px-5 font-semibold text-[#0b2a1a]">{s.buttonText} <span className="inline-block rtl:-scale-x-100">→</span></Link>)}
+            ? <a href={s.buttonHref} className="inline-flex min-h-[50px] items-center rounded-xl bg-[#93c5fd] px-5 font-semibold text-[#0f1b3d]">{s.buttonText} <span className="inline-block rtl:-scale-x-100">→</span></a>
+            : <Link href={s.buttonHref} className="inline-flex min-h-[50px] items-center rounded-xl bg-[#93c5fd] px-5 font-semibold text-[#0f1b3d]">{s.buttonText} <span className="inline-block rtl:-scale-x-100">→</span></Link>)}
           {s.button2Text && s.button2Href && (external(s.button2Href)
             ? <a href={s.button2Href} target="_blank" rel="noopener" className="inline-flex min-h-[50px] items-center rounded-xl border border-white/25 px-5 font-semibold">{s.button2Text}</a>
             : <Link href={s.button2Href} className="inline-flex min-h-[50px] items-center rounded-xl border border-white/25 px-5 font-semibold">{s.button2Text}</Link>)}
@@ -52,10 +52,10 @@ export function HomeSlider({ slides, prevLabel, nextLabel }: { slides: Slide[]; 
           <div className="flex gap-1.5">
             {slides.map((x, n) => (
               <button key={x.id} type="button" aria-label={`${n + 1} / ${slides.length}`} aria-current={n === i} onClick={() => setI(n)}
-                className={`h-1 w-9 rounded-full ${n === i ? "bg-[#7ce0a8]" : "bg-white/20"}`} />
+                className={`h-1 w-9 rounded-full ${n === i ? "bg-[#93c5fd]" : "bg-white/20"}`} />
             ))}
           </div>
-          <div className="flex items-center gap-3 text-[13px] text-[#b9c0b6]">
+          <div className="flex items-center gap-3 text-[13px] text-[#b4c0da]">
             <button type="button" aria-label={prevLabel} onClick={() => setI((i - 1 + slides.length) % slides.length)} className="grid h-9 w-9 place-items-center rounded-full border border-white/20">‹</button>
             <span className="tabular-nums">{String(i + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}</span>
             <button type="button" aria-label={nextLabel} onClick={() => setI((i + 1) % slides.length)} className="grid h-9 w-9 place-items-center rounded-full border border-white/20">›</button>

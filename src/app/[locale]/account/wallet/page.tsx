@@ -53,21 +53,21 @@ export default async function WalletPage({ params }: { params: Promise<{ locale:
       <header className="flex items-center justify-between gap-3">
         <h1 className="display text-[28px] tracking-tight">{tw("title")}</h1>
         {me?.priceGroup && me.priceGroup.discountBps > 0 && (
-          <span className="rounded-full bg-[#111418] px-2.5 py-1.5 text-xs font-semibold text-[#7ce0a8]">{g("groupChip", { group: me.priceGroup.name, pct: me.priceGroup.discountBps / 100 })}</span>
+          <span className="rounded-full bg-[#0F1B3D] px-2.5 py-1.5 text-xs font-semibold text-[#93c5fd]">{g("groupChip", { group: me.priceGroup.name, pct: me.priceGroup.discountBps / 100 })}</span>
         )}
       </header>
 
-      <section className="grid grid-cols-2 gap-3 rounded-[20px] bg-[#111418] p-[18px] text-white">
-        <div><span className="text-xs text-[#b9c0b6]">USD</span><b className="display block text-[30px] tabular-nums">{money(balances.USD.available, "USD")}</b></div>
-        <div><span className="text-xs text-[#b9c0b6]">HTG</span><b className="display block text-[30px] tabular-nums">{money(balances.HTG.available, "HTG").replace(" HTG", " G")}</b></div>
+      <section className="grid grid-cols-2 gap-3 rounded-[20px] bg-[#0F1B3D] p-[18px] text-white">
+        <div><span className="text-xs text-[#b4c0da]">USD</span><b className="display block text-[30px] tabular-nums">{money(balances.USD.available, "USD")}</b></div>
+        <div><span className="text-xs text-[#b4c0da]">HTG</span><b className="display block text-[30px] tabular-nums">{money(balances.HTG.available, "HTG").replace(" HTG", " G")}</b></div>
         {held > 0 && <p className="col-span-2 text-xs text-[#ffd48a]">{g("held", { usd: money(balances.USD.held, "USD"), htg: money(balances.HTG.held, "HTG") })}</p>}
-        <Link href="/account/wallet/deposit" className="col-span-2 flex min-h-12 items-center justify-center rounded-xl bg-[#7ce0a8] font-semibold text-[#0b2a1a]">{g("addMoney")}</Link>
-        <Link href="/account/wallet/exchange" className="col-span-2 -mt-1 text-center text-xs font-semibold text-[#b9c0b6] underline">{g("exchange")}</Link>
+        <Link href="/account/wallet/deposit" className="col-span-2 flex min-h-12 items-center justify-center rounded-xl bg-[#93c5fd] font-semibold text-[#0f1b3d]">{g("addMoney")}</Link>
+        <Link href="/account/wallet/exchange" className="col-span-2 -mt-1 text-center text-xs font-semibold text-[#b4c0da] underline">{g("exchange")}</Link>
       </section>
 
       {showBonus && (
         <section className="flex items-center gap-3 rounded-2xl bg-primary-soft px-4 py-3.5">
-          <GiftIcon width={28} height={28} className="shrink-0 text-[#145c39] dark:text-primary" />
+          <GiftIcon width={28} height={28} className="shrink-0 text-[#1e40af] dark:text-primary" />
           <span className="text-sm">
             {firstTopUp && bonus.firstPct > 0 && <b>{g("bonusFirst", { pct: bonus.firstPct })} </b>}
             {bonus.pct > 0 && g("bonusMore", { min: money(bonus.minUsd, "USD"), pct: bonus.pct })}
@@ -139,7 +139,7 @@ export default async function WalletPage({ params }: { params: Promise<{ locale:
                   </span>
                   <span className="block text-xs text-muted">{fmt.dateTime(e.createdAt, { dateStyle: "medium", timeStyle: "short" })}</span>
                 </span>
-                <b className={`shrink-0 tabular-nums ${e.amount > 0 ? "text-[#145c39] dark:text-success" : ""}`}>
+                <b className={`shrink-0 tabular-nums ${e.amount > 0 ? "text-[#1e40af] dark:text-success" : ""}`}>
                   {e.amount > 0 ? "+" : "−"}{formatMoney(Math.abs(e.amount), e.currency, locale)}
                 </b>
               </li>

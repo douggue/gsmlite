@@ -103,10 +103,10 @@ export default async function SupplierServices({ params, searchParams }: { param
     return `/admin/suppliers/${id}${s ? `?${s}` : ""}`;
   };
   const chip = (on: boolean, warn = false) =>
-    `inline-flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold ${on ? "bg-[#111418] text-white dark:bg-primary" : `border bg-surface ${warn ? "border-warning/40 text-warning" : "border-border"}`}`;
+    `inline-flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold ${on ? "bg-[#0F1B3D] text-white dark:bg-primary" : `border bg-surface ${warn ? "border-warning/40 text-warning" : "border-border"}`}`;
   // Phones: one row that scrolls sideways; wide screens: wraps.
   const scroller = "-mx-4 flex gap-2 overflow-x-auto whitespace-nowrap px-4 sm:mx-0 sm:flex-wrap sm:px-0 [&>*]:shrink-0";
-  const pill = (on: boolean) => `rounded-full px-2.5 py-1 font-semibold ${on ? "bg-[#111418] text-white dark:bg-primary" : "border border-border bg-surface"}`;
+  const pill = (on: boolean) => `rounded-full px-2.5 py-1 font-semibold ${on ? "bg-[#0F1B3D] text-white dark:bg-primary" : "border border-border bg-surface"}`;
 
   const groupLinks = (
     <>

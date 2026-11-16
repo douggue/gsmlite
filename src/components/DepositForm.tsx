@@ -57,8 +57,8 @@ export function DepositForm(p: Props) {
 
   const methods: Method[] = [
     ...(p.moncash ? [{ key: "MONCASH", kind: "moncash" as const, name: "MonCash", brand: "moncash" as const, mark: "MC", markBg: "#e30613", markFg: "#fff", recipientName: "", recipientNumber: "" }] : []),
-    ...(p.card ? [{ key: "CARD", kind: "card" as const, name: tw("card"), mark: "VISA", markBg: "#111418", markFg: "#7ce0a8", recipientName: "", recipientNumber: "" }] : []),
-    ...(p.natcash ? [{ key: "NATCASH", kind: "mobile" as const, name: "NatCash", brand: "natcash" as const, mark: "NC", markBg: "#f7a400", markFg: "#0b0e10", recipientName: p.natcashName, recipientNumber: p.natcashPhone, qr: p.natcashQr || null }] : []),
+    ...(p.card ? [{ key: "CARD", kind: "card" as const, name: tw("card"), mark: "VISA", markBg: "#0F1B3D", markFg: "#93c5fd", recipientName: "", recipientNumber: "" }] : []),
+    ...(p.natcash ? [{ key: "NATCASH", kind: "mobile" as const, name: "NatCash", brand: "natcash" as const, mark: "NC", markBg: "#f7a400", markFg: "#070d1f", recipientName: p.natcashName, recipientNumber: p.natcashPhone, qr: p.natcashQr || null }] : []),
     ...p.manual.map((m) => ({
       key: `MANUAL:${m.id}`,
       kind: m.kind,
@@ -400,7 +400,7 @@ export function DepositForm(p: Props) {
               {tw("refHelpExample", { recipient: m.recipientName.toUpperCase(), ref: "§" }).split("§").map((part, i) =>
                 i === 0 ? part : (
                   <span key={i}>
-                    <mark className="rounded bg-[#f7a400] px-1 font-mono font-bold text-[#0b0e10]">20261014094821</mark>
+                    <mark className="rounded bg-[#f7a400] px-1 font-mono font-bold text-[#070d1f]">20261014094821</mark>
                     {part}
                   </span>
                 ),

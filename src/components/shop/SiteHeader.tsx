@@ -45,7 +45,7 @@ export async function SiteHeader() {
   return (
     <>
       {/* Thin trust bar (wide screens) */}
-      <div className="hidden bg-[#111418] text-[12.5px] text-[#c9cfc6] lg:block">
+      <div className="hidden bg-[#0F1B3D] text-[12.5px] text-[#c3cde3] lg:block">
         <div className="container-page flex h-8 items-center justify-between gap-4">
           <span className="flex gap-5">
             <span>{t("top.delivery")}</span>
@@ -59,9 +59,9 @@ export async function SiteHeader() {
         </div>
       </div>
 
-      <header className="sticky top-0 z-40 border-b border-border bg-bg/90 backdrop-blur-md lg:border-[#1d2226] lg:bg-[#111418] lg:text-white">
+      <header className="sticky top-0 z-40 border-b border-border bg-bg/90 backdrop-blur-md lg:border-[#1d2226] lg:bg-[#0F1B3D] lg:text-white">
         <div className="container-page flex h-16 items-center gap-2 lg:h-[82px] lg:gap-5">
-          <Link href="/" className="shrink-0 lg:[&_.font-display]:text-white lg:[&_.font-display_span]:!text-[#7ce0a8]">
+          <Link href="/" className="shrink-0 lg:[&_.font-display]:text-white lg:[&_.font-display_span]:!text-[#93c5fd]">
             <Logo src={settings.logoUrl} darkSrc={settings.logoDarkUrl} alt={settings.businessName} />
           </Link>
           <div className="hidden flex-1 lg:block">
@@ -88,7 +88,7 @@ export async function SiteHeader() {
                 aria-label={`${t("header.balance")}: ${balance}`}
                 className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border bg-surface px-3 text-sm font-semibold tabular-nums lg:border-white/15 lg:bg-white/[0.06] lg:text-white"
               >
-                <WalletIcon width={16} height={16} className="text-primary lg:text-[#7ce0a8]" />
+                <WalletIcon width={16} height={16} className="text-primary lg:text-[#93c5fd]" />
                 {balance}
               </Link>
             ) : (
@@ -96,14 +96,14 @@ export async function SiteHeader() {
                 <Link href="/auth/login" className="inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-3.5 text-sm font-semibold lg:rounded-xl lg:border-white/20 lg:bg-transparent lg:px-4 lg:text-white">
                   {t("header.signIn")}
                 </Link>
-                <Link href="/auth/register" className="hidden min-h-11 items-center rounded-xl bg-[#7ce0a8] px-4 text-sm font-semibold text-[#0b2a1a] lg:inline-flex">
+                <Link href="/auth/register" className="hidden min-h-11 items-center rounded-xl bg-[#93c5fd] px-4 text-sm font-semibold text-[#0f1b3d] lg:inline-flex">
                   {t("header.createAccount")}
                 </Link>
               </>
             )}
             {user && (
               <Link href="/account" className="hidden min-h-10 px-1 lg:inline-flex" aria-label={tc("account")}>
-                <span className="grid h-9 w-9 place-items-center rounded-full bg-[#7ce0a8] text-sm font-bold text-[#0b2a1a]">{user.name.slice(0, 1).toUpperCase()}</span>
+                <span className="grid h-9 w-9 place-items-center rounded-full bg-[#93c5fd] text-sm font-bold text-[#0f1b3d]">{user.name.slice(0, 1).toUpperCase()}</span>
               </Link>
             )}
             {user && isStaff(user.role) && <a href="/admin" className="hidden min-h-10 items-center rounded-xl border border-white/20 px-3 text-sm font-semibold xl:inline-flex">{tc("admin")}</a>}
@@ -117,7 +117,7 @@ export async function SiteHeader() {
       {/* Category row with "Hot" badges (wide screens) */}
       <nav aria-label={t("header.allCategories")} className="hidden border-b border-border bg-surface lg:block">
         <div className="container-page flex h-[62px] items-center gap-1 overflow-x-auto whitespace-nowrap text-[15px]">
-          <Link href="/categories" className="mr-2 inline-flex min-h-[42px] items-center rounded-xl bg-[#111418] px-3.5 font-semibold text-white dark:bg-primary">{t("header.allCategories")}</Link>
+          <Link href="/categories" className="mr-2 inline-flex min-h-[42px] items-center rounded-xl bg-[#0F1B3D] px-3.5 font-semibold text-white dark:bg-primary">{t("header.allCategories")}</Link>
           {menu.map((c) => (
             <Link key={c.slug} href={`/categories/${c.slug}`} className="inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2.5 hover:bg-surface-2">
               {txt(c.name, locale)}

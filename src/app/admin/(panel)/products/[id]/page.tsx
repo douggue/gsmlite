@@ -166,7 +166,7 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
                 kycLevels={levels}
                 fieldsSummary={summarize(product.fields as FieldDef[])}
                 product={{
-                  id: product.id, slug: product.slug, categoryId: product.categoryId, accent: product.accent ?? "#1F7A4D",
+                  id: product.id, slug: product.slug, categoryId: product.categoryId, accent: product.accent ?? "#1D4ED8",
                   fulfillmentType: product.fulfillmentType, isPublished: product.isPublished, isFeatured: product.isFeatured, sortOrder: product.sortOrder,
                   name: product.name as Record<string, string>, description: product.description as Record<string, string>,
                   delivery: (product.deliveryEstimate ?? {}) as Record<string, string>, instructions: (product.instructions ?? {}) as Record<string, string>, seoTitle: (product.seoTitle ?? {}) as Record<string, string>,

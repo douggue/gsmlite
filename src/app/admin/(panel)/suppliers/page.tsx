@@ -64,7 +64,7 @@ export default async function SuppliersPage() {
                 {stuck > 0 && s.isEnabled ? (
                   <ActionButton label="Send waiting orders again" className={`${linkBtn} bg-primary text-white`} action={resendWaiting.bind(null, s.id)} />
                 ) : (
-                  <Link href={`/admin/suppliers/${s.id}`} className={`${linkBtn} bg-[#111418] text-white dark:bg-surface-2`}>Service list &amp; import</Link>
+                  <Link href={`/admin/suppliers/${s.id}`} className={`${linkBtn} bg-[#0F1B3D] text-white dark:bg-surface-2`}>Service list &amp; import</Link>
                 )}
                 <ActionButton label="Sync now" className={`${linkBtn} border border-border bg-surface`} action={syncSupplier.bind(null, s.id)} />
                 <Link href={`/admin/suppliers/${s.id}/logs`} className={`${linkBtn} border border-border bg-surface`}>Logs</Link>

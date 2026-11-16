@@ -40,7 +40,7 @@ type SeedProduct = {
 
 const products: SeedProduct[] = [
   {
-    slug: "iphone-usa-att-unlock", category: "carrier-unlock", accent: "#111418", featured: true, fulfillment: "MANUAL", serviceType: "IMEI",
+    slug: "iphone-usa-att-unlock", category: "carrier-unlock", accent: "#0F1B3D", featured: true, fulfillment: "MANUAL", serviceType: "IMEI",
     name: L("Debloke iPhone USA AT&T", "Déblocage iPhone USA AT&T", "iPhone USA AT&T unlock", "Liberación iPhone USA AT&T"),
     description: L(
       "Debloke pou tout tan. Telefòn nan dwe pa rapòte kòm pèdi oswa vòlè.",
@@ -57,7 +57,7 @@ const products: SeedProduct[] = [
     card: { title: L("iPhone USA AT&T", "iPhone USA AT&T", "iPhone USA AT&T", "iPhone USA AT&T"), tag: L("IMEI pwòp", "IMEI propre", "Clean IMEI", "IMEI limpio"), style: "ink" },
   },
   {
-    slug: "samsung-network-unlock-code", category: "carrier-unlock", accent: "#1F7A4D", fulfillment: "MANUAL", serviceType: "IMEI",
+    slug: "samsung-network-unlock-code", category: "carrier-unlock", accent: "#1D4ED8", fulfillment: "MANUAL", serviceType: "IMEI",
     name: L("Kòd debloke Samsung", "Code de déblocage Samsung", "Samsung network unlock code", "Código de liberación Samsung"),
     description: L("Kòd pou debloke rezo a.", "Code pour débloquer le réseau.", "Code to unlock the network.", "Código para liberar la red."),
     delivery: L("1–24 è", "1–24 h", "1–24 h", "1–24 h"),
@@ -66,7 +66,7 @@ const products: SeedProduct[] = [
     tags: ["Samsung"],
   },
   {
-    slug: "full-imei-check", category: "imei-checks", accent: "#E4F3EA", featured: true, fulfillment: "MANUAL", serviceType: "IMEI",
+    slug: "full-imei-check", category: "imei-checks", accent: "#E8F0FE", featured: true, fulfillment: "MANUAL", serviceType: "IMEI",
     name: L("Tchèk IMEI konplè", "Vérification IMEI complète", "Full IMEI check", "Verificación IMEI completa"),
     description: L(
       "Operatè, lis nwa, garanti ak modèl.",
@@ -104,7 +104,7 @@ const products: SeedProduct[] = [
     variants: [{ name: L("Pa kredi", "Par crédit", "Per credit", "Por crédito"), price: 0.6, minQty: 10, maxQty: 1000 }],
   },
   {
-    slug: "samsung-frp-remove-remote", category: "remote-services", accent: "#111418", featured: true, hideFromGoogle: true, fulfillment: "MANUAL", serviceType: "REMOTE",
+    slug: "samsung-frp-remove-remote", category: "remote-services", accent: "#0F1B3D", featured: true, hideFromGoogle: true, fulfillment: "MANUAL", serviceType: "REMOTE",
     card: { title: L("Retire FRP Samsung", "Suppression FRP Samsung", "Samsung FRP remove", "Eliminar FRP Samsung"), tag: L("30 min", "30 min", "30 min", "30 min"), style: "ink" },
     name: L("Retire FRP Samsung", "Suppression FRP Samsung", "Samsung FRP remove", "Eliminar FRP Samsung"),
     description: L("Fèt a distans sou òdinatè ou.", "Fait à distance sur votre ordinateur.", "Done remotely on your computer.", "Se hace a distancia en su computadora."),

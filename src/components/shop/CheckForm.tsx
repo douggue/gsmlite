@@ -36,14 +36,14 @@ export function CheckForm({ initial, signedIn, left: startLeft, perDay, full, cr
       <div className="flex items-center justify-end">
         {signedIn && <span className="rounded-full bg-primary-soft px-2.5 py-1.5 text-xs font-semibold text-primary">{g("left", { left, total: perDay })}</span>}
       </div>
-      <section className="rounded-[20px] bg-[#111418] px-4 py-5 text-white">
-        <h1 className="display text-[30px] leading-[1.1] tracking-tight">{g("title1")}<br /><span className="text-[#7ce0a8]">{g("title2")}</span></h1>
-        <p className="mb-4 mt-2.5 text-sm text-[#c9cfc6]">{g("sub")}</p>
+      <section className="rounded-[20px] bg-[#0F1B3D] px-4 py-5 text-white">
+        <h1 className="display text-[30px] leading-[1.1] tracking-tight">{g("title1")}<br /><span className="text-[#93c5fd]">{g("title2")}</span></h1>
+        <p className="mb-4 mt-2.5 text-sm text-[#c3cde3]">{g("sub")}</p>
         <form onSubmit={(e) => { e.preventDefault(); run(); }}>
           <label htmlFor="ci" className="mb-1.5 block text-[13px] font-semibold">IMEI</label>
           <input id="ci" inputMode="numeric" autoComplete="off" value={imei} onChange={(e) => setImei(e.target.value.slice(0, 24))} placeholder="35 678901 234567 8"
-            className="h-[52px] w-full rounded-xl border-0 bg-white px-3.5 font-mono text-lg text-[#111418] focus:outline-none focus:ring-2 focus:ring-[#7ce0a8]" />
-          <button type="submit" disabled={pending || clean.length < 14} className="mt-2.5 min-h-[52px] w-full rounded-xl bg-[#7ce0a8] text-base font-semibold text-[#0b2a1a] disabled:opacity-60">
+            className="h-[52px] w-full rounded-xl border-0 bg-white px-3.5 font-mono text-lg text-[#0F1B3D] focus:outline-none focus:ring-2 focus:ring-[#93c5fd]" />
+          <button type="submit" disabled={pending || clean.length < 14} className="mt-2.5 min-h-[52px] w-full rounded-xl bg-[#93c5fd] text-base font-semibold text-[#0f1b3d] disabled:opacity-60">
             {pending ? g("checking") : g("checkNow")}
           </button>
         </form>

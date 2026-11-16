@@ -16,13 +16,13 @@ export async function AuthShell({ children }: { children: React.ReactNode }) {
         <div className="hero-grid" aria-hidden />
         <div className="stagger relative flex max-w-lg flex-col gap-6">
           <p className="display animate-rise text-5xl font-bold leading-[1.05]">
-            {t("heroTitle")} <span className="text-[#7ce0a8]">{t("heroAccent")}</span>
+            {t("heroTitle")} <span className="text-[#93c5fd]">{t("heroAccent")}</span>
           </p>
-          <p className="animate-rise text-lg text-[#c9cfc6]">{t("heroBody")}</p>
+          <p className="animate-rise text-lg text-[#c3cde3]">{t("heroBody")}</p>
           <ul className="animate-rise mt-2 space-y-4">
             {items.map(([Icon, title, body]) => (
               <li key={title} className="flex items-center gap-4">
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#1f7a4d]/25 text-[#8fb5ff]"><Icon /></span>
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#1d4ed8]/25 text-[#8fb5ff]"><Icon /></span>
                 <span>
                   <b className="block">{t(title)}</b>
                   <span className="text-sm text-[#9fb0d0]">{t(body)}</span>

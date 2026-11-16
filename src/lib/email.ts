@@ -93,13 +93,13 @@ const COPY = {
 
 export function emailLayout(name: string, body: string, cta: string, url: string, ignore: string) {
   const safeName = name.replace(/[<>&"]/g, "");
-  const html = `<!doctype html><html><body style="margin:0;background:#f4f5f2;font-family:Arial,sans-serif;color:#111418">
+  const html = `<!doctype html><html><body style="margin:0;background:#f4f7fd;font-family:Arial,sans-serif;color:#0F1B3D">
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px">
 <table width="100%" style="max-width:480px;background:#fff;border-radius:16px;padding:28px" cellpadding="0" cellspacing="0"><tr><td>
-<p style="font-size:20px;font-weight:800;margin:0 0 16px">GSM<span style="color:#1F7A4D">Lite</span></p>
+<p style="font-size:20px;font-weight:800;margin:0 0 16px">GSM<span style="color:#1D4ED8">Lite</span></p>
 <p style="margin:0 0 8px">${safeName ? `${safeName},` : ""}</p>
 <p style="margin:0 0 24px;line-height:1.5">${body}</p>
-<p style="margin:0 0 24px"><a href="${url}" style="display:inline-block;background:#1F7A4D;color:#fff;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:10px">${cta}</a></p>
+<p style="margin:0 0 24px"><a href="${url}" style="display:inline-block;background:#1D4ED8;color:#fff;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:10px">${cta}</a></p>
 <p style="margin:0;font-size:13px;color:#55668a;line-height:1.5">${ignore}</p>
 </td></tr></table></td></tr></table></body></html>`;
   const text = `${safeName ? `${safeName},\n\n` : ""}${body}\n\n${cta}: ${url}\n\n${ignore}`;

@@ -14,20 +14,20 @@ export async function SiteFooter({ settings, methods, categories }: { settings: 
   const t = await getTranslations("gl.footer");
   const names = listNames(methods, locale);
   const badges = [...new Set(methods.map((m) => (m.kind === "card" ? "Visa · Mastercard" : m.name)))];
-  const link = "text-[#b9c0b6] hover:text-white";
+  const link = "text-[#b4c0da] hover:text-white";
   return (
-    <footer className="mt-16 bg-[#0b0e10] text-white">
+    <footer className="mt-16 bg-[#070d1f] text-white">
       <div className="container-page grid gap-5 border-b border-white/10 py-6 text-sm sm:grid-cols-2 lg:grid-cols-4">
-        <p><b className="block">{t("trust1")}</b><span className="text-[#b9c0b6]">{t("trust1Sub")}</span></p>
-        <p><b className="block">{t("trust2")}</b><span className="text-[#b9c0b6]">{t("trust2Sub")}</span></p>
-        <p><b className="block">{t("trust3")}</b><span className="text-[#b9c0b6]">{names ? t("trust3Sub", { methods: names }) : t("trust3Wallet")}</span></p>
-        <p><b className="block">{t("trust4")}</b><span className="text-[#b9c0b6]">{t("trust4Sub")}</span></p>
+        <p><b className="block">{t("trust1")}</b><span className="text-[#b4c0da]">{t("trust1Sub")}</span></p>
+        <p><b className="block">{t("trust2")}</b><span className="text-[#b4c0da]">{t("trust2Sub")}</span></p>
+        <p><b className="block">{t("trust3")}</b><span className="text-[#b4c0da]">{names ? t("trust3Sub", { methods: names }) : t("trust3Wallet")}</span></p>
+        <p><b className="block">{t("trust4")}</b><span className="text-[#b4c0da]">{t("trust4Sub")}</span></p>
       </div>
       <div className="container-page grid gap-8 py-8 text-sm sm:grid-cols-2 lg:grid-cols-4">
-        <div className="space-y-2 [&_.font-display]:text-white [&_.font-display_span]:!text-[#7ce0a8]">
+        <div className="space-y-2 [&_.font-display]:text-white [&_.font-display_span]:!text-[#93c5fd]">
           <Logo src={settings.logoDarkUrl || settings.logoUrl} alt={settings.businessName} />
-          <p className="text-[#b9c0b6]">{t("tagline")}</p>
-          {settings.businessAddress && <p className="text-[#8a9187]">{settings.businessAddress}</p>}
+          <p className="text-[#b4c0da]">{t("tagline")}</p>
+          {settings.businessAddress && <p className="text-[#8a94a6]">{settings.businessAddress}</p>}
         </div>
         <div>
           <h2 className="mb-3 font-semibold">{t("colServices")}</h2>
@@ -60,12 +60,12 @@ export async function SiteFooter({ settings, methods, categories }: { settings: 
         </div>
       </div>
       {settings.newsletterEnabled && <div className="container-page pb-6"><NewsletterForm /></div>}
-      <div className="container-page flex flex-wrap items-center gap-x-6 gap-y-3 pb-5 text-[#b9c0b6] [&_*]:!text-[#b9c0b6]"><DataSaverToggle /><InstallLink /></div>
-      <div className="container-page flex flex-wrap items-center justify-between gap-3 border-t border-white/10 py-5 text-[13px] text-[#b9c0b6]">
+      <div className="container-page flex flex-wrap items-center gap-x-6 gap-y-3 pb-5 text-[#b4c0da] [&_*]:!text-[#b4c0da]"><DataSaverToggle /><InstallLink /></div>
+      <div className="container-page flex flex-wrap items-center justify-between gap-3 border-t border-white/10 py-5 text-[13px] text-[#b4c0da]">
         <span>© {new Date().getFullYear()} {settings.legal?.entity || settings.businessName}. {t("rights")}{settings.legal?.registration ? ` · ${settings.legal.registration}` : ""}{settings.legal?.taxId ? ` · NIF ${settings.legal.taxId}` : ""}</span>
         {badges.length > 0 && (
           <span className="flex flex-wrap gap-1.5">
-            {badges.map((b) => <span key={b} className="rounded-md bg-white px-2 py-1 text-xs font-bold text-[#111418]">{b}</span>)}
+            {badges.map((b) => <span key={b} className="rounded-md bg-white px-2 py-1 text-xs font-bold text-[#0F1B3D]">{b}</span>)}
           </span>
         )}
       </div>

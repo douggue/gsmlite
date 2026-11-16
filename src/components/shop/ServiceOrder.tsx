@@ -225,8 +225,8 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
               const [title, ...rest] = t(v.name, locale).split("·");
               return (
                 <label key={v.id}
-                  className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-[14px] bg-surface p-3.5 ${active ? "border-2 border-[#111418] dark:border-primary" : "border border-border"} ${!v.inStock ? "cursor-not-allowed opacity-60" : ""}`}>
-                  <input type="radio" name="variant" checked={active} disabled={!v.inStock} onChange={() => { setVariantId(v.id); setQty(v.minQty); }} className="h-5 w-5 accent-[#111418] dark:accent-[var(--primary)]" />
+                  className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-[14px] bg-surface p-3.5 ${active ? "border-2 border-[#0F1B3D] dark:border-primary" : "border border-border"} ${!v.inStock ? "cursor-not-allowed opacity-60" : ""}`}>
+                  <input type="radio" name="variant" checked={active} disabled={!v.inStock} onChange={() => { setVariantId(v.id); setQty(v.minQty); }} className="h-5 w-5 accent-[#0F1B3D] dark:accent-[var(--primary)]" />
                   <span className="min-w-0 flex-1">
                     <b dir="auto" className={`block text-[15px] ${!v.inStock ? "line-through" : ""}`}>{title.trim()}</b>
                     {rest.length > 0 && <span dir="auto" className="text-xs text-muted">{rest.join("·").trim()}</span>}
@@ -258,7 +258,7 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
             value={idText}
             onChange={(e) => setIdText(e.target.value.slice(0, 2400))}
             aria-describedby="identifiers-help"
-            className="mt-2 w-full resize-y rounded-xl border-[1.5px] border-[#111418] bg-white px-3.5 py-3 font-mono text-base leading-relaxed text-[#111418] focus:outline-none focus:ring-2 focus:ring-primary dark:border-border dark:bg-surface dark:text-text"
+            className="mt-2 w-full resize-y rounded-xl border-[1.5px] border-[#0F1B3D] bg-white px-3.5 py-3 font-mono text-base leading-relaxed text-[#0F1B3D] focus:outline-none focus:ring-2 focus:ring-primary dark:border-border dark:bg-surface dark:text-text"
           />
           {(ids.valid.length > 0 || ids.invalid.length > 0) && (
             <ul className="mt-2 space-y-1.5 text-[13px]" aria-live="polite">
@@ -311,10 +311,10 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
             ...methods.map((m) => ({ id: m.id, name: m.name === "Card" ? g("card") : m.name, hint: g(`hint.${m.hint}`) }))].map((m) => {
             const on = method === m.id;
             return (
-              <label key={m.id} className={`relative flex min-h-11 cursor-pointer flex-col gap-0.5 rounded-xl px-2.5 py-3 ${on ? "bg-[#111418] text-white dark:bg-primary" : "border border-border bg-surface"}`}>
+              <label key={m.id} className={`relative flex min-h-11 cursor-pointer flex-col gap-0.5 rounded-xl px-2.5 py-3 ${on ? "bg-[#0F1B3D] text-white dark:bg-primary" : "border border-border bg-surface"}`}>
                 <input type="radio" name="pay" className="absolute opacity-0" checked={on} onChange={() => setMethod(m.id)} />
                 <b className="text-sm">{m.name}</b>
-                <span className={`text-[11px] ${on ? "text-[#b9c0b6] dark:text-white/80" : "text-muted"}`}>{m.hint}</span>
+                <span className={`text-[11px] ${on ? "text-[#b4c0da] dark:text-white/80" : "text-muted"}`}>{m.hint}</span>
               </label>
             );
           })}

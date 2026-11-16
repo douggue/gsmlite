@@ -24,7 +24,7 @@ export type ImportRow = {
 };
 
 const usd = (c: number) => `$${(c / 100).toFixed(2)}`;
-const field = "mt-1 block h-10 rounded-xl border-0 bg-white px-2 text-sm text-[#111418]";
+const field = "mt-1 block h-10 rounded-xl border-0 bg-white px-2 text-sm text-[#0F1B3D]";
 
 /** Supplier services with checkboxes, details on tap, and the import bar (category, markup, rounding). */
 export function ImportTable({ rows, categories }: { rows: ImportRow[]; categories: { id: string; name: string }[] }) {
@@ -151,22 +151,22 @@ export function ImportTable({ rows, categories }: { rows: ImportRow[]; categorie
       </section>
 
       {picked.size > 0 && (
-        <section aria-label="Import selected" className="sticky bottom-24 z-20 mt-4 flex flex-wrap items-end gap-3 rounded-2xl bg-[#111418] p-4 text-white shadow-xl lg:bottom-4">
+        <section aria-label="Import selected" className="sticky bottom-24 z-20 mt-4 flex flex-wrap items-end gap-3 rounded-2xl bg-[#0F1B3D] p-4 text-white shadow-xl lg:bottom-4">
           <div className="flex-[1_1_160px] self-center">
             <b className="text-base">{picked.size} selected</b>
-            {preview && <span className="block text-xs text-[#b9c0b6]">Your price{picked.size > 1 ? "s" : ""}: {preview}</span>}
+            {preview && <span className="block text-xs text-[#b4c0da]">Your price{picked.size > 1 ? "s" : ""}: {preview}</span>}
           </div>
-          {!barOpen && <button type="button" onClick={() => setBarOpen(true)} className="min-h-11 rounded-xl bg-[#7ce0a8] px-4 font-semibold text-[#0b2a1a] lg:hidden">Import…</button>}
+          {!barOpen && <button type="button" onClick={() => setBarOpen(true)} className="min-h-11 rounded-xl bg-[#93c5fd] px-4 font-semibold text-[#0f1b3d] lg:hidden">Import…</button>}
           <div className={`${barOpen ? "flex" : "hidden"} w-full flex-wrap items-end gap-3 lg:flex lg:w-auto`}>
-          <label className="text-xs text-[#b9c0b6]">Put in category
+          <label className="text-xs text-[#b4c0da]">Put in category
             <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className={`${field} max-w-[14rem]`}>
               <option value="group">Same name as their group</option>
               {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </label>
-          <label className="text-xs text-[#b9c0b6]">Markup %<input value={markup} onChange={(e) => setMarkup(e.target.value)} inputMode="decimal" className={`${field} w-20`} /></label>
-          <label className="text-xs text-[#b9c0b6]">Min. profit $<input value={minProfit} onChange={(e) => setMinProfit(e.target.value)} inputMode="decimal" className={`${field} w-20`} /></label>
-          <label className="text-xs text-[#b9c0b6]">Round prices
+          <label className="text-xs text-[#b4c0da]">Markup %<input value={markup} onChange={(e) => setMarkup(e.target.value)} inputMode="decimal" className={`${field} w-20`} /></label>
+          <label className="text-xs text-[#b4c0da]">Min. profit $<input value={minProfit} onChange={(e) => setMinProfit(e.target.value)} inputMode="decimal" className={`${field} w-20`} /></label>
+          <label className="text-xs text-[#b4c0da]">Round prices
             <select value={round} onChange={(e) => setRound(e.target.value as PriceRounding)} className={field}>
               <option value="99">to .99</option>
               <option value="49">to .49 / .99</option>
@@ -175,7 +175,7 @@ export function ImportTable({ rows, categories }: { rows: ImportRow[]; categorie
           </label>
           <div className="flex w-full flex-wrap gap-2 xl:w-auto">
           <button type="button" disabled={pending} onClick={() => run(false)} className="min-h-11 rounded-xl border border-[#3a423a] px-3.5 font-semibold">Import as hidden drafts</button>
-          <button type="button" disabled={pending} onClick={() => run(true)} className="min-h-11 rounded-xl bg-[#7ce0a8] px-3.5 font-semibold text-[#0b2a1a]">{pending ? "Importing…" : "Import and publish"}</button>
+          <button type="button" disabled={pending} onClick={() => run(true)} className="min-h-11 rounded-xl bg-[#93c5fd] px-3.5 font-semibold text-[#0f1b3d]">{pending ? "Importing…" : "Import and publish"}</button>
           </div>
           </div>
         </section>

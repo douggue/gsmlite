@@ -24,15 +24,15 @@ export function PriceList({ groups, deal, telegram }: { groups: PriceGroupView[]
   );
   const searching = words.length > 0 || !!type;
   const toggle = (id: string) => setOpen((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
-  const chip = (on: boolean) => `min-h-[46px] rounded-xl px-4 font-semibold ${on ? "bg-[#111418] text-white dark:bg-primary" : "border border-border bg-surface"}`;
-  const statusCls = { online: "text-[#145c39] dark:text-success", slow: "text-[#8a3607] dark:text-warning", down: "text-danger" };
+  const chip = (on: boolean) => `min-h-[46px] rounded-xl px-4 font-semibold ${on ? "bg-[#0F1B3D] text-white dark:bg-primary" : "border border-border bg-surface"}`;
+  const statusCls = { online: "text-[#1e40af] dark:text-success", slow: "text-[#8a3607] dark:text-warning", down: "text-danger" };
 
   return (
     <div className="mt-5 space-y-4">
       <div className="flex flex-wrap items-center gap-2.5">
         <label htmlFor="ps" className="sr-only">{g("search")}</label>
         <input id="ps" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={g("searchPlaceholder")}
-          className="h-[46px] min-w-0 flex-[1_1_280px] rounded-xl border-[1.5px] border-[#111418] bg-white px-3.5 text-base text-[#111418] dark:border-border dark:bg-surface dark:text-text" />
+          className="h-[46px] min-w-0 flex-[1_1_280px] rounded-xl border-[1.5px] border-[#0F1B3D] bg-white px-3.5 text-base text-[#0F1B3D] dark:border-border dark:bg-surface dark:text-text" />
         <div className="flex gap-2 overflow-x-auto">
           {(["IMEI", "SERVER", "REMOTE", "FILE"] as const).filter((x) => x !== "FILE" || groups.some((gr) => gr.rows.some((r) => r.type === "FILE"))).map((x) => (
             <button key={x} type="button" aria-pressed={type === x} onClick={() => setType(type === x ? "" : x)} className={chip(type === x)}>{g(`type.${x}`)}</button>
@@ -47,9 +47,9 @@ export function PriceList({ groups, deal, telegram }: { groups: PriceGroupView[]
         return (
           <section key={gr.id} className="overflow-hidden rounded-2xl border border-border bg-surface">
             <button type="button" onClick={() => toggle(gr.id)} aria-expanded={isOpen}
-              className={`flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left ${isOpen ? "bg-[#111418] text-white" : ""}`}>
+              className={`flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left ${isOpen ? "bg-[#0F1B3D] text-white" : ""}`}>
               <b>{gr.name}</b>
-              <span className={`text-[13px] ${isOpen ? "text-[#b9c0b6]" : "text-muted"}`}>{isOpen ? `${g("collapse")} ▲` : `${g("count", { n: gr.rows.length })} · ${g("expand")} ▼`}</span>
+              <span className={`text-[13px] ${isOpen ? "text-[#b4c0da]" : "text-muted"}`}>{isOpen ? `${g("collapse")} ▲` : `${g("count", { n: gr.rows.length })} · ${g("expand")} ▼`}</span>
             </button>
             {isOpen && (
               <ul className="divide-y divide-border sm:hidden">
@@ -90,11 +90,11 @@ export function PriceList({ groups, deal, telegram }: { groups: PriceGroupView[]
       })}
 
       {(deal || telegram) && (
-        <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#111418] p-4 text-white">
+        <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#0F1B3D] p-4 text-white">
           {deal ? (
-            <span><b className="text-[#7ce0a8]">{g("dealLabel")}</b> <Link href={`/products/${deal.slug}`} className="underline">{deal.name}</Link> {g("dealAt")} <Price usd={deal.price} /> {g("until", { date: fmt.dateTime(new Date(deal.endsAt), { weekday: "long", day: "numeric", month: "short" }) })}</span>
+            <span><b className="text-[#93c5fd]">{g("dealLabel")}</b> <Link href={`/products/${deal.slug}`} className="underline">{deal.name}</Link> {g("dealAt")} <Price usd={deal.price} /> {g("until", { date: fmt.dateTime(new Date(deal.endsAt), { weekday: "long", day: "numeric", month: "short" }) })}</span>
           ) : <span>{g("telegramText")}</span>}
-          {telegram && <a href={telegram} target="_blank" rel="noopener" className="inline-flex min-h-11 items-center rounded-xl bg-[#7ce0a8] px-4 font-semibold text-[#0b2a1a]">{g("joinTelegram")}</a>}
+          {telegram && <a href={telegram} target="_blank" rel="noopener" className="inline-flex min-h-11 items-center rounded-xl bg-[#93c5fd] px-4 font-semibold text-[#0f1b3d]">{g("joinTelegram")}</a>}
         </section>
       )}
     </div>
