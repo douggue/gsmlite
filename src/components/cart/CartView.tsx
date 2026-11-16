@@ -2,68 +2,85 @@
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { t } from "@/lib/text";
-import { useStore } from "./CartProvider";
-import { Price } from "../Money";
+import { formatMoney } from "@/lib/money";
+import { linePrice, useStore } from "./CartProvider";
 import { ProductArtSmall } from "./ProductArtSmall";
+import { CheckoutShell, OrderSummary } from "./CheckoutShell";
 
-export function CartView() {
+export type Upsell = { slug: string; name: string; sub: string; priceUsd: number };
+
+/** Cart (Zoom-style): one card per service with its IMEIs or quantity, a suggestion below, the summary on the side. */
+export function CartView({ upsell }: { upsell?: Upsell | null }) {
   const tc = useTranslations("cart");
   const locale = useLocale();
-  const { lines, ready, setQuantity, remove } = useStore();
-  const subtotal = lines.reduce((s, l) => s + l.priceUsd * l.quantity, 0);
+  const store = useStore();
+  const { lines, ready, setQuantity, remove, currency, htgPerUsd } = store;
+  const fmt = (usd: number) => formatMoney(linePrice({ priceUsd: usd }, currency, htgPerUsd), currency, locale);
 
-  if (!ready) return <p className="text-muted">…</p>;
+  if (!ready) return <p className="container-page py-12 text-muted">…</p>;
   if (lines.length === 0)
     return (
-      <div className="card mx-auto max-w-md p-10 text-center">
-        <h1 className="text-xl font-bold">{tc("title")}</h1>
-        <p className="mt-2 text-muted">{tc("empty")}</p>
-        <Link href="/store" className="btn-primary mt-6">{tc("emptyCta")}</Link>
+      <div className="container-page py-12">
+        <div className="card mx-auto max-w-md p-10 text-center">
+          <h1 className="text-xl font-bold">{tc("title")}</h1>
+          <p className="mt-2 text-muted">{tc("empty")}</p>
+          <Link href="/store" className="btn-primary mt-6">{tc("emptyCta")}</Link>
+        </div>
       </div>
     );
 
+  const showUpsell = upsell && !lines.some((l) => l.productSlug === upsell.slug) && lines.some((l) => l.identifiers?.length);
+
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">{tc("title")}</h1>
-        <ul className="mt-6 space-y-3">
-          {lines.map((l) => (
-            <li key={l.key} className="card flex gap-4 p-3 sm:p-4">
-              <ProductArtSmall name={t(l.productName, locale)} accent={l.accent} image={l.image} />
-              <div className="min-w-0 flex-1">
-                <Link href={`/products/${l.productSlug}`} className="font-semibold hover:text-primary">{t(l.productName, locale)}</Link>
-                <p className="text-sm text-muted">{t(l.variantName, locale)}</p>
-                {l.identifiers && l.identifiers.length > 0 && (
-                  <p className="mt-0.5 break-all font-mono text-xs text-muted">{l.identifiers.join(" · ")}</p>
-                )}
-                {Object.values(l.fields).length > 0 && <p className="mt-0.5 truncate text-xs text-muted">{Object.values(l.fields).join(" · ")}</p>}
-                <div className="mt-3 flex flex-wrap items-center gap-3">
-                  {l.identifiers?.length ? (
-                    <span className="text-sm text-muted">× {l.quantity}</span>
-                  ) : (
-                    <div className="flex items-center rounded-lg border border-border">
-                      <button type="button" className="h-9 w-9" onClick={() => setQuantity(l.key, l.quantity - 1)} aria-label="−">−</button>
-                      <span className="min-w-8 px-1 text-center text-sm font-semibold">{l.quantity}</span>
-                      <button type="button" className="h-9 w-9" onClick={() => setQuantity(l.key, l.quantity + 1)} aria-label="+">+</button>
-                    </div>
-                  )}
-                  <button type="button" onClick={() => remove(l.key)} className="text-sm text-danger hover:underline">{tc("remove")}</button>
-                  <Price usd={l.priceUsd * l.quantity} className="ml-auto font-bold" />
+    <CheckoutShell
+      step="cart"
+      title={tc("title")}
+      summary={<OrderSummary currency={currency} button={<Link href="/checkout" className="btn-primary min-h-12 w-full text-base">{tc("continue")}</Link>} />}
+    >
+      {lines.map((l) => (
+        <article key={l.key} className="rounded-2xl border border-border bg-surface p-4 shadow-[0_8px_30px_rgba(15,27,61,0.08)] sm:p-5">
+          <div className="flex items-start gap-3.5">
+            <ProductArtSmall name={t(l.productName, locale)} accent={l.accent} image={l.image} />
+            <div className="min-w-0 flex-1">
+              <Link href={`/products/${l.productSlug}`} className="font-semibold leading-snug hover:text-primary" dir="auto">{t(l.productName, locale)}</Link>
+              <p className="text-sm text-muted">{t(l.variantName, locale)} · {tc("each", { price: fmt(l.priceUsd) })}</p>
+            </div>
+            <button type="button" onClick={() => remove(l.key)} className="min-h-11 shrink-0 px-1 text-sm font-semibold text-danger hover:underline">{tc("remove")}</button>
+          </div>
+          <div className="mt-4 border-t border-border pt-4">
+            {l.identifiers?.length ? (
+              <>
+                <p className="text-sm font-semibold">{tc("imeis", { n: l.identifiers.length })}</p>
+                <ul className="mt-2 flex flex-wrap gap-1.5">
+                  {l.identifiers.map((id) => <li key={id} className="rounded-lg bg-surface-2 px-2.5 py-1 font-mono text-[13px]">{id}</li>)}
+                </ul>
+              </>
+            ) : (
+              <div className="flex items-center gap-3">
+                <div className="flex items-center rounded-xl border border-border">
+                  <button type="button" className="h-11 w-11 text-lg" onClick={() => setQuantity(l.key, l.quantity - 1)} aria-label="−">−</button>
+                  <span className="min-w-10 text-center font-semibold tabular-nums">{l.quantity}</span>
+                  <button type="button" className="h-11 w-11 text-lg" onClick={() => setQuantity(l.key, l.quantity + 1)} aria-label="+">+</button>
                 </div>
               </div>
-            </li>
-          ))}
-        </ul>
-        <Link href="/store" className="mt-4 inline-block text-sm font-semibold text-primary">← {tc("continueShopping")}</Link>
-      </div>
-      <aside className="card h-fit space-y-4 p-5 lg:sticky lg:top-24">
-        <div className="flex items-center justify-between">
-          <span className="text-muted">{tc("subtotal")}</span>
-          <Price usd={subtotal} className="text-xl font-bold" />
-        </div>
-        <p className="text-xs text-muted">{tc("priceNote")}</p>
-        <Link href="/checkout" className="btn-primary w-full">{tc("checkout")}</Link>
-      </aside>
-    </div>
+            )}
+            {Object.values(l.fields).length > 0 && <p className="mt-2 truncate text-sm text-muted">{Object.values(l.fields).join(" · ")}</p>}
+            <p className="mt-3 text-right font-bold tabular-nums">{fmt(l.priceUsd * l.quantity)}</p>
+          </div>
+        </article>
+      ))}
+
+      {showUpsell && (
+        <section className="border-t border-border pt-6">
+          <h2 className="display text-xl font-bold">{tc("addToOrder")}</h2>
+          <p className="mt-1 text-sm text-muted">{tc("addToOrderSub")}</p>
+          <div className="mt-3 flex items-center gap-3 rounded-2xl border border-border bg-surface p-4">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#e0f5f9] text-xs font-bold text-[#0e7490]">IMEI</span>
+            <span className="min-w-0 flex-1"><b className="block text-sm" dir="auto">{upsell.name}</b><span className="text-xs text-muted">{upsell.sub} · {fmt(upsell.priceUsd)}</span></span>
+            <Link href={`/products/${upsell.slug}?ids=${lines.flatMap((l) => l.identifiers ?? []).join(",")}`} className="inline-flex min-h-10 items-center rounded-full border-[1.5px] border-primary px-4 text-sm font-semibold text-primary hover:bg-primary-soft">{tc("add")}</Link>
+          </div>
+        </section>
+      )}
+    </CheckoutShell>
   );
 }

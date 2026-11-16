@@ -19,6 +19,8 @@ export type Settings = {
   /** Manual deposits at or above this amount are held before becoming spendable */
   holdThresholdUsd: number;
   holdHours: number;
+  /** Usual time for staff to confirm a manual top-up (NatCash, crypto…), shown before the customer pays */
+  depositReviewMinutes: number;
   /** Accounts younger than this many days get lower limits */
   newAccountDays: number;
   newAccountDailyLimitUsd: number;
@@ -193,6 +195,7 @@ export const DEFAULT_SETTINGS: Settings = {
   maxDepositUsd: 100_000,
   holdThresholdUsd: 20_000,
   holdHours: 24,
+  depositReviewMinutes: 30,
   newAccountDays: 3,
   newAccountDailyLimitUsd: 10_000,
   reviewOrderThresholdUsd: 15_000,

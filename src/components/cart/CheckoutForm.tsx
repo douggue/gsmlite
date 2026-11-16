@@ -7,11 +7,12 @@ import { formatMoney } from "@/lib/money";
 import { t } from "@/lib/text";
 import { linePrice, useStore } from "./CartProvider";
 import { PayLogo } from "@/components/PayLogo";
+import { CheckoutShell, OrderSummary } from "./CheckoutShell";
 
 type Method = string; // "WALLET" | "MONCASH" | "NATCASH" | "MANUAL:<id>"
 type Manual = { id: string; name: string; instructions: string; logo: string | null };
 
-export function CheckoutForm({ balances, moncashEnabled, natcashEnabled, manualMethods = [] }: { balances: { HTG: number; USD: number }; moncashEnabled: boolean; natcashEnabled: boolean; manualMethods?: Manual[] }) {
+export function CheckoutForm({ balances, moncashEnabled, natcashEnabled, manualMethods = [], user }: { balances: { HTG: number; USD: number }; moncashEnabled: boolean; natcashEnabled: boolean; manualMethods?: Manual[]; user: { name: string; email: string } }) {
   const tc = useTranslations("checkout");
   const tcart = useTranslations("cart");
   const locale = useLocale();
@@ -30,7 +31,7 @@ export function CheckoutForm({ balances, moncashEnabled, natcashEnabled, manualM
 
   if (store.ready && store.lines.length === 0)
     return (
-      <div className="card mx-auto max-w-md p-10 text-center">
+      <div className="card mx-auto my-12 max-w-md p-10 text-center">
         <p className="text-muted">{tcart("empty")}</p>
         <Link href="/store" className="btn-primary mt-6">{tcart("emptyCta")}</Link>
       </div>
@@ -82,32 +83,57 @@ export function CheckoutForm({ balances, moncashEnabled, natcashEnabled, manualM
     })),
   ];
 
+  const chosen = options.find((o) => o.id === method);
+  const card = "rounded-2xl border border-border bg-surface p-4 shadow-[0_8px_30px_rgba(15,27,61,0.08)] sm:p-5";
+
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
-      <div className="space-y-6">
-        <h1 className="text-3xl font-bold tracking-tight">{tc("title")}</h1>
-        <fieldset className="space-y-3">
-          <legend className="label">{tc("paymentMethod")}</legend>
+    <CheckoutShell
+      step="checkout"
+      title={tc("title")}
+      summary={
+        <OrderSummary
+          currency={currency}
+          extra={error ? <p className="mt-4 rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger" role="alert">{error}</p> : null}
+          button={
+            <button type="button" className="btn-primary min-h-12 w-full text-base" onClick={submit} disabled={pending || insufficient || !store.ready}>
+              {pending ? tc("placing") : tc("placeOrder")}
+            </button>
+          }
+        />
+      }
+    >
+      <section className={card}>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-bold">{tc("signedInAs")}</h2>
+          <Link href="/auth/login?next=/checkout" className="text-sm font-semibold text-primary">{tc("otherAccount")}</Link>
+        </div>
+        <div className="mt-2 grid gap-1 text-sm sm:grid-cols-2">
+          <b className="truncate">{user.name}</b>
+          <span className="truncate text-muted">{user.email}</span>
+        </div>
+      </section>
+
+      <fieldset className={card}>
+        <legend className="float-left mb-3 w-full text-lg font-bold">{tc("paymentMethod")}</legend>
+        <div className="clear-both grid grid-cols-2 gap-2.5 sm:grid-cols-3">
           {options.filter((o) => o.enabled).map((o) => (
-            <label
-              key={o.id}
-              className={`flex cursor-pointer items-start gap-3 rounded-2xl border-2 p-4 ${method === o.id ? "border-primary bg-primary-soft" : "border-border bg-surface"}`}
-            >
-              <input type="radio" name="method" className="mt-1 accent-[var(--primary)]" checked={method === o.id} onChange={() => setMethod(o.id)} />
-              <span className="flex-1">
-                <span className="flex items-center gap-2 font-semibold">{o.badge} {o.title}</span>
-                <span className="mt-1 block text-sm text-muted">{o.hint}</span>
-              </span>
+            <label key={o.id}
+              className={`relative flex min-h-[92px] cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 p-3 text-center text-sm font-semibold ${method === o.id ? "border-primary bg-primary-soft/40 ring-2 ring-primary/20" : "border-border bg-surface hover:border-[#c7d7fb]"}`}>
+              <input type="radio" name="method" className="sr-only" checked={method === o.id} onChange={() => setMethod(o.id)} />
+              {o.badge}
+              <span>{o.title}</span>
+              {method === o.id && <span aria-hidden className="absolute right-2 top-2 grid h-5 w-5 place-items-center rounded-full bg-primary text-[11px] text-white">✓</span>}
             </label>
           ))}
-        </fieldset>
+        </div>
+        {chosen && <p className="mt-3 text-sm text-muted">{chosen.hint}</p>}
 
         {method === "WALLET" ? (
-          <div>
+          <div className="mt-4">
             <span className="label">{tc("payIn")}</span>
             <div className="inline-flex rounded-xl border border-border bg-surface p-1">
               {(["HTG", "USD"] as const).map((c) => (
-                <button key={c} type="button" onClick={() => setWalletCurrency(c)} className={`rounded-lg px-4 py-2 text-sm font-semibold ${walletCurrency === c ? "bg-primary text-white" : ""}`}>
+                <button key={c} type="button" onClick={() => setWalletCurrency(c)} className={`min-h-10 rounded-lg px-4 text-sm font-semibold ${walletCurrency === c ? "bg-primary text-white" : ""}`}>
                   {c}
                 </button>
               ))}
@@ -119,37 +145,14 @@ export function CheckoutForm({ balances, moncashEnabled, natcashEnabled, manualM
             )}
           </div>
         ) : (
-          <p className="text-sm text-muted">{tc("htgOnly")}</p>
+          <p className="mt-3 text-sm text-muted">{tc("htgOnly")}</p>
         )}
+      </fieldset>
 
-        <div>
-          <label htmlFor="note" className="label">{tc("giftNote")}</label>
-          <input id="note" className="input" maxLength={300} placeholder={tc("giftNotePlaceholder")} value={note} onChange={(e) => setNote(e.target.value)} />
-        </div>
-      </div>
-
-      <aside className="card h-fit space-y-4 p-5 lg:sticky lg:top-24">
-        <h2 className="font-semibold">{tc("summary")}</h2>
-        <ul className="space-y-2 text-sm">
-          {store.lines.map((l) => (
-            <li key={l.key} className="flex justify-between gap-3">
-              <span className="min-w-0">
-                <span className="block truncate">{t(l.productName, locale)}</span>
-                <span className="text-xs text-muted">{t(l.variantName, locale)} × {l.quantity}</span>
-              </span>
-              <span className="shrink-0 font-medium">{fmt(linePrice(l, currency, store.htgPerUsd) * l.quantity, currency)}</span>
-            </li>
-          ))}
-        </ul>
-        <div className="flex items-center justify-between border-t border-border pt-4">
-          <span className="font-semibold">{tc("total")}</span>
-          <span className="text-xl font-bold">{fmt(total, currency)}</span>
-        </div>
-        {error && <p className="rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger" role="alert">{error}</p>}
-        <button type="button" className="btn-primary min-h-12 w-full" onClick={submit} disabled={pending || insufficient || !store.ready}>
-          {pending ? tc("placing") : tc("placeOrder")}
-        </button>
-      </aside>
-    </div>
+      <section className={card}>
+        <label htmlFor="note" className="text-lg font-bold">{tc("noteLabel")}</label>
+        <input id="note" className="input mt-3" maxLength={120} value={note} onChange={(e) => setNote(e.target.value)} />
+      </section>
+    </CheckoutShell>
   );
 }

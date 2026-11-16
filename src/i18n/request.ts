@@ -1,3 +1,4 @@
+import "@/lib/intl-ht";
 import { getRequestConfig } from "next-intl/server";
 import { hasLocale } from "next-intl";
 import { unstable_cache } from "next/cache";

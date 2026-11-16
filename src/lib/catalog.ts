@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { prisma } from "./db";
 import { countryWhere } from "./countries";
 
@@ -63,12 +63,10 @@ export async function searchProducts(opts: {
   if (opts.category) where.category = { OR: [{ slug: opts.category }, { parent: { slug: opts.category } }] };
   if (opts.tag) where.tags = { has: opts.tag };
   if (opts.featured) where.isFeatured = true;
+  let rank: Map<string, number> | null = null;
   if (opts.q) {
-    const q = opts.q.trim().slice(0, 80);
-    // Localized names are JSON; search the serialized value so any language matches.
-    const ids = await prisma.$queryRaw<{ id: string }[]>`
-      SELECT id FROM "Product" WHERE "isPublished" = true AND (name::text ILIKE ${"%" + q + "%"} OR slug ILIKE ${"%" + q + "%"})`;
-    where.id = { in: ids.map((r) => r.id) };
+    rank = await searchRank(opts.q);
+    where.id = { in: [...rank.keys()] };
   }
   const orderBy: Prisma.ProductOrderByWithRelationInput[] =
     opts.sort === "newest" ? [{ createdAt: "desc" }] : [{ isFeatured: "desc" }, { sortOrder: "asc" }];
@@ -77,7 +75,29 @@ export async function searchProducts(opts: {
   if (opts.minUsd !== undefined) list = list.filter((p) => minPrice(p) >= opts.minUsd!);
   if (opts.maxUsd !== undefined) list = list.filter((p) => minPrice(p) <= opts.maxUsd!);
   if (list !== products) products.splice(0, products.length, ...list);
+  // A search lists the closest matches first, unless the shopper picked another order.
+  if (rank && !opts.sort) products.sort((a, b) => (rank.get(b.id) ?? 0) - (rank.get(a.id) ?? 0));
   if (opts.sort === "price_asc") products.sort((a, b) => minPrice(a) - minPrice(b));
   if (opts.sort === "price_desc") products.sort((a, b) => minPrice(b) - minPrice(a));
   return products;
+}
+
+/**
+ * Word-by-word search over names (every language), slug, tags, category and option names.
+ * Products matching every word come first; if none do (e.g. "iPhone 13 AT&T" when no name says "13"),
+ * the best partial matches are returned instead of an empty page. Returns product id → number of words matched.
+ */
+export async function searchRank(q: string): Promise<Map<string, number>> {
+  const words = [...new Set(q.toLowerCase().replace(/[^\p{L}\p{N}&+]+/gu, " ").split(" ").filter((w) => w.length >= 2 || /\d/.test(w)))].slice(0, 8);
+  if (!words.length) return new Map();
+  const doc = Prisma.sql`(p.name::text || ' ' || p.slug || ' ' || array_to_string(p.tags, ' ') || ' ' || c.name::text || ' ' ||
+    COALESCE((SELECT string_agg(v.name::text, ' ') FROM "ProductVariant" v WHERE v."productId" = p.id AND v."isActive"), ''))`;
+  const score = Prisma.join(words.map((w) => Prisma.sql`(CASE WHEN ${doc} ILIKE ${"%" + w + "%"} THEN 1 ELSE 0 END)`), " + ");
+  const rows = await prisma.$queryRaw<{ id: string; n: number }[]>`
+    SELECT p.id, (${score})::int AS n FROM "Product" p JOIN "Category" c ON c.id = p."categoryId" WHERE p."isPublished" = true`;
+  const hits = rows.filter((r) => r.n > 0);
+  const best = Math.max(0, ...hits.map((r) => r.n));
+  // Everything that matched all words; otherwise everything as good as the best partial match (at least half the words).
+  const keep = best === words.length ? hits.filter((r) => r.n === best) : hits.filter((r) => r.n >= Math.max(1, Math.ceil(words.length / 2)) && r.n >= best - 1);
+  return new Map(keep.map((r) => [r.id, r.n]));
 }

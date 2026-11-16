@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { priceIn } from "@/lib/money";
-import { indexWords, matchExact, matchFuzzy, tokens } from "@/lib/search";
+import { bestPartial, indexWords, matchCount, matchExact, matchFuzzy, tokens } from "@/lib/search";
 import { tagIcon } from "@/lib/platforms";
 import { useStore } from "./cart/CartProvider";
 import { Price } from "./Money";
@@ -135,7 +135,10 @@ export function StoreBrowser({ products, categories, tags, init }: { products: S
       if (fixed && !words) words = fixed;
       return !!fixed;
     });
-    return { textHits: new Set(near.map((p) => p.id)), guess: near.length && words ? (words as string[]).join(" ") : "" };
+    if (near.length) return { textHits: new Set(near.map((p) => p.id)), guess: words ? (words as string[]).join(" ") : "" };
+    // Still nothing: show the closest partial matches rather than an empty page.
+    const partial = bestPartial(products, (p) => matchCount(index.get(p.id)!, toks), toks.length);
+    return { textHits: new Set(partial.map((p) => p.id)), guess: "" };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [products, index, toks.join(" "), searching]);
   const byText = (p: StoreProduct) => !textHits || textHits.has(p.id);

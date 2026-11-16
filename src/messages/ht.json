@@ -170,7 +170,20 @@
     "checkout": "Peye",
     "remove": "Retire",
     "continueShopping": "Kontinye achte",
-    "priceNote": "Pri yo konfime lè w ap peye."
+    "priceNote": "Pri yo konfime lè w ap peye.",
+    "browseMore": "Gade lòt sèvis",
+    "stepCart": "Panye ou",
+    "stepCheckout": "Peye",
+    "orderSummary": "Rezime kòmand",
+    "itemsCount": "{n} atik",
+    "todaysTotal": "Total jodi a",
+    "continue": "Kontinye",
+    "refundNote": "Ranbouse nan bous ou otomatikman si yon sèvis pa ka fèt.",
+    "addToOrder": "Ajoute nan kòmand ou",
+    "addToOrderSub": "Tchèk telefòn nan anvan: pifò debloke yo refize paske IMEI a sou lis nwa.",
+    "add": "Ajoute",
+    "imeis": "{n} IMEI",
+    "each": "{price} chak"
   },
   "checkout": {
     "title": "Peman",
@@ -207,7 +220,10 @@
       "kyc_blocked": "Sa pa pèmèt sou kont ou. Kontakte sipò.",
       "maintenance": "Sit la an antretyen pou kèk minit. Eseye ankò talè.",
       "busy": "Twòp eseye nan yon ti tan. Tann kèk minit epi eseye ankò."
-    }
+    },
+    "signedInAs": "Konekte",
+    "otherAccount": "Sèvi ak yon lòt kont",
+    "noteLabel": "Nòt pou ou (non kliyan, tikè…)"
   },
   "order": {
     "title": "Kòmand #{number}",
@@ -292,7 +308,22 @@
     "shopByType": "Chwazi pa kalite",
     "servicesCount": "{count} sèvis",
     "telegramTitle": "Alèt kòmand nan Telegram",
-    "needHelp": "Ou bezwen èd ak yon kòmand?"
+    "needHelp": "Ou bezwen èd ak yon kòmand?",
+    "exportCsv": "Telechaje CSV",
+    "ordersSearch": "IMEI, nimewo kòmand oswa nòt",
+    "ordersFilter": "Filtre kòmand yo",
+    "noMatch": "Pa gen kòmand ki koresponn.",
+    "linesDone": "{n} fini",
+    "linesWorking": "{n} ap fèt",
+    "linesRefunded": "{n} ranbouse",
+    "orderAgain": "Kòmande ankò",
+    "showMore": "Montre plis",
+    "filter": {
+      "all": "Tout",
+      "working": "Ap fèt",
+      "done": "Fini",
+      "refunded": "Ranbouse"
+    }
   },
   "wallet": {
     "title": "Bous",
@@ -371,7 +402,9 @@
     "methodAuto": "Otomatik",
     "card": "Kat",
     "cardInfo": "W ap peye sou yon paj kat ki an sekirite (Visa, Mastercard, Apple Pay). Bous USD ou ap resevwa kòb la depi peman an pase.",
-    "payCard": "Peye ak kat"
+    "payCard": "Peye ak kat",
+    "reviewTime": "≈ {usd} · Ekip nou an verifye l, anjeneral nan {minutes} min. Gwo depo ka rete an atant jiska {hours} è.",
+    "orderN": "Kòmand #{n}"
   },
   "auth": {
     "loginTitle": "Konekte",
@@ -497,10 +530,11 @@
     ],
     "refundsTitle": "Politik ranbousman",
     "refundsBody": [
-      "Si yon sèvis pa ka fèt, pri li tounen nan bous GSMLite ou otomatikman.",
+      "Si yon sèvis pa ka fèt (pa egzanp founisè a refize IMEI a paske li sou lis nwa oswa li pa sipòte), lajan an retounen nan bous GSMLite ou otomatikman, IMEI pa IMEI.",
+      "Ranbousman yo se kredi nan bous la: ou ka itilize l touswit sou nenpòt sèvis. Ou pa ka retire lajan bous la an kach.",
       "Kle lisans ak rezilta ki deja livre pa ka ranbouse.",
-      "Kòmand ki fèt ak yon move IMEI oswa move detay ka pa ranbousab yon fwa yo trete.",
-      "Kontakte nou sou WhatsApp ak nimewo kòmand ou pou nenpòt pwoblèm."
+      "Si sèvis la fèt sou IMEI ou te tape a, menm si se te yon move IMEI, li pa ka ranbouse. Fè yon tchèk IMEI gratis anvan ou kòmande.",
+      "Ekri nou sou WhatsApp ak nimewo kòmand ou pou nenpòt pwoblèm."
     ]
   },
   "news": {
@@ -884,7 +918,9 @@
       "why3": "Pri teknisyen pou boutik reparasyon verifye",
       "why4t": "Moun tout bon",
       "why4": "WhatsApp ak Telegram, 7 jou sou 7",
-      "contactTitle": "Ou gen kesyon? Nou reponn chak jou"
+      "contactTitle": "Ou gen kesyon? Nou reponn chak jou",
+      "brandsEyebrow": "PA MAK",
+      "brandsTitle": "Debloke oswa tchèk pa mak"
     },
     "footer": {
       "trust1": "Livrezon otomatik",
@@ -996,7 +1032,10 @@
       "uploadFailed": "Fichye a pa t ka pase. Eseye ankò.",
       "fileTooBig": "Fichye sa a twò gwo.",
       "signinToUpload": "Konekte pou mete yon fichye",
-      "yes": "Wi"
+      "yes": "Wi",
+      "noteAdd": "Ajoute yon nòt (non kliyan, tikè…)",
+      "notePlaceholder": "egz. Marie – iPhone 12 ble",
+      "noteHelp": "Se ou sèl ki wè l. Ou ka chèche kòmand ou yo avè l."
     },
     "order": {
       "lines": "Telefòn nan kòmand sa a",

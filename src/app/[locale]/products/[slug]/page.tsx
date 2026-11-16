@@ -211,7 +211,7 @@ export default async function ProductPage({ params }: { params: P }) {
               })),
             }}
             saved={saved.map((x) => ({ id: x.id, label: x.label, values: x.values as Record<string, string> }))}
-            methods={methods.map((m) => ({ id: m.id, name: m.name, hint: m.hint, currency: m.currency }))}
+            methods={methods.map((m) => ({ id: m.id, name: m.name, hint: m.hint, currency: m.currency, kind: m.kind }))}
             signedIn={!!user}
             balances={balances ? { HTG: balances.HTG.available, USD: balances.USD.available } : null}
             showHtg={methods.some((m) => m.currency === "HTG")}

@@ -170,7 +170,20 @@
     "checkout": "Checkout",
     "remove": "Remove",
     "continueShopping": "Continue shopping",
-    "priceNote": "Prices are confirmed at checkout."
+    "priceNote": "Prices are confirmed at checkout.",
+    "browseMore": "Browse more services",
+    "stepCart": "Your cart",
+    "stepCheckout": "Checkout",
+    "orderSummary": "Order summary",
+    "itemsCount": "{n, plural, one {# item} other {# items}}",
+    "todaysTotal": "Today's total",
+    "continue": "Continue",
+    "refundNote": "Refunded to your wallet automatically if a service can't be done.",
+    "addToOrder": "Add to your order",
+    "addToOrderSub": "Check the phone first: most refused unlocks are blacklisted IMEIs.",
+    "add": "Add",
+    "imeis": "{n, plural, one {# IMEI} other {# IMEIs}}",
+    "each": "{price} each"
   },
   "checkout": {
     "title": "Checkout",
@@ -207,7 +220,10 @@
       "kyc_blocked": "This isn't allowed on your account. Contact support.",
       "maintenance": "The site is under maintenance for a few minutes. Try again soon.",
       "busy": "Too many attempts in a short time. Wait a few minutes and try again."
-    }
+    },
+    "signedInAs": "Signed in",
+    "otherAccount": "Use another account",
+    "noteLabel": "Note for you (customer name, ticket…)"
   },
   "order": {
     "title": "Order #{number}",
@@ -292,7 +308,22 @@
     "shopByType": "Shop by type",
     "servicesCount": "{count, plural, one {# service} other {# services}}",
     "telegramTitle": "Order alerts in Telegram",
-    "needHelp": "Need help with an order?"
+    "needHelp": "Need help with an order?",
+    "exportCsv": "Download CSV",
+    "ordersSearch": "IMEI, order number or note",
+    "ordersFilter": "Filter orders",
+    "noMatch": "No order matches.",
+    "linesDone": "{n} done",
+    "linesWorking": "{n} working",
+    "linesRefunded": "{n} refunded",
+    "orderAgain": "Order again",
+    "showMore": "Show more",
+    "filter": {
+      "all": "All",
+      "working": "In progress",
+      "done": "Done",
+      "refunded": "Refunded"
+    }
   },
   "wallet": {
     "title": "Wallet",
@@ -371,7 +402,9 @@
     "methodAuto": "Automatic",
     "card": "Card",
     "cardInfo": "You'll pay on a secure card page (Visa, Mastercard, Apple Pay). Your USD wallet is credited as soon as the payment goes through.",
-    "payCard": "Pay by card"
+    "payCard": "Pay by card",
+    "reviewTime": "≈ {usd} · Our staff checks it, usually within {minutes} min. Large top-ups can be held up to {hours} h.",
+    "orderN": "Order #{n}"
   },
   "auth": {
     "loginTitle": "Sign in",
@@ -497,9 +530,10 @@
     ],
     "refundsTitle": "Refund policy",
     "refundsBody": [
-      "If a service can't be done, its price goes back to your GSMLite wallet automatically.",
+      "If a service can't be done (for example the supplier rejects the IMEI as blacklisted or not supported), its price goes back to your GSMLite wallet automatically, IMEI by IMEI.",
+      "Refunds are wallet credit: you can use them on any service right away. Wallet money can't be withdrawn as cash.",
       "License keys and results that have been delivered cannot be refunded.",
-      "Orders placed with a wrong IMEI or wrong details may not be refundable once processed.",
+      "If the service was done on the IMEI you typed, even a wrong one, it can't be refunded. Run a free IMEI check before ordering.",
       "Contact us on WhatsApp with your order number for any problem."
     ]
   },
@@ -884,7 +918,9 @@
       "why3": "Technician prices for verified repair shops",
       "why4t": "Real people",
       "why4": "WhatsApp and Telegram, 7 days a week",
-      "contactTitle": "Questions? We answer every day"
+      "contactTitle": "Questions? We answer every day",
+      "brandsEyebrow": "BY BRAND",
+      "brandsTitle": "Unlock or check by brand"
     },
     "footer": {
       "trust1": "Automatic delivery",
@@ -996,7 +1032,10 @@
       "uploadFailed": "The file could not be sent. Try again.",
       "fileTooBig": "This file is too big.",
       "signinToUpload": "Sign in to add a file",
-      "yes": "Yes"
+      "yes": "Yes",
+      "noteAdd": "Add a note (customer name, ticket…)",
+      "notePlaceholder": "e.g. Marie – iPhone 12 blue",
+      "noteHelp": "Only you see it. You can search your orders by it."
     },
     "order": {
       "lines": "Phones in this order",

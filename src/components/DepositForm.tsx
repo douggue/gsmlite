@@ -45,6 +45,8 @@ type Props = {
   minHtg: number;
   maxHtg: number;
   htgPerUsd: number;
+  reviewMinutes: number;
+  holdHours: number;
 };
 
 export function DepositForm(p: Props) {
@@ -308,6 +310,11 @@ export function DepositForm(p: Props) {
             ))}
           </div>
           <p className="mt-1.5 text-xs text-muted">{hint}</p>
+          {!usd && !direct && minor != null && minor > 0 && (
+            <p className="mt-1.5 rounded-lg bg-primary-soft px-3 py-2 text-[13px] text-primary">
+              {tw("reviewTime", { usd: formatMoney(Math.round(minor / p.htgPerUsd), "USD", locale), minutes: p.reviewMinutes, hours: p.holdHours })}
+            </p>
+          )}
         </div>
 
         {!direct && (
@@ -329,7 +336,7 @@ export function DepositForm(p: Props) {
               {crypto ? (
                 <p className="mt-1.5 text-xs text-muted">{tw("txHashHint")}</p>
               ) : (
-                <button type="button" onClick={() => setGuide(true)} className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-primary">
+                <button type="button" onClick={() => setGuide(true)} className="mt-1 inline-flex min-h-11 items-center gap-1.5 text-sm font-bold text-primary">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17v.01" /></svg>
                   {tw("refHelp")}
                 </button>

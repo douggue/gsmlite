@@ -10,7 +10,7 @@ import { useSiteLocales } from "./SiteLangs";
 import { setCurrency, saveLocalePreference } from "@/actions/prefs";
 import { authClient } from "@/lib/auth-client";
 import { useStore } from "./cart/CartProvider";
-import { ReceiptIcon, BagIcon, BookIcon, CartIcon, CloseIcon, FileIcon, HelpIcon, HomeIcon, LoginIcon, LogoutIcon, MenuIcon, MoonIcon, NewsIcon, StoreIcon, SunIcon, TagIcon, UserIcon, UserPlusIcon, WalletIcon } from "./Icons";
+import { ReceiptIcon, BagIcon, BookIcon, CartIcon, CloseIcon, FileIcon, HelpIcon, HomeIcon, LoginIcon, LogoutIcon, MenuIcon, MoonIcon, NewsIcon, StoreIcon, SunIcon, TagIcon, UserIcon, UserPlusIcon, WalletIcon, WhatsAppIcon, TelegramIcon } from "./Icons";
 
 /**
  * Keeps light/dark after client-side navigation. Changing language re-renders <html> from the server,
@@ -246,7 +246,7 @@ export function CartButton() {
   const t = useTranslations("common");
   const { count, ready } = useStore();
   return (
-    <Link href="/cart" className="btn-ghost relative min-h-10 px-2.5" aria-label={`${t("cart")} (${count})`}>
+    <Link href="/cart" className="btn-ghost relative min-h-11 min-w-11 px-2.5" aria-label={`${t("cart")} (${count})`}>
       <CartIcon />
       {ready && count > 0 && (
         <CountBadge count={count} className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[11px] font-bold text-white shadow-[0_0_10px_var(--glow)]" />
@@ -305,7 +305,7 @@ function MenuLink({ href, label }: { href: string; label: string }) {
   );
 }
 
-export function MobileMenu({ nav, signedIn, name }: { nav: NavItem[]; signedIn: boolean; name?: string }) {
+export function MobileMenu({ nav, signedIn, name, whatsapp, telegram }: { nav: NavItem[]; signedIn: boolean; name?: string; whatsapp?: string; telegram?: string }) {
   const t = useTranslations("common");
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -321,7 +321,7 @@ export function MobileMenu({ nav, signedIn, name }: { nav: NavItem[]; signedIn: 
 
   return (
     <>
-      <button type="button" className="btn-ghost min-h-10 px-2 sm:px-2.5 md:hidden" aria-expanded={open} aria-controls="mobile-menu" onClick={() => setOpen(true)}>
+      <button type="button" className="btn-ghost min-h-11 min-w-11 px-2 sm:px-2.5 md:hidden" aria-expanded={open} aria-controls="mobile-menu" onClick={() => setOpen(true)}>
         <MenuIcon />
         <span className="sr-only">{t("menu")}</span>
       </button>
@@ -337,6 +337,12 @@ export function MobileMenu({ nav, signedIn, name }: { nav: NavItem[]; signedIn: 
                 <span className="sr-only">{t("close")}</span>
               </button>
             </div>
+            {(whatsapp || telegram) && (
+              <div className="mb-2 grid grid-cols-2 gap-2">
+                {whatsapp && <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#1fa855] font-semibold text-white"><WhatsAppIcon width={18} height={18} />WhatsApp</a>}
+                {telegram && <a href={telegram} target="_blank" rel="noopener" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#229ed9] font-semibold text-white"><TelegramIcon width={18} height={18} />Telegram</a>}
+              </div>
+            )}
             {nav.map((n) => <MenuLink key={n.href} href={n.href} label={n.label} />)}
             <div className="my-3 border-t border-border" />
             {signedIn ? (

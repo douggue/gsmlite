@@ -21,6 +21,7 @@ import { fullTheme } from "@/lib/settings";
 import { Bricolage_Grotesque, IBM_Plex_Sans, IBM_Plex_Sans_Arabic } from "next/font/google";
 import { cookies, headers } from "next/headers";
 import { getUser } from "@/lib/session";
+import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { ServiceWorker } from "@/components/ServiceWorker";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { SPLASH } from "@/lib/splash";
@@ -97,6 +98,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
             {/* Room for the phone bottom navigation so it never covers the footer */}
             <div className="md:hidden" style={{ height: "calc(4rem + env(safe-area-inset-bottom, 0px))" }} aria-hidden />
             <BottomNav signedIn={!!user} />
+            {!closed && settings.whatsappNumber && <WhatsAppButton number={settings.whatsappNumber} />}
             <ThemeKeeper defaultMode={fullTheme(settings.theme).defaultMode} />
             <ServiceWorker />
             <InstallPrompt />

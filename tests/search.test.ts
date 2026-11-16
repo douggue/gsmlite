@@ -33,3 +33,18 @@ describe("store search", () => {
     expect(tagIcon("Something else")).toBe("");
   });
 });
+
+describe("closest matches", () => {
+  it("finds the AT&T unlock for 'iPhone 13 AT&T' when no name says 13", async () => {
+    const { bestPartial, indexWords, matchCount, tokens } = await import("@/lib/search");
+    const items = [
+      { id: "att", idx: indexWords(["iPhone USA AT&T unlock", "carrier unlock"]) },
+      { id: "tmo", idx: indexWords(["iPhone USA T-Mobile unlock"]) },
+      { id: "chi", idx: indexWords(["Chimera credits"]) },
+    ];
+    const toks = tokens("iPhone 13 AT&T");
+    const out = bestPartial(items, (x) => matchCount(x.idx, toks), toks.length).map((x) => x.id);
+    expect(out[0]).toBe("att");
+    expect(out).not.toContain("chi");
+  });
+});

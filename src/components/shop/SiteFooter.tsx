@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import type { Settings } from "@/lib/settings";
 import type { PayMethod } from "@/lib/pay-methods";
 import { listNames } from "@/lib/pay-methods";
+import { PayLogos } from "../PayLogo";
 import { Logo } from "../Logo";
 import { DataSaverToggle } from "../DataSaverToggle";
 import { InstallLink } from "../InstallPrompt";
@@ -13,8 +14,7 @@ export async function SiteFooter({ settings, methods, categories }: { settings: 
   const locale = await getLocale();
   const t = await getTranslations("gl.footer");
   const names = listNames(methods, locale);
-  const badges = [...new Set(methods.map((m) => (m.kind === "card" ? "Visa · Mastercard" : m.name)))];
-  const link = "text-[#b4c0da] hover:text-white";
+  const link = "inline-flex min-h-11 items-center text-[#b4c0da] hover:text-white md:min-h-0";
   return (
     <footer className="mt-16 bg-[#070d1f] text-white">
       <div className="container-page grid gap-5 border-b border-white/10 py-6 text-sm sm:grid-cols-2 lg:grid-cols-4">
@@ -31,14 +31,14 @@ export async function SiteFooter({ settings, methods, categories }: { settings: 
         </div>
         <div>
           <h2 className="mb-3 font-semibold">{t("colServices")}</h2>
-          <ul className="space-y-2">
+          <ul className="space-y-0 md:space-y-2">
             {categories.slice(0, 5).map((c) => <li key={c.slug}><Link className={link} href={`/categories/${c.slug}`}>{c.name}</Link></li>)}
             <li><Link className={link} href="/check">{t("imeiCheck")}</Link></li>
           </ul>
         </div>
         <div>
           <h2 className="mb-3 font-semibold">{t("colAccount")}</h2>
-          <ul className="space-y-2">
+          <ul className="space-y-0 md:space-y-2">
             <li><Link className={link} href="/account/orders">{t("orders")}</Link></li>
             <li><Link className={link} href="/account/wallet">{t("wallet")}</Link></li>
             <li><Link className={link} href="/account/wallet/deposit">{t("addFunds")}</Link></li>
@@ -47,7 +47,7 @@ export async function SiteFooter({ settings, methods, categories }: { settings: 
         </div>
         <div>
           <h2 className="mb-3 font-semibold">{t("colSite")}</h2>
-          <ul className="space-y-2">
+          <ul className="space-y-0 md:space-y-2">
             <li><Link className={link} href="/about">{t("about")}</Link></li>
             <li><Link className={link} href="/prices">{t("prices")}</Link></li>
             <li><Link className={link} href="/status">{t("status")}</Link></li>
@@ -63,11 +63,7 @@ export async function SiteFooter({ settings, methods, categories }: { settings: 
       <div className="container-page flex flex-wrap items-center gap-x-6 gap-y-3 pb-5 text-[#b4c0da] [&_*]:!text-[#b4c0da]"><DataSaverToggle /><InstallLink /></div>
       <div className="container-page flex flex-wrap items-center justify-between gap-3 border-t border-white/10 py-5 text-[13px] text-[#b4c0da]">
         <span>© {new Date().getFullYear()} {settings.legal?.entity || settings.businessName}. {t("rights")}{settings.legal?.registration ? ` · ${settings.legal.registration}` : ""}{settings.legal?.taxId ? ` · NIF ${settings.legal.taxId}` : ""}</span>
-        {badges.length > 0 && (
-          <span className="flex flex-wrap gap-1.5">
-            {badges.map((b) => <span key={b} className="rounded-md bg-white px-2 py-1 text-xs font-bold text-[#0F1B3D]">{b}</span>)}
-          </span>
-        )}
+        <PayLogos methods={methods} height={18} />
       </div>
     </footer>
   );

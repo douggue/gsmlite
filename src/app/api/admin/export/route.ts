@@ -3,16 +3,7 @@ import { prisma } from "@/lib/db";
 import { assertStaff } from "@/lib/session";
 import { audit } from "@/lib/audit";
 import { t } from "@/lib/text";
-
-/** CSV exports for accounting. Cells starting with = + - @ are prefixed so spreadsheets don't run them as formulas. */
-function csv(rows: (string | number | null | undefined)[][]) {
-  const cell = (v: string | number | null | undefined) => {
-    let s = v == null ? "" : String(v);
-    if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
-    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-  };
-  return "﻿" + rows.map((r) => r.map(cell).join(",")).join("\n");
-}
+import { csv } from "@/lib/csv";
 
 export async function GET(req: NextRequest) {
   const type = req.nextUrl.searchParams.get("type") ?? "orders";

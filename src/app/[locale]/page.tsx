@@ -18,6 +18,7 @@ import { SearchBox } from "@/components/shop/SearchBox";
 import { ServiceCard } from "@/components/shop/ServiceCard";
 import { HomeSlider } from "@/components/shop/HomeSlider";
 import { ToolTabs } from "@/components/shop/ToolTabs";
+import { PayLogos } from "@/components/PayLogo";
 import { ArrowRightIcon, CheckListIcon, ChipIcon, KeyIcon, UnlockPhoneIcon } from "@/components/Icons";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -42,6 +43,22 @@ function initials(s: string) {
   const w = s.replace(/[^\p{L}\p{N} ]/gu, " ").split(/\s+/).filter(Boolean);
   return ((w[0]?.[0] ?? "") + (w[1]?.[0] ?? w[0]?.[1] ?? "")).toUpperCase();
 }
+
+/** Phone brands with their logos (public/logos, from the CC0 Simple Icons set). */
+const BRANDS = [
+  { name: "Apple", q: "iphone", logo: "/logos/apple.svg" },
+  { name: "Samsung", q: "samsung", logo: "/logos/samsung.svg" },
+  { name: "Google Pixel", q: "pixel", logo: "/logos/google.svg" },
+  { name: "Xiaomi", q: "xiaomi", logo: "/logos/xiaomi.svg" },
+  { name: "Motorola", q: "motorola", logo: "/logos/motorola.svg" },
+  { name: "Huawei", q: "huawei", logo: "/logos/huawei.svg" },
+  { name: "Oppo", q: "oppo", logo: "/logos/oppo.svg" },
+  { name: "OnePlus", q: "oneplus", logo: "/logos/oneplus.svg" },
+  { name: "Honor", q: "honor", logo: "/logos/honor.svg" },
+  { name: "LG", q: "lg", logo: "/logos/lg.svg" },
+  { name: "Nokia", q: "nokia", logo: "/logos/nokia.svg" },
+  { name: "T-Mobile", q: "t-mobile", logo: "/logos/tmobile.svg" },
+];
 
 const INSTANT = /instant|imedya|instantan|فوري/i;
 
@@ -138,6 +155,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 </div>
               ))}
             </dl>
+            <PayLogos methods={data.methods} height={20} className="mt-5" />
           </div>
           <div className="hidden justify-center lg:flex" aria-hidden>
             {settings.heroImageUrl ? (
@@ -166,7 +184,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c62f3c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M12 3c1 4 5 5.5 5 10a5 5 0 0 1-10 0c0-2 1-3.5 2-4.5.5 2 1.5 2.5 2.5 2.5C11 8 11 5.5 12 3z" /></svg>
                 {g("home.popularServices")}
               </h2>
-              <Link href="/store" className="text-sm font-semibold text-primary">{g("home.seeAllServices")}</Link>
+              <Link href="/store" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary">{g("home.seeAllServices")}</Link>
             </div>
             <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
               {popular.map((p) => (
@@ -183,7 +201,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                   </div>
                   <div className="flex shrink-0 flex-col items-end justify-between gap-2">
                     <b className="text-base tabular-nums"><Price usd={p.price} /></b>
-                    <Link href={`/products/${p.slug}#order`} className="inline-flex min-h-9 items-center rounded-xl bg-primary px-3.5 text-[13px] font-semibold text-white hover:bg-primary-hover">{g("home.order")}</Link>
+                    <Link href={`/products/${p.slug}`} className="inline-flex min-h-9 items-center rounded-xl bg-primary px-3.5 text-[13px] font-semibold text-white hover:bg-primary-hover">{g("home.order")}</Link>
                   </div>
                 </article>
               ))}
@@ -217,6 +235,23 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 </Link>
               );
             })}
+          </div>
+        </section>
+      )}
+
+      {/* ─────────── By brand (real logos; each opens the store filtered on that brand) ─────────── */}
+      {show("quickActions") && (
+        <section aria-labelledby="brands" className="container-page mt-12 lg:mt-14">
+          <Eyebrow>{g("home.brandsEyebrow")}</Eyebrow>
+          <h2 id="brands" className="display mb-4 mt-1 text-[26px] font-bold lg:text-3xl">{g("home.brandsTitle")}</h2>
+          <div className="grid grid-cols-3 overflow-hidden rounded-2xl border border-border bg-surface sm:grid-cols-4 lg:grid-cols-6">
+            {BRANDS.map((b) => (
+              <Link key={b.q} href={`/store?q=${encodeURIComponent(b.q)}`} className="-mb-px -mr-px flex flex-col items-center justify-center gap-2 border-b border-r border-border px-2 py-4 hover:bg-surface-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={b.logo} alt="" width={30} height={30} className="h-[30px] w-[30px] dark:rounded-md dark:bg-white dark:p-0.5" loading="lazy" />
+                <b className="text-[13px] sm:text-sm">{b.name}</b>
+              </Link>
+            ))}
           </div>
         </section>
       )}
@@ -353,11 +388,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 </div>
               ))}
             </div>
-            {payNames.length > 0 && (
-              <div className="mt-4 flex flex-wrap gap-2">
-                {payNames.map((n) => <span key={n} className="rounded-xl border border-border bg-surface-2 px-3 py-1.5 text-[13px] font-semibold">{n}</span>)}
-              </div>
-            )}
+            <PayLogos methods={data.methods} height={22} className="mt-4" />
           </div>
           <div className="rounded-3xl border border-border bg-surface p-5 sm:p-6">
             <Eyebrow>{g("home.faqEyebrow").toUpperCase()}</Eyebrow>

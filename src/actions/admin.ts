@@ -419,6 +419,7 @@ export async function saveSettings(form: FormData): Promise<R> {
       maxDepositUsd: money("maxDepositUsd"),
       holdThresholdUsd: money("holdThresholdUsd"),
       holdHours: Math.max(0, Math.min(168, Math.round(num("holdHours")))),
+      depositReviewMinutes: Math.max(1, Math.min(1440, Math.round(num("depositReviewMinutes")) || 30)),
       newAccountDays: Math.max(0, Math.min(90, Math.round(num("newAccountDays")))),
       newAccountDailyLimitUsd: money("newAccountDailyLimitUsd"),
       reviewOrderThresholdUsd: money("reviewOrderThresholdUsd"),

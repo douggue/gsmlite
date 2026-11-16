@@ -67,7 +67,8 @@ export function InstallPrompt() {
 
   useEffect(() => {
     if (!mode || open) return;
-    if (/\/(checkout|auth|cart)/.test(pathname)) return;
+    // Never over a form or a result the shopper is reading (order, IMEI check, wallet, account).
+    if (/\/(checkout|auth|cart|check|products|account|order-status|track)(\/|$)/.test(pathname)) return;
     if (Number(read(OFF_KEY) ?? 0) > Date.now()) return;
     const visits = Number(read(VISITS_KEY) ?? 0) + 1;
     write(VISITS_KEY, String(visits));

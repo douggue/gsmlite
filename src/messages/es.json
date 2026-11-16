@@ -170,7 +170,20 @@
     "checkout": "Pagar",
     "remove": "Quitar",
     "continueShopping": "Seguir comprando",
-    "priceNote": "Los precios se confirman al pagar."
+    "priceNote": "Los precios se confirman al pagar.",
+    "browseMore": "Ver más servicios",
+    "stepCart": "Tu carrito",
+    "stepCheckout": "Pago",
+    "orderSummary": "Resumen del pedido",
+    "itemsCount": "{n, plural, one {# artículo} other {# artículos}}",
+    "todaysTotal": "Total de hoy",
+    "continue": "Continuar",
+    "refundNote": "Reembolso automático a tu billetera si un servicio no se puede hacer.",
+    "addToOrder": "Añadir a tu pedido",
+    "addToOrderSub": "Verifica el teléfono primero: la mayoría de las liberaciones rechazadas son IMEI en lista negra.",
+    "add": "Añadir",
+    "imeis": "{n, plural, one {# IMEI} other {# IMEI}}",
+    "each": "{price} c/u"
   },
   "checkout": {
     "title": "Pago",
@@ -207,7 +220,10 @@
       "kyc_blocked": "Esto no está permitido en tu cuenta. Contacta con soporte.",
       "maintenance": "El sitio está en mantenimiento unos minutos. Inténtalo pronto.",
       "busy": "Demasiados intentos en poco tiempo. Espera unos minutos y vuelve a intentarlo."
-    }
+    },
+    "signedInAs": "Sesión iniciada",
+    "otherAccount": "Usar otra cuenta",
+    "noteLabel": "Nota para ti (nombre del cliente, ticket…)"
   },
   "order": {
     "title": "Pedido #{number}",
@@ -292,7 +308,22 @@
     "shopByType": "Por tipo de servicio",
     "servicesCount": "{count, plural, one {# servicio} other {# servicios}}",
     "telegramTitle": "Alertas de pedidos en Telegram",
-    "needHelp": "¿Necesitas ayuda con un pedido?"
+    "needHelp": "¿Necesitas ayuda con un pedido?",
+    "exportCsv": "Descargar CSV",
+    "ordersSearch": "IMEI, número de pedido o nota",
+    "ordersFilter": "Filtrar pedidos",
+    "noMatch": "Ningún pedido coincide.",
+    "linesDone": "{n} hecho",
+    "linesWorking": "{n} en curso",
+    "linesRefunded": "{n} reembolsado",
+    "orderAgain": "Pedir de nuevo",
+    "showMore": "Mostrar más",
+    "filter": {
+      "all": "Todos",
+      "working": "En curso",
+      "done": "Hechos",
+      "refunded": "Reembolsados"
+    }
   },
   "wallet": {
     "title": "Billetera",
@@ -371,7 +402,9 @@
     "methodAuto": "Automático",
     "card": "Tarjeta",
     "cardInfo": "Pagarás en una página de pago segura (Visa, Mastercard, Apple Pay). Tu billetera en USD se acredita en cuanto pasa el pago.",
-    "payCard": "Pagar con tarjeta"
+    "payCard": "Pagar con tarjeta",
+    "reviewTime": "≈ {usd} · Nuestro equipo lo verifica, normalmente en {minutes} min. Los depósitos grandes pueden retenerse hasta {hours} h.",
+    "orderN": "Pedido #{n}"
   },
   "auth": {
     "loginTitle": "Iniciar sesión",
@@ -497,10 +530,11 @@
     ],
     "refundsTitle": "Política de reembolso",
     "refundsBody": [
-      "Si un servicio no se puede hacer, su precio vuelve a tu billetera GSMLite automáticamente.",
-      "Las claves de licencia y resultados ya entregados no son reembolsables.",
-      "Los pedidos hechos con un IMEI o datos incorrectos pueden no ser reembolsables una vez procesados.",
-      "Contáctanos por WhatsApp con tu número de pedido ante cualquier problema."
+      "Si un servicio no se puede hacer (por ejemplo el proveedor rechaza el IMEI por estar en lista negra o no ser compatible), su precio vuelve a tu billetera GSMLite automáticamente, IMEI por IMEI.",
+      "Los reembolsos son crédito en la billetera: puedes usarlo enseguida en cualquier servicio. El dinero de la billetera no se puede retirar en efectivo.",
+      "Las claves de licencia y los resultados ya entregados no se reembolsan.",
+      "Si el servicio se hizo sobre el IMEI que escribiste, aunque fuera erróneo, no se reembolsa. Haz una verificación IMEI gratis antes de pedir.",
+      "Escríbenos por WhatsApp con tu número de pedido ante cualquier problema."
     ]
   },
   "news": {
@@ -884,7 +918,9 @@
       "why3": "Precios de técnico para talleres verificados",
       "why4t": "Personas reales",
       "why4": "WhatsApp y Telegram, 7 días a la semana",
-      "contactTitle": "¿Preguntas? Respondemos todos los días"
+      "contactTitle": "¿Preguntas? Respondemos todos los días",
+      "brandsEyebrow": "POR MARCA",
+      "brandsTitle": "Liberar o verificar por marca"
     },
     "footer": {
       "trust1": "Entrega automática",
@@ -996,7 +1032,10 @@
       "uploadFailed": "No se pudo enviar el archivo. Inténtalo de nuevo.",
       "fileTooBig": "Este archivo es demasiado grande.",
       "signinToUpload": "Inicia sesión para añadir un archivo",
-      "yes": "Sí"
+      "yes": "Sí",
+      "noteAdd": "Añadir una nota (nombre del cliente, ticket…)",
+      "notePlaceholder": "ej. Marie – iPhone 12 azul",
+      "noteHelp": "Solo tú la ves. Puedes buscar tus pedidos con ella."
     },
     "order": {
       "lines": "Teléfonos de este pedido",

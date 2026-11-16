@@ -39,6 +39,8 @@ export default async function DepositPage({ params, searchParams }: { params: Pr
         minHtg={Math.round(s.minDepositUsd * s.htgPerUsd)}
         maxHtg={Math.round(s.maxDepositUsd * s.htgPerUsd)}
         htgPerUsd={s.htgPerUsd}
+        reviewMinutes={s.depositReviewMinutes}
+        holdHours={s.holdHours}
       />
       <p className="text-sm text-muted">{tw("storeCredit")}</p>
     </div>

@@ -1,4 +1,5 @@
 "use client";
+import "@/lib/intl-ht";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { getSavedCart, saveCart } from "@/actions/customer";
 import { priceIn } from "@/lib/money";

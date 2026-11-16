@@ -170,7 +170,20 @@
     "checkout": "Finalizar compra",
     "remove": "Remover",
     "continueShopping": "Continuar comprando",
-    "priceNote": "Os preços são confirmados ao finalizar a compra."
+    "priceNote": "Os preços são confirmados ao finalizar a compra.",
+    "browseMore": "Ver mais serviços",
+    "stepCart": "Seu carrinho",
+    "stepCheckout": "Pagamento",
+    "orderSummary": "Resumo do pedido",
+    "itemsCount": "{n, plural, one {# item} other {# itens}}",
+    "todaysTotal": "Total de hoje",
+    "continue": "Continuar",
+    "refundNote": "Reembolso automático na sua carteira se um serviço não puder ser feito.",
+    "addToOrder": "Adicionar ao pedido",
+    "addToOrderSub": "Verifique o telefone antes: a maioria dos desbloqueios recusados são IMEI na lista negra.",
+    "add": "Adicionar",
+    "imeis": "{n, plural, one {# IMEI} other {# IMEIs}}",
+    "each": "{price} cada"
   },
   "checkout": {
     "title": "Finalizar compra",
@@ -207,7 +220,10 @@
       "kyc_blocked": "Isto não é permitido na sua conta. Fale com o suporte.",
       "maintenance": "O site está em manutenção por alguns minutos. Tente novamente em breve.",
       "busy": "Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente."
-    }
+    },
+    "signedInAs": "Conectado",
+    "otherAccount": "Usar outra conta",
+    "noteLabel": "Nota para você (nome do cliente, ticket…)"
   },
   "order": {
     "title": "Pedido #{number}",
@@ -292,7 +308,22 @@
     "shopByType": "Por tipo de serviço",
     "servicesCount": "{count, plural, one {# serviço} other {# serviços}}",
     "telegramTitle": "Alertas de pedidos no Telegram",
-    "needHelp": "Precisa de ajuda com um pedido?"
+    "needHelp": "Precisa de ajuda com um pedido?",
+    "exportCsv": "Baixar CSV",
+    "ordersSearch": "IMEI, número do pedido ou nota",
+    "ordersFilter": "Filtrar pedidos",
+    "noMatch": "Nenhum pedido corresponde.",
+    "linesDone": "{n} feito",
+    "linesWorking": "{n} em andamento",
+    "linesRefunded": "{n} reembolsado",
+    "orderAgain": "Pedir novamente",
+    "showMore": "Mostrar mais",
+    "filter": {
+      "all": "Todos",
+      "working": "Em andamento",
+      "done": "Concluídos",
+      "refunded": "Reembolsados"
+    }
   },
   "wallet": {
     "title": "Carteira",
@@ -371,7 +402,9 @@
     "methodAuto": "Automático",
     "card": "Cartão",
     "cardInfo": "Você vai pagar em uma página de cartão segura (Visa, Mastercard, Apple Pay). Sua carteira em USD é creditada assim que o pagamento for aprovado.",
-    "payCard": "Pagar com cartão"
+    "payCard": "Pagar com cartão",
+    "reviewTime": "≈ {usd} · Nossa equipe verifica, geralmente em {minutes} min. Depósitos grandes podem ficar retidos até {hours} h.",
+    "orderN": "Pedido #{n}"
   },
   "auth": {
     "loginTitle": "Entrar",
@@ -497,10 +530,11 @@
     ],
     "refundsTitle": "Política de reembolso",
     "refundsBody": [
-      "Se um serviço não puder ser feito, o valor volta para sua carteira GSMLite automaticamente.",
-      "Chaves de licença e resultados já entregues não podem ser reembolsados.",
-      "Pedidos feitos com IMEI ou dados errados podem não ser reembolsáveis depois de processados.",
-      "Fale com a gente no WhatsApp com o número do seu pedido para qualquer problema."
+      "Se um serviço não puder ser feito (por exemplo o fornecedor recusa o IMEI por estar na lista negra ou não ser compatível), o valor volta automaticamente para sua carteira GSMLite, IMEI por IMEI.",
+      "Reembolsos são crédito na carteira: use na hora em qualquer serviço. O dinheiro da carteira não pode ser sacado em espécie.",
+      "Chaves de licença e resultados já entregues não são reembolsáveis.",
+      "Se o serviço foi feito no IMEI digitado, mesmo errado, não é reembolsável. Faça uma verificação de IMEI grátis antes de pedir.",
+      "Fale conosco no WhatsApp com o número do pedido para qualquer problema."
     ]
   },
   "news": {
@@ -884,7 +918,9 @@
       "why3": "Preços de técnico para lojas verificadas",
       "why4t": "Pessoas reais",
       "why4": "WhatsApp e Telegram, 7 dias por semana",
-      "contactTitle": "Dúvidas? Respondemos todos os dias"
+      "contactTitle": "Dúvidas? Respondemos todos os dias",
+      "brandsEyebrow": "POR MARCA",
+      "brandsTitle": "Desbloquear ou verificar por marca"
     },
     "footer": {
       "trust1": "Entrega automática",
@@ -996,7 +1032,10 @@
       "uploadFailed": "Não foi possível enviar o arquivo. Tente novamente.",
       "fileTooBig": "Este arquivo é grande demais.",
       "signinToUpload": "Entre para adicionar um arquivo",
-      "yes": "Sim"
+      "yes": "Sim",
+      "noteAdd": "Adicionar uma nota (nome do cliente, ticket…)",
+      "notePlaceholder": "ex. Marie – iPhone 12 azul",
+      "noteHelp": "Só você vê. Você pode buscar seus pedidos por ela."
     },
     "order": {
       "lines": "Celulares neste pedido",

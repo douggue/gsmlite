@@ -106,6 +106,7 @@ export default async function SettingsPage() {
             <div className={grid}>
               <Field name="holdThresholdUsd" label="Hold top-ups above (USD)" value={m(s.holdThresholdUsd)} />
               <Field name="holdHours" label="for (hours)" value={s.holdHours} type="number" />
+              <Field name="depositReviewMinutes" label="Manual top-ups usually confirmed within (minutes)" value={s.depositReviewMinutes} type="number" />
               <Field name="reviewOrderThresholdUsd" label="Review orders above (USD)" value={m(s.reviewOrderThresholdUsd)} hint="Staff check before anything is delivered." />
               <Field name="approvalThresholdUsd" label="Second approval for wallet changes above (USD)" value={m(s.approvalThresholdUsd)} />
               <Field name="newAccountDays" label="New account period (days)" value={s.newAccountDays} type="number" />

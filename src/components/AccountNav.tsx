@@ -26,6 +26,9 @@ export function AccountNav({ groups, user, placeOrder, foldLabel }: { groups: Ac
     });
   };
   const all = groups.flatMap((g) => g.items);
+  // Phones: the links people need most come first in the sideways row (support used to be off screen).
+  const FIRST = ["/account", "/account/orders", "/account/wallet", "/account/support", "/account/wallet/deposit"];
+  const phone = [...FIRST.map((h) => all.find((i) => i.href === h)).filter((i): i is (typeof all)[number] => !!i), ...all.filter((i) => !FIRST.includes(i.href) && i.href !== "/store")];
   // Longest matching link wins, so /account/wallet/deposit lights "Add credit", not "Wallet".
   const current = all.filter((i) => (i.href === "/account" ? pathname === "/account" : pathname === i.href || pathname.startsWith(i.href + "/"))).sort((a, b) => b.href.length - a.href.length)[0]?.href;
 
@@ -33,7 +36,7 @@ export function AccountNav({ groups, user, placeOrder, foldLabel }: { groups: Ac
     <>
       <nav aria-label="Account" className="-mx-4 min-w-0 lg:hidden">
         <ul className="flex gap-1.5 overflow-x-auto px-4 pb-1">
-          {all.map((i) => (
+          {phone.map((i) => (
             <li key={i.href} className="shrink-0">
               <Link href={i.href} aria-current={current === i.href ? "page" : undefined}
                 className={`inline-flex min-h-10 items-center rounded-xl px-3.5 text-sm font-semibold ${current === i.href ? "bg-[#0F1B3D] text-white dark:bg-primary" : "border border-border bg-surface text-muted"}`}>

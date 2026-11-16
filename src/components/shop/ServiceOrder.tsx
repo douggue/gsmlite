@@ -1,4 +1,5 @@
 "use client";
+import { PayLogos } from "../PayLogo";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -21,7 +22,7 @@ export type OrderVariant = {
   inStock: boolean;
   lowStock?: boolean;
 };
-export type OrderMethod = { id: string; name: string; hint: string; currency: "HTG" | "USD" };
+export type OrderMethod = { id: string; name: string; hint: string; currency: "HTG" | "USD"; kind?: string };
 
 type Props = {
   product: {
@@ -46,7 +47,7 @@ type Props = {
 };
 
 const DRAFT_KEY = "gl_order_draft";
-type Draft = { slug: string; variantId?: string; idText: string; fields: Record<string, string>; qty: number; method: string };
+type Draft = { slug: string; variantId?: string; idText: string; fields: Record<string, string>; qty: number; method: string; note?: string };
 
 /**
  * Service order card (mockup "Service"): option, IMEIs checked as you type, the service's fields, how to pay,
@@ -63,6 +64,7 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
   const variant = product.variants.find((v) => v.id === variantId);
   const [qty, setQty] = useState(variant?.minQty ?? 1);
   const [idText, setIdText] = useState("");
+  const [note, setNote] = useState("");
   const [fields, setFields] = useState<Record<string, string>>(saved[0]?.values ?? {});
   const [method, setMethod] = useState(signedIn && balances ? "WALLET" : methods[0]?.id ?? "WALLET");
   const [error, setError] = useState("");
@@ -112,7 +114,19 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
       setFields(d.fields ?? {});
       setQty(d.qty ?? 1);
       if (d.method) setMethod(d.method);
+      if (d.note) setNote(d.note);
     } catch {}
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // "Order again" links: ?variant=<option>&ids=<IMEI,IMEI>&note=<text>
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    const v = q.get("variant");
+    if (v && product.variants.some((x) => x.id === v)) setVariantId(v);
+    const again = q.get("ids");
+    if (again) setIdText(again.split(",").map((x) => x.trim()).filter(Boolean).join("\n"));
+    const n = q.get("note");
+    if (n) setNote(n.slice(0, 120));
   }, [product.slug, product.variants]);
 
   // Phones: a bar with the total and "Order" while the card's own button is off screen.
@@ -182,7 +196,7 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
     if (!check() || !variant) return;
     if (!signedIn) {
       try {
-        sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ slug: product.slug, variantId, idText, fields, qty, method } satisfies Draft));
+        sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ slug: product.slug, variantId, idText, fields, qty, method, note } satisfies Draft));
       } catch {}
       router.push(`/auth/login?next=${encodeURIComponent(`/products/${product.slug}#order`)}`);
       return;
@@ -193,6 +207,7 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
         currency: payCurrency,
         method: method.startsWith("MANUAL:") ? "MANUAL" : method,
         manualMethodId: method.startsWith("MANUAL:") ? method.slice(7) : undefined,
+        note: note.trim() || undefined,
       });
       if (!res.ok) {
         if (res.error === "signin") return router.push(`/auth/login?next=${encodeURIComponent(`/products/${product.slug}#order`)}`);
@@ -215,7 +230,7 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
   };
 
   return (
-    <div id="order" className="scroll-mt-24 space-y-4">
+    <div id="order" className="scroll-mt-36 space-y-4">
       {product.variants.length > 1 && (
         <fieldset>
           <legend className="mb-2 text-sm font-semibold">{g("option")}</legend>
@@ -291,6 +306,12 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
         </fieldset>
       )}
 
+      <details className="group rounded-xl border border-border px-3.5 py-2.5" open={!!note}>
+        <summary className="cursor-pointer list-none text-sm font-semibold [&::-webkit-details-marker]:hidden">+ {g("noteAdd")}</summary>
+        <input id="order-note" value={note} onChange={(e) => setNote(e.target.value.slice(0, 120))} placeholder={g("notePlaceholder")} aria-label={g("noteAdd")} className="input mt-2" />
+        <p className="mt-1 text-xs text-muted">{g("noteHelp")}</p>
+      </details>
+
       {isServer && max > 1 && (
         <div className="flex flex-wrap items-center gap-3">
           <label className="text-sm font-semibold" htmlFor="qty">{g("quantity")}</label>
@@ -308,11 +329,12 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
         <legend className="mb-2 text-sm font-semibold">{g("payWith")}</legend>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {[...(signedIn && balances ? [{ id: "WALLET", name: g("wallet"), hint: g("walletLeft", { amount: fmt(balances[store.currency], store.currency) }) }] : !signedIn ? [{ id: "WALLET", name: g("wallet"), hint: g("walletHint") }] : []),
-            ...methods.map((m) => ({ id: m.id, name: m.name === "Card" ? g("card") : m.name, hint: g(`hint.${m.hint}`) }))].map((m) => {
+            ...methods.map((m) => ({ id: m.id, name: m.name === "Card" ? g("card") : m.name, hint: g(`hint.${m.hint}`), raw: m }))].map((m) => {
             const on = method === m.id;
             return (
               <label key={m.id} className={`relative flex min-h-11 cursor-pointer flex-col gap-0.5 rounded-xl px-2.5 py-3 ${on ? "bg-[#0F1B3D] text-white dark:bg-primary" : "border border-border bg-surface"}`}>
                 <input type="radio" name="pay" className="absolute opacity-0" checked={on} onChange={() => setMethod(m.id)} />
+                {"raw" in m && m.raw ? <PayLogos methods={[{ id: m.raw.id, name: m.raw.name, kind: m.raw.kind ?? "" }]} height={14} className="mb-0.5" /> : null}
                 <b className="text-sm">{m.name}</b>
                 <span className={`text-[11px] ${on ? "text-[#b4c0da] dark:text-white/80" : "text-muted"}`}>{m.hint}</span>
               </label>
@@ -362,8 +384,9 @@ export function ServiceOrder({ product, saved, methods, signedIn, balances, show
 
       {/* Phones: total + Order while the button above is off screen */}
       {!buttonVisible && variant?.inStock && (
-        <div className="fixed inset-x-0 z-30 flex items-center gap-3 border-t border-border bg-surface/95 px-4 py-2.5 backdrop-blur lg:hidden"
-          style={{ bottom: "calc(4rem + env(safe-area-inset-bottom, 0px))" }}>
+        // Sits over the bottom tab bar (one bar instead of two stacked ones).
+        <div className="kb-hide fixed inset-x-0 bottom-0 z-50 flex items-center gap-3 border-t border-border bg-surface px-4 pt-2.5 shadow-[0_-8px_24px_rgba(15,27,61,0.08)] md:hidden"
+          style={{ paddingBottom: "calc(0.625rem + env(safe-area-inset-bottom, 0px))" }}>
           <span className="flex-1 text-sm"><span className="block text-xs text-muted">{g("total")}</span><b className="tabular-nums">{fmt(total, payCurrency)}</b></span>
           <button type="button" onClick={() => document.getElementById("order")?.scrollIntoView({ behavior: "smooth" })} className="min-h-11 rounded-xl bg-primary px-5 font-semibold text-white">{g("stickyOrder")}</button>
         </div>

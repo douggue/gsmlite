@@ -62,7 +62,7 @@ export default async function WalletPage({ params }: { params: Promise<{ locale:
         <div><span className="text-xs text-[#b4c0da]">HTG</span><b className="display block text-[30px] tabular-nums">{money(balances.HTG.available, "HTG").replace(" HTG", " G")}</b></div>
         {held > 0 && <p className="col-span-2 text-xs text-[#ffd48a]">{g("held", { usd: money(balances.USD.held, "USD"), htg: money(balances.HTG.held, "HTG") })}</p>}
         <Link href="/account/wallet/deposit" className="col-span-2 flex min-h-12 items-center justify-center rounded-xl bg-[#93c5fd] font-semibold text-[#0f1b3d]">{g("addMoney")}</Link>
-        <Link href="/account/wallet/exchange" className="col-span-2 -mt-1 text-center text-xs font-semibold text-[#b4c0da] underline">{g("exchange")}</Link>
+        <Link href="/account/wallet/exchange" className="col-span-2 -mt-1 inline-flex min-h-11 items-center justify-center text-sm font-semibold text-[#c3cde3] underline">{g("exchange")}</Link>
       </section>
 
       {showBonus && (
@@ -131,12 +131,23 @@ export default async function WalletPage({ params }: { params: Promise<{ locale:
             {entries.map((e) => (
               <li key={e.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
                 <span className="min-w-0">
-                  <span className="block">
-                    {e.transaction.description && !/^[A-Z]+ payment/.test(e.transaction.description) && e.transaction.type !== "PURCHASE"
-                      ? e.transaction.description
-                      : tw(`tx.${e.transaction.type}`)}
-                    {e.account.type === "CUSTOMER_HELD" && <span className="badge ml-2 bg-warning-soft text-warning">⏳</span>}
-                  </span>
+                  {(() => {
+                    // Label in the shopper's language from the type; the stored English text only gives the order number
+                    // and, for refunds and adjustments, the reason (written by the supplier or staff).
+                    const d = e.transaction.description ?? "";
+                    const num = d.match(/#(\d+)/)?.[1];
+                    const reason = /^(Refund|Adjustment)/.test(d) && d.includes(": ") ? d.slice(d.indexOf(": ") + 2) : null;
+                    const pct = e.transaction.type === "BONUS" ? d.match(/[+]\d+\s?%/)?.[0] : null;
+                    return (
+                      <>
+                        <span className="block">
+                          {tw(`tx.${e.transaction.type}`)}{num && <> · {tw("orderN", { n: num })}</>}{pct && <> {pct}</>}
+                          {e.account.type === "CUSTOMER_HELD" && <span className="badge ml-2 bg-warning-soft text-warning">⏳</span>}
+                        </span>
+                        {reason && <span className="block truncate text-xs text-muted">{reason}</span>}
+                      </>
+                    );
+                  })()}
                   <span className="block text-xs text-muted">{fmt.dateTime(e.createdAt, { dateStyle: "medium", timeStyle: "short" })}</span>
                 </span>
                 <b className={`shrink-0 tabular-nums ${e.amount > 0 ? "text-[#1e40af] dark:text-success" : ""}`}>

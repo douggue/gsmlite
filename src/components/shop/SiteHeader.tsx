@@ -108,7 +108,7 @@ export async function SiteHeader() {
             )}
             {user && isStaff(user.role) && <a href="/admin" className="hidden min-h-10 items-center rounded-xl border border-white/20 px-3 text-sm font-semibold xl:inline-flex">{tc("admin")}</a>}
             <div className="lg:hidden">
-              <MobileMenu nav={nav} signedIn={!!user} name={user?.name} />
+              <MobileMenu nav={nav} signedIn={!!user} name={user?.name} whatsapp={settings.whatsappNumber} telegram={settings.telegramUrl || undefined} />
             </div>
           </div>
         </div>

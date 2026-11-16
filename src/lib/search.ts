@@ -3,6 +3,7 @@
  * - accents and capitals don't matter ("abonman" finds "Abònman")
  * - every word typed must be found somewhere: names in all languages, slug, tags, category
  * - nothing found? small typos are forgiven ("netflx" finds "Netflix")
+ * - still nothing? the closest partial matches ("iphone 13 at&t" finds the AT&T unlock even if no name says "13")
  */
 
 /** Lowercase, no accents, single spaces. */
@@ -71,4 +72,17 @@ export function matchFuzzy(idx: { text: string; words: string[] }, toks: string[
     fixed.push(best);
   }
   return fixed;
+}
+
+/** How many typed words appear in the product's texts (for the "closest matches" fallback). */
+export function matchCount(idx: { text: string }, toks: string[]): number {
+  return toks.filter((tk) => idx.text.includes(tk)).length;
+}
+
+/** Keeps the best partial matches: at least half the words, and no more than one word behind the best one. */
+export function bestPartial<T>(items: T[], count: (x: T) => number, words: number): T[] {
+  const scored = items.map((x) => [x, count(x)] as const).filter(([, n]) => n > 0);
+  const best = Math.max(0, ...scored.map(([, n]) => n));
+  const floor = Math.max(1, Math.ceil(words / 2), best - 1);
+  return scored.filter(([, n]) => n >= floor).sort((a, b) => b[1] - a[1]).map(([x]) => x);
 }

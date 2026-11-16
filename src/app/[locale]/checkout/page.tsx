@@ -23,13 +23,12 @@ export default async function CheckoutPage({ params }: { params: Promise<{ local
   if (await mustVerifyEmail(user.id)) return <div className="container-page py-8 sm:py-12"><VerifyGate email={user.email} /></div>;
   const [balances, settings, manualMethods] = await Promise.all([getBalances(prisma, user.id), getSettings(), getManualMethods(locale, "orders")]);
   return (
-    <div className="container-page py-8 sm:py-12">
-      <CheckoutForm
+    <CheckoutForm
         balances={{ HTG: balances.HTG.available, USD: balances.USD.available }}
         moncashEnabled={moncashAvailable(settings.moncashEnabled)}
         natcashEnabled={settings.natcashEnabled}
         manualMethods={manualMethods}
+        user={{ name: user.name, email: user.email }}
       />
-    </div>
   );
 }
