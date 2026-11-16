@@ -1,5 +1,5 @@
 "use client";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { freeCheck, type CheckResponse } from "@/actions/check";
@@ -27,6 +27,13 @@ export function CheckForm({ initial, signedIn, left: startLeft, perDay, full, cr
       if (r.ok) setLeft(r.left);
     });
   }
+  // Arriving with an IMEI (pasted in the home search or the free-check box): check it straight away, once.
+  const auto = useRef(false);
+  useEffect(() => {
+    if (auto.current || clean.length < 14) return;
+    auto.current = true;
+    run();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const ok = res?.ok ? res : null;
   const valid = ok ? ok.valid : localValid;
   const model = ok?.model;
@@ -60,7 +67,7 @@ export function CheckForm({ initial, signedIn, left: startLeft, perDay, full, cr
             {signedIn && valid && (
               <>
                 <dt className="text-muted">{g("model")}</dt><dd className="font-semibold">{model || g("unknownModel")}</dd>
-                <dt className="text-muted">{g("brand")}</dt><dd className="font-semibold">{ok?.brand || "—"}</dd>
+                {ok?.brand && <><dt className="text-muted">{g("brand")}</dt><dd className="font-semibold">{ok.brand}</dd></>}
               </>
             )}
             <dt className="text-muted">IMEI</dt>

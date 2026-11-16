@@ -4,8 +4,8 @@ import { prisma } from "@/lib/db";
 import { requireStaff } from "@/lib/session";
 import { formatMoney } from "@/lib/money";
 import { t } from "@/lib/text";
-import { saveCategory } from "@/actions/admin";
-import { ActionForm } from "@/components/admin/ActionButton";
+import { addStarterCatalog, saveCategory } from "@/actions/admin";
+import { ActionButton, ActionForm } from "@/components/admin/ActionButton";
 import { PageTitle, Table, Empty } from "@/components/admin/ui";
 import { LocalizedInputs } from "@/components/admin/LocalizedInputs";
 import { ImageField } from "@/components/admin/ImageField";
@@ -41,7 +41,7 @@ export default async function AdminProducts({ searchParams }: { searchParams: Pr
   };
   return (
     <>
-      <PageTitle title="Services & prices" sub="From a supplier (Suppliers → import) or your own." actions={<><Link href="/admin/suppliers" className="btn-secondary">Import from a supplier</Link><Link href="/admin/products/new" className="btn-primary">+ New service</Link></>} />
+      <PageTitle title="Services & prices" sub="From a supplier (Suppliers → import) or your own." actions={<><ActionButton label="Add starter catalog" className="btn-secondary" confirm="Add about 20 real services (unlocks, IMEI checks, tool licenses, remote) as drafts with suggested prices? Nothing is published and existing services are not changed." action={addStarterCatalog} /><Link href="/admin/suppliers" className="btn-secondary">Import from a supplier</Link><Link href="/admin/products/new" className="btn-primary">+ New service</Link></>} />
       <form className="mb-3 flex flex-wrap items-center gap-2">
         {show !== "all" && <input type="hidden" name="show" value={show} />}
         <label htmlFor="pq" className="sr-only">Search services</label>

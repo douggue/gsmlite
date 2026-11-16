@@ -7,6 +7,7 @@ import { can } from "@/lib/permissions";
 import { formatMoney } from "@/lib/money";
 import { itemTitle } from "@/lib/orders";
 import { deliverItem, refundOrder, revealOrderCodes, runFulfillment } from "@/actions/admin";
+import { checkSupplierItemNow, confirmSupplierOrder, refundSupplierItem, resendSupplierItem } from "@/actions/suppliers";
 import { ActionButton } from "@/components/admin/ActionButton";
 import { RevealCodes } from "@/components/admin/RevealCodes";
 import { FieldAnswers } from "@/components/admin/FieldAnswers";
@@ -64,9 +65,29 @@ export default async function AdminOrder({ params }: { params: Promise<{ id: str
                 <p className="text-xs text-muted">{i.variant.product.fulfillmentType === "SUPPLIER_API" ? "Supplier" : i.variant.product.fulfillmentType === "CODE_INVENTORY" ? "License keys from stock" : "Delivered by hand"} · {formatMoney(i.unitPrice, order.currency, "en")} each{i._count.codes > 0 ? ` · ${i._count.codes} key(s) delivered` : ""}</p>
                 <FieldAnswers itemId={i.id} values={i.fieldValues as Record<string, string>} defs={i.variant.product.fields as FieldDef[]} />
                 {i.deliveryNote && <p className="rounded-lg bg-surface-2 p-3 text-sm">{i.deliveryNote}</p>}
-                {manage && i.status === "PENDING" && ["PAID", "PROCESSING"].includes(order.status) && (
-                  <ActionButton label="Deliver by hand…" className="btn-primary min-h-9 px-3 text-xs" prompt="Result shown to the customer (unlock code, report, license…)" action={deliverItem.bind(null, i.id)} />
-                )}
+                {manage && i.status === "PENDING" && ["PAID", "PROCESSING"].includes(order.status) && (() => {
+                  // One IMEI at a time: what staff can do depends on where the line stands with its supplier.
+                  const so = i.supplierOrders[0];
+                  const live = so && ["WAITING", "IN_PROCESS"].includes(so.status);
+                  const unknown = so?.status === "UNKNOWN";
+                  const viaSupplier = !!i.variant.supplierId && i.variant.product.fulfillmentType === "SUPPLIER_API";
+                  return (
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      {live && <ActionButton label="Check with supplier now" className="btn-secondary min-h-9 px-3 text-xs" action={checkSupplierItemNow.bind(null, i.id)} />}
+                      {unknown && (
+                        <>
+                          <ActionButton label="It's on their site: link it…" className="btn-secondary min-h-9 px-3 text-xs" prompt="The order ID shown on the supplier's site" action={confirmSupplierOrder.bind(null, so.id)} />
+                          <ActionButton label="Not on their site: send again" className="btn-secondary min-h-9 px-3 text-xs" confirm="Only if you checked the supplier's site and this IMEI is NOT there. Otherwise the supplier is paid twice. Send again?" action={resendSupplierItem.bind(null, i.id)} />
+                        </>
+                      )}
+                      {viaSupplier && !live && !unknown && (
+                        <ActionButton label="Send to supplier" className="btn-secondary min-h-9 px-3 text-xs" confirm="Send this IMEI to the supplier now?" action={resendSupplierItem.bind(null, i.id)} />
+                      )}
+                      <ActionButton label="Deliver by hand…" className="btn-primary min-h-9 px-3 text-xs" prompt="Result shown to the customer (unlock code, report, license…)" action={deliverItem.bind(null, i.id)} />
+                      <ActionButton label="Refund this IMEI…" className="btn-danger min-h-9 px-3 text-xs" prompt="Why? (shown to the customer)" confirm={live ? "The supplier is still working on it and may still charge you. Refund the customer anyway?" : "Refund this line to the customer's wallet?"} action={refundSupplierItem.bind(null, i.id)} />
+                    </div>
+                  );
+                })()}
               </div>
             ))}
           </section>
@@ -84,7 +105,11 @@ export default async function AdminOrder({ params }: { params: Promise<{ id: str
           <section className="card p-5 text-sm">
             <h2 className="mb-2 font-semibold">Customer</h2>
             <Link href={`/admin/customers/${order.userId}`} className="font-medium text-primary">{order.user.name}</Link>
-            <p className="text-muted">{order.user.email} {order.user.phone && <>· <a href={`https://wa.me/${waNumber(order.user.phone)}`} target="_blank" rel="noopener" className="text-[#1fa855]">{formatPhone(order.user.phone)} ↗</a></>}</p>
+            <p className="text-muted">{order.user.email}{order.user.phone && <> · {formatPhone(order.user.phone)}</>}</p>
+            {order.user.phone && (
+              <a href={`https://wa.me/${waNumber(order.user.phone)}?text=${encodeURIComponent(`GSMLite: ${order.user.locale === "en" ? `about your order #${order.number}` : `konsènan kòmand #${order.number} ou a`}`)}`} target="_blank" rel="noopener"
+                className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-xl bg-[#1fa855] px-4 text-sm font-semibold text-white">WhatsApp the customer</a>
+            )}
             {order.recipientNote && <p className="mt-2"><span className="text-muted">Note:</span> {order.recipientNote}</p>}
             <div className="mt-3 flex flex-wrap items-center gap-2"><span className="text-muted">Order status link for the customer</span><CopyButton value={`${siteUrl()}/${order.user.locale}/order-status/${order.id}?t=${order.accessToken}`} label="Copy link" done="Copied" /></div>
           </section>

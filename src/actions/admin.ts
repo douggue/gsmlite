@@ -773,3 +773,17 @@ export async function revealFieldSecret(itemId: string, key: string): Promise<{ 
     return { ok: false, error: e instanceof Error ? e.message : "Error" };
   }
 }
+
+/** Adds the starter catalog (real services, suggested prices) as drafts; existing services are left alone. */
+export async function addStarterCatalog(): Promise<R> {
+  try {
+    const staff = await assertStaff("catalog.manage");
+    const { installStarterCatalog } = await import("@/lib/starter-catalog");
+    const r = await installStarterCatalog();
+    await audit(staff.id, "catalog.starter", "Product", "starter", r);
+    revalidatePath("/admin/products");
+    return { ok: true, message: r.added ? `${r.added} services added as drafts. Link each option to a supplier and check the price before publishing.` : "Everything from the starter catalog is already here" };
+  } catch (e) {
+    return fail(e);
+  }
+}
