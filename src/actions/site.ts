@@ -82,6 +82,8 @@ export async function subscribeNewsletter(email: string, locale: string, captcha
   const { headers } = await import("next/headers");
   const ip = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim();
   if (!(await verifyTurnstile(captcha, ip))) return { ok: false, error: "captcha" };
+  const { rateLimit } = await import("@/lib/rate-limit");
+  if (!(await rateLimit(`newsletter:${ip ?? "?"}`, 5, 3600))) return { ok: false, error: "busy" };
   const e = email.trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) || e.length > 200) return { ok: false, error: "invalid" };
   const l = LOCALES.includes(locale) ? locale : "ht";

@@ -8,7 +8,8 @@
 
 /** Lowercase, no accents, single spaces. */
 export function norm(s: string): string {
-  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9$]+/g, " ").trim();
+  // "AT&T" → "att" (one word on both sides), otherwise "at" and "t" would match almost every service.
+  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/&/g, "").replace(/[^a-z0-9$]+/g, " ").trim();
 }
 
 /** Edit distance (Levenshtein), stopping early once it goes over `max`. */
@@ -40,7 +41,10 @@ export function indexWords(haystack: string[]): { text: string; words: string[] 
 }
 
 export function tokens(q: string): string[] {
-  return norm(q).split(" ").filter(Boolean);
+  const all = norm(q).split(" ").filter(Boolean);
+  // Single letters match everything; keep them only when they are all the shopper typed.
+  const long = all.filter((w) => w.length > 1);
+  return long.length ? long : all;
 }
 
 /** Exact match: every typed word appears (as part of a word) in the product's texts. */

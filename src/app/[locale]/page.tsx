@@ -1,3 +1,4 @@
+import { jsonLd as toJsonLd } from "@/lib/json-ld";
 import { siteUrl } from "@/lib/site-url";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -125,7 +126,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
 
   return (
     <>
-      {jsonLd.map((j, i) => <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(j) }} />)}
+      {jsonLd.map((j, i) => <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: toJsonLd(j) }} />)}
 
       {/* ─────────── Hero ─────────── */}
       <section className="bg-[linear-gradient(150deg,#0f1b3d_0%,#1e3a8a_55%,#1d4ed8_100%)] pb-28 pt-6 text-white lg:pb-36 lg:pt-12">

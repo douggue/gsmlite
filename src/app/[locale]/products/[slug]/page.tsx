@@ -1,3 +1,4 @@
+import { jsonLd as toJsonLd } from "@/lib/json-ld";
 import { servicePageContent } from "@/lib/content/machine";
 import { SeoArticle } from "@/components/shop/SeoArticle";
 import { siteUrl } from "@/lib/site-url";
@@ -144,7 +145,7 @@ export default async function ProductPage({ params }: { params: P }) {
 
   return (
     <div className="container-page pb-10 pt-2 lg:pt-6">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([jsonLd, crumbs]) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: toJsonLd([jsonLd, crumbs]) }} />
       <nav className="-ml-2 flex items-center gap-1 text-[13px] text-muted lg:ml-0" aria-label="Breadcrumb">
         <Link href={`/categories/${product.category.slug}`} aria-label={g("service.back")} className="grid h-11 w-11 place-items-center text-text lg:hidden"><BackIcon width={22} height={22} /></Link>
         <Link href="/store" className="hidden hover:text-text lg:inline">{g("nav.services")}</Link>

@@ -1,3 +1,4 @@
+import { jsonLd } from "@/lib/json-ld";
 import type { WrittenPage } from "@/lib/content/ai";
 
 /** Text from the content machine (approved by staff): intro, steps, sections and FAQ with FAQPage rich results. */
@@ -9,7 +10,7 @@ export function SeoArticle({ page, stepsTitle, faqTitle, showIntro = true }: { p
   };
   return (
     <article className="space-y-6 text-[15px] leading-relaxed">
-      {page.faq.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faq).replace(/</g, "\\u003c") }} />}
+      {page.faq.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(faq) }} />}
       {showIntro && <div className="space-y-3 whitespace-pre-line">{page.intro}</div>}
       {page.steps.length > 0 && (
         <section>

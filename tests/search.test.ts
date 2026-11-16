@@ -46,5 +46,15 @@ describe("closest matches", () => {
     const out = bestPartial(items, (x) => matchCount(x.idx, toks), toks.length).map((x) => x.id);
     expect(out[0]).toBe("att");
     expect(out).not.toContain("chi");
+    expect(out).not.toContain("tmo"); // "AT&T" is one word, so T-Mobile no longer matches
+  });
+});
+
+describe("JSON-LD output", () => {
+  it("can't be closed by a name containing </script>", async () => {
+    const { jsonLd } = await import("@/lib/json-ld");
+    const out = jsonLd({ name: "x</script><script>alert(1)</script>" });
+    expect(out).not.toContain("</script>");
+    expect(JSON.parse(out).name).toBe("x</script><script>alert(1)</script>");
   });
 });

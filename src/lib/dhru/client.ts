@@ -27,10 +27,14 @@ export async function callSupplier(supplier: Supplier, action: DhruAction, param
       body,
       signal: AbortSignal.timeout(TIMEOUT_MS),
       cache: "no-store",
-      redirect: "follow",
+      // Never follow a redirect: the API key is in the body, and a redirect could point our server at an internal address.
+      redirect: "manual",
     });
     httpStatus = res.status;
-    text = await res.text();
+    if (res.status >= 300 && res.status < 400) {
+      const to = res.headers.get("location");
+      error = `The supplier's address moved${to ? ` to ${to.slice(0, 200)}` : ""}. Update it in Admin → Suppliers.`;
+    } else text = await res.text();
   } catch (e) {
     error = e instanceof Error && e.name === "TimeoutError" ? `No answer within ${TIMEOUT_MS / 1000} s` : `Network error: ${e instanceof Error ? e.message : String(e)}`;
   }

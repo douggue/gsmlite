@@ -58,8 +58,8 @@ export default async function WalletPage({ params }: { params: Promise<{ locale:
       </header>
 
       <section className="grid grid-cols-2 gap-3 rounded-[20px] bg-[#0F1B3D] p-[18px] text-white">
-        <div><span className="text-xs text-[#b4c0da]">USD</span><b className="display block text-[30px] tabular-nums">{money(balances.USD.available, "USD")}</b></div>
-        <div><span className="text-xs text-[#b4c0da]">HTG</span><b className="display block text-[30px] tabular-nums">{money(balances.HTG.available, "HTG").replace(" HTG", " G")}</b></div>
+        <div className="min-w-0"><span className="text-xs text-[#b4c0da]">USD</span><b className="display block break-words text-[clamp(1.25rem,6.5vw,1.875rem)] leading-tight tabular-nums">{money(balances.USD.available, "USD")}</b></div>
+        <div className="min-w-0"><span className="text-xs text-[#b4c0da]">HTG</span><b className="display block break-words text-[clamp(1.25rem,6.5vw,1.875rem)] leading-tight tabular-nums">{money(balances.HTG.available, "HTG").replace(" HTG", " G")}</b></div>
         {held > 0 && <p className="col-span-2 text-xs text-[#ffd48a]">{g("held", { usd: money(balances.USD.held, "USD"), htg: money(balances.HTG.held, "HTG") })}</p>}
         <Link href="/account/wallet/deposit" className="col-span-2 flex min-h-12 items-center justify-center rounded-xl bg-[#93c5fd] font-semibold text-[#0f1b3d]">{g("addMoney")}</Link>
         <Link href="/account/wallet/exchange" className="col-span-2 -mt-1 inline-flex min-h-11 items-center justify-center text-sm font-semibold text-[#c3cde3] underline">{g("exchange")}</Link>

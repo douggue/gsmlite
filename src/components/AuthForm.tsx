@@ -10,6 +10,11 @@ import { Turnstile, turnstileOn } from "./Turnstile";
 import { PhoneInput } from "./PhoneInput";
 import { normalizePhone } from "@/lib/phone";
 
+/** Only paths on this site: "/x" yes; "//evil.com", "/\\evil.com" or control characters no (browsers read them as another site). */
+function isSafePath(p: string | null | undefined): boolean {
+  return !!p && p.startsWith("/") && !p.startsWith("//") && !/[\\\u0000-\u001f]/.test(p);
+}
+
 export function AuthForm({ mode: firstMode, google = false }: { mode: "login" | "register"; google?: boolean }) {
   const t = useTranslations("auth");
   // Sign in ↔ create account switch in place (no page load): the address changes with history.pushState,
@@ -91,7 +96,7 @@ export function AuthForm({ mode: firstMode, google = false }: { mode: "login" | 
   }
 
   function goNext() {
-    const safeNext = next && next.startsWith("/") && !next.startsWith("//") ? next : "/account";
+    const safeNext = isSafePath(next) ? next! : "/account";
     router.push(safeNext.replace(new RegExp(`^/(${locales.join("|")})(?=/|$)`), "") || "/account");
     router.refresh();
   }
@@ -135,7 +140,7 @@ export function AuthForm({ mode: firstMode, google = false }: { mode: "login" | 
           <button type="button" disabled={!hydrated || loading}
             onClick={async () => {
               setLoading(true);
-              const back = `/${locale}${next && next.startsWith("/") && !next.startsWith("//") ? next : "/account"}`;
+              const back = `/${locale}${isSafePath(next) ? next : "/account"}`;
               const r = await authClient.signIn.social({ provider: "google", callbackURL: back, errorCallbackURL: `/${locale}/auth/login?blocked=1` });
               if (r?.error) {
                 setLoading(false);
